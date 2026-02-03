@@ -1,0 +1,59 @@
+# Render.com Blueprint
+# Deploy: Connect GitHub repo to Render, it auto-detects this file
+
+databases:
+  - name: resto360-db
+    databaseName: resto360
+    user: resto360
+    plan: starter  # Upgrade for persistence (free tier resets)
+    postgresMajorVersion: 15
+    ipAllowList: []  # Only Render internal network
+
+services:
+  # Redis key-value store
+  - type: redis
+    name: resto360-redis
+    plan: starter
+    maxmemoryPolicy: allkeys-lru
+    ipAllowList: []  # Only Render internal network
+
+  # Django API service
+  - type: web
+    name: resto360-api
+    runtime: python
+    plan: starter
+    region: frankfurt  # Closest to West Africa
+    rootDir: apps/api
+    buildCommand: |
+      pip install -r requirements/production.txt
+      python manage.py collectstatic --noinput
+    startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2
+    healthCheckPath: /health/
+    autoDeploy: false  # Manual deploys (triggered by CI)
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.0"
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings.production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: resto360-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: resto360-redis
+          type: redis
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        sync: false  # Set manually: resto360-api.onrender.com,yourdomain.com
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false  # Set manually: https://yourdomain.com
+
+# Environment variable groups (shared secrets)
+envVarGroups:
+  - name: resto360-shared
+    envVars:
+      - key: SENTRY_DSN
+        sync: false  # Add manually when Sentry is configured
