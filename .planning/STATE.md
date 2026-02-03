@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-03)
 
 **Core value:** Restaurants can take orders, accept payments, and manage deliveries - even when internet is unreliable.
-**Current focus:** Phase 2 - POS Core (COMPLETED)
+**Current focus:** Phase 3 - Inventory Management (IN PROGRESS)
 
 ## Current Position
 
-Phase: 2 of 9 (POS Core)
-Plan: 7 of 7 in current phase
-Status: Phase complete
-Last activity: 2026-02-03 - Completed 02-07-PLAN.md (Customer QR Menu)
+Phase: 3 of 9 (Inventory Management)
+Plan: 1 of 3 in current phase
+Status: In progress
+Last activity: 2026-02-03 - Completed 03-01-PLAN.md (Inventory Foundation)
 
-Progress: [████████..] 83%
+Progress: [████████░░] 85%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
+- Total plans completed: 11
 - Average duration: 10 minutes
-- Total execution time: 1.8 hours
+- Total execution time: 2.0 hours
 
 **By Phase:**
 
@@ -29,10 +29,11 @@ Progress: [████████..] 83%
 |-------|-------|-------|----------|
 | 01-foundation | 3/3 | 33 min | 11 min |
 | 02-pos-core | 7/7 | 75 min | 11 min |
+| 03-inventory | 1/3 | 13 min | 13 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-03 (8 min), 02-04 (15 min), 02-05 (5 min), 02-06 (6 min), 02-07 (7 min)
-- Trend: Very efficient execution
+- Last 5 plans: 02-04 (15 min), 02-05 (5 min), 02-06 (6 min), 02-07 (7 min), 03-01 (13 min)
+- Trend: Efficient execution
 
 *Updated after each plan completion*
 
@@ -82,6 +83,9 @@ Recent decisions affecting current work:
 - [02-07]: AllowAny permission for public menu endpoints
 - [02-07]: Separate GuestOrderCreateSerializer for unauthenticated orders
 - [02-07]: Bottom sheet modals for mobile-first cart and checkout
+- [03-01]: F() expressions with select_for_update() for race-safe stock updates
+- [03-01]: StockMovement records are immutable (save() raises error on updates)
+- [03-01]: django-simple-history for StockItem audit trail
 
 ### Pending Todos
 
@@ -94,12 +98,13 @@ None yet.
 - PWA placeholder icons need to be replaced with branded versions before production
 - Docker not running during 02-02 execution - tests need verification when Docker available
 - Redis required for production WebSocket (configured but needs running instance)
+- WeasyPrint requires GTK libraries on Windows (missing, but not needed for tests)
 
 ## Session Continuity
 
 Last session: 2026-02-03
-Stopped at: Completed 02-07-PLAN.md (Phase 2 Complete)
+Stopped at: Completed 03-01-PLAN.md (Inventory Foundation)
 Resume file: None
 
 ---
-*Next step: Begin Phase 3 - Kitchen Display System*
+*Next step: Continue Phase 3 - Plan 02 (Recipe to Stock Item Mapping)*
