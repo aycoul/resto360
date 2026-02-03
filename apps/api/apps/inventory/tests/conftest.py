@@ -10,7 +10,10 @@ from apps.authentication.tests.factories import (
     RestaurantFactory,
 )
 
-from .factories import StockItemFactory, StockMovementFactory
+from apps.menu.tests.factories import CategoryFactory, MenuItemFactory
+from apps.orders.tests.factories import OrderFactory, OrderItemFactory
+
+from .factories import MenuItemIngredientFactory, StockItemFactory, StockMovementFactory
 
 # Register authentication factories
 register(RestaurantFactory)
@@ -21,6 +24,15 @@ register(CashierFactory, "cashier")
 # Register inventory factories
 register(StockItemFactory)
 register(StockMovementFactory)
+register(MenuItemIngredientFactory)
+
+# Register menu factories (needed for recipe tests)
+register(CategoryFactory)
+register(MenuItemFactory)
+
+# Register order factories (needed for signal tests)
+register(OrderFactory)
+register(OrderItemFactory)
 
 
 @pytest.fixture
@@ -115,3 +127,178 @@ def sample_inventory(owner):
     }
 
     return {"restaurant": restaurant, "items": items}
+
+
+@pytest.fixture
+def order_with_ingredients(owner, db):
+    """Create an order with menu items that have ingredient mappings."""
+    from decimal import Decimal
+
+    from apps.orders.models import OrderStatus
+
+    restaurant = owner.restaurant
+
+    # Create stock item with enough quantity
+    stock_item = StockItemFactory(
+        restaurant=restaurant,
+        name="Test Ingredient",
+        current_quantity=Decimal("100.0000"),
+        low_stock_threshold=Decimal("10.0000"),
+    )
+
+    # Create a menu item
+    category = CategoryFactory(restaurant=restaurant, name="Test Category")
+    menu_item = MenuItemFactory(
+        restaurant=restaurant,
+        category=category,
+        name="Test Menu Item",
+        price=1500,
+    )
+
+    # Create ingredient mapping: 0.5 kg per menu item
+    ingredient = MenuItemIngredientFactory(
+        restaurant=restaurant,
+        menu_item=menu_item,
+        stock_item=stock_item,
+        quantity_required=Decimal("0.5000"),
+    )
+
+    # Create order with the menu item (quantity 2 = 1.0 kg needed)
+    order = OrderFactory(
+        restaurant=restaurant,
+        cashier=owner,
+        status=OrderStatus.PENDING,
+    )
+    order_item = OrderItemFactory(
+        restaurant=restaurant,
+        order=order,
+        menu_item=menu_item,
+        name=menu_item.name,
+        unit_price=menu_item.price,
+        quantity=2,
+        line_total=menu_item.price * 2,
+    )
+
+    class Result:
+        pass
+
+    result = Result()
+    result.order = order
+    result.order_item = order_item
+    result.menu_item = menu_item
+    result.stock_item = stock_item
+    result.ingredient = ingredient
+    result.owner = owner
+    return result
+
+
+@pytest.fixture
+def order_with_insufficient_stock(owner, db):
+    """Create an order where stock is insufficient for ingredients."""
+    from decimal import Decimal
+
+    from apps.orders.models import OrderStatus
+
+    restaurant = owner.restaurant
+
+    # Create stock item with very low quantity
+    stock_item = StockItemFactory(
+        restaurant=restaurant,
+        name="Low Stock Ingredient",
+        current_quantity=Decimal("0.1000"),  # Very low
+        low_stock_threshold=Decimal("1.0000"),
+    )
+
+    # Create a menu item
+    category = CategoryFactory(restaurant=restaurant, name="Test Category 2")
+    menu_item = MenuItemFactory(
+        restaurant=restaurant,
+        category=category,
+        name="Test Menu Item 2",
+        price=2000,
+    )
+
+    # Create ingredient mapping: 1.0 kg per menu item (more than available)
+    MenuItemIngredientFactory(
+        restaurant=restaurant,
+        menu_item=menu_item,
+        stock_item=stock_item,
+        quantity_required=Decimal("1.0000"),
+    )
+
+    # Create order (quantity 1 = 1.0 kg needed, but only 0.1 available)
+    order = OrderFactory(
+        restaurant=restaurant,
+        cashier=owner,
+        status=OrderStatus.PENDING,
+    )
+    OrderItemFactory(
+        restaurant=restaurant,
+        order=order,
+        menu_item=menu_item,
+        name=menu_item.name,
+        unit_price=menu_item.price,
+        quantity=1,
+        line_total=menu_item.price,
+    )
+
+    class Result:
+        pass
+
+    result = Result()
+    result.order = order
+    result.stock_item = stock_item
+    return result
+
+
+@pytest.fixture
+def order_without_ingredients(owner, db):
+    """Create an order with menu items that have NO ingredient mappings."""
+    from apps.orders.models import OrderStatus
+
+    restaurant = owner.restaurant
+
+    # Create a menu item without any ingredient mappings
+    category = CategoryFactory(restaurant=restaurant, name="Test Category 3")
+    menu_item = MenuItemFactory(
+        restaurant=restaurant,
+        category=category,
+        name="No Ingredients Item",
+        price=1000,
+    )
+
+    # Create order
+    order = OrderFactory(
+        restaurant=restaurant,
+        cashier=owner,
+        status=OrderStatus.PENDING,
+    )
+    OrderItemFactory(
+        restaurant=restaurant,
+        order=order,
+        menu_item=menu_item,
+        name=menu_item.name,
+        unit_price=menu_item.price,
+        quantity=1,
+        line_total=menu_item.price,
+    )
+
+    return order
+
+
+@pytest.fixture
+def completed_order_with_ingredients(order_with_ingredients, db):
+    """Create an already-completed order with ingredients (movements exist)."""
+    from apps.inventory.services import deduct_ingredients_for_order
+    from apps.orders.models import OrderStatus
+    from django.utils import timezone
+
+    order = order_with_ingredients.order
+    order.status = OrderStatus.COMPLETED
+    order.completed_at = timezone.now()
+    order.save()
+
+    # Manually process the deduction to simulate already completed
+    deduct_ingredients_for_order(order)
+
+    return order_with_ingredients

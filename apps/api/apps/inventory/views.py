@@ -7,10 +7,11 @@ from rest_framework.response import Response
 from apps.core.permissions import IsOwnerOrManager
 from apps.core.views import TenantModelViewSet
 
-from .models import StockItem, StockMovement
+from .models import MenuItemIngredient, StockItem, StockMovement
 from .serializers import (
     AddStockSerializer,
     AdjustStockSerializer,
+    MenuItemIngredientSerializer,
     StockItemListSerializer,
     StockItemSerializer,
     StockMovementSerializer,
@@ -186,3 +187,36 @@ class StockMovementViewSet(TenantReadOnlyModelViewSet):
             qs = qs.filter(reason=reason)
 
         return qs.order_by("-created_at")
+
+
+class MenuItemIngredientViewSet(TenantModelViewSet):
+    """
+    ViewSet for managing recipe ingredient mappings.
+
+    GET /api/inventory/recipes/ - List all mappings
+    POST /api/inventory/recipes/ - Create mapping
+    GET /api/inventory/recipes/{id}/ - Get mapping detail
+    PUT/PATCH /api/inventory/recipes/{id}/ - Update mapping
+    DELETE /api/inventory/recipes/{id}/ - Delete mapping
+    GET /api/inventory/recipes/?menu_item={id} - Filter by menu item
+    GET /api/inventory/recipes/?stock_item={id} - Filter by stock item
+    """
+
+    serializer_class = MenuItemIngredientSerializer
+    permission_classes = [IsAuthenticated, IsOwnerOrManager]
+
+    def get_queryset(self):
+        """Get recipe mappings filtered by tenant and optional filters."""
+        qs = MenuItemIngredient.objects.all()
+
+        # Filter by menu_item if provided
+        menu_item_id = self.request.query_params.get("menu_item")
+        if menu_item_id:
+            qs = qs.filter(menu_item_id=menu_item_id)
+
+        # Filter by stock_item if provided
+        stock_item_id = self.request.query_params.get("stock_item")
+        if stock_item_id:
+            qs = qs.filter(stock_item_id=stock_item_id)
+
+        return qs.select_related("menu_item", "stock_item")

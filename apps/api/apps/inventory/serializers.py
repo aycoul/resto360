@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from rest_framework import serializers
 
-from .models import MovementReason, StockItem, StockMovement
+from .models import MenuItemIngredient, MovementReason, StockItem, StockMovement
 
 
 class StockItemSerializer(serializers.ModelSerializer):
@@ -131,3 +131,36 @@ class AdjustStockSerializer(serializers.Serializer):
         allow_blank=True,
         help_text="Optional notes explaining the adjustment",
     )
+
+
+class MenuItemIngredientSerializer(serializers.ModelSerializer):
+    """Serializer for recipe ingredient mapping."""
+
+    menu_item_name = serializers.CharField(source="menu_item.name", read_only=True)
+    stock_item_name = serializers.CharField(source="stock_item.name", read_only=True)
+    stock_item_unit = serializers.CharField(source="stock_item.unit", read_only=True)
+
+    class Meta:
+        model = MenuItemIngredient
+        fields = [
+            "id",
+            "menu_item",
+            "menu_item_name",
+            "stock_item",
+            "stock_item_name",
+            "stock_item_unit",
+            "quantity_required",
+        ]
+        read_only_fields = ["id"]
+
+    def validate(self, data):
+        """Ensure menu_item and stock_item belong to same restaurant."""
+        menu_item = data.get("menu_item")
+        stock_item = data.get("stock_item")
+
+        if menu_item and stock_item:
+            if menu_item.restaurant_id != stock_item.restaurant_id:
+                raise serializers.ValidationError(
+                    "Menu item and stock item must belong to the same restaurant"
+                )
+        return data

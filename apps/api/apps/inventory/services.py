@@ -321,54 +321,14 @@ def deduct_ingredients_for_order(order):
                         reference=("Order", order.id),
                     )
                 except InsufficientStockError:
-                    # Log but continue - don't block order completion
+                    # Log warning but continue - don't block order completion.
+                    # Note: We do NOT create a movement record here because the
+                    # database has a CHECK constraint preventing negative stock.
+                    # The warning log serves as the audit trail for discrepancies.
+                    # Managers should perform inventory reconciliation to fix counts.
                     logger.warning(
                         f"Insufficient stock for order {order.id}: "
                         f"{ingredient.stock_item.name} needed {quantity_needed}, "
-                        f"available {ingredient.stock_item.current_quantity}"
+                        f"available {ingredient.stock_item.current_quantity}. "
+                        f"Skipping deduction - manual inventory adjustment required."
                     )
-                    # Create movement anyway to track discrepancy
-                    _create_negative_balance_movement(
-                        ingredient.stock_item,
-                        quantity_needed,
-                        order,
-                        order.cashier,
-                    )
-
-
-def _create_negative_balance_movement(stock_item, quantity, order, user):
-    """
-    Create movement even when stock goes negative (for tracking discrepancies).
-
-    This is used when there's insufficient stock but the order must complete.
-    The movement is recorded for audit purposes, allowing the restaurant
-    to identify stock count discrepancies.
-
-    Args:
-        stock_item: StockItem instance
-        quantity: Quantity to deduct (positive number)
-        order: Order instance
-        user: User who created the order
-    """
-    with transaction.atomic():
-        # Force deduction even if insufficient
-        StockItem.all_objects.filter(id=stock_item.id).update(
-            current_quantity=F("current_quantity") - Decimal(str(quantity))
-        )
-        stock_item.refresh_from_db()
-
-        StockMovement.all_objects.create(
-            restaurant=stock_item.restaurant,
-            stock_item=stock_item,
-            quantity_change=-Decimal(str(quantity)),
-            movement_type=MovementType.OUT,
-            reason=MovementReason.ORDER_USAGE,
-            notes=f"Order #{order.order_number} (INSUFFICIENT STOCK)",
-            reference_type="Order",
-            reference_id=order.id,
-            created_by=user,
-            balance_after=stock_item.current_quantity,
-        )
-
-        # Check for low stock alert
-        _check_low_stock_alert(stock_item)

@@ -5,12 +5,14 @@ from factory.django import DjangoModelFactory
 
 from apps.authentication.tests.factories import OwnerFactory, RestaurantFactory
 from apps.inventory.models import (
+    MenuItemIngredient,
     MovementReason,
     MovementType,
     StockItem,
     StockMovement,
     UnitType,
 )
+from apps.menu.tests.factories import MenuItemFactory
 
 
 class StockItemFactory(DjangoModelFactory):
@@ -44,3 +46,18 @@ class StockMovementFactory(DjangoModelFactory):
     created_by = factory.LazyAttribute(
         lambda o: OwnerFactory(restaurant=o.stock_item.restaurant)
     )
+
+
+class MenuItemIngredientFactory(DjangoModelFactory):
+    """Factory for creating MenuItemIngredient instances (recipe mappings)."""
+
+    class Meta:
+        model = MenuItemIngredient
+
+    restaurant = factory.LazyAttribute(lambda o: o.stock_item.restaurant)
+    menu_item = factory.SubFactory(
+        MenuItemFactory,
+        restaurant=factory.LazyAttribute(lambda o: o.factory_parent.restaurant),
+    )
+    stock_item = factory.SubFactory(StockItemFactory)
+    quantity_required = Decimal("0.2500")  # 0.25 units per menu item
