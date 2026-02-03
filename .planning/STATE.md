@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-03)
 
 **Core value:** Restaurants can take orders, accept payments, and manage deliveries - even when internet is unreliable.
-**Current focus:** Phase 3 - Inventory Management (IN PROGRESS)
+**Current focus:** Phase 3 - Inventory Management (COMPLETE)
 
 ## Current Position
 
 Phase: 3 of 9 (Inventory Management)
-Plan: 2 of 3 in current phase
-Status: In progress
-Last activity: 2026-02-04 - Completed 03-02-PLAN.md (Recipe Mapping and Order Stock Deduction)
+Plan: 3 of 3 in current phase
+Status: Phase complete
+Last activity: 2026-02-04 - Completed 03-03-PLAN.md (Low Stock Alerts and Reports)
 
-Progress: [████████░░] 86%
+Progress: [█████████░] 93%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 12
+- Total plans completed: 13
 - Average duration: 10 minutes
-- Total execution time: 2.2 hours
+- Total execution time: 2.3 hours
 
 **By Phase:**
 
@@ -29,10 +29,10 @@ Progress: [████████░░] 86%
 |-------|-------|-------|----------|
 | 01-foundation | 3/3 | 33 min | 11 min |
 | 02-pos-core | 7/7 | 75 min | 11 min |
-| 03-inventory | 2/3 | 22 min | 11 min |
+| 03-inventory | 3/3 | 29 min | 10 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-05 (5 min), 02-06 (6 min), 02-07 (7 min), 03-01 (13 min), 03-02 (9 min)
+- Last 5 plans: 02-06 (6 min), 02-07 (7 min), 03-01 (13 min), 03-02 (9 min), 03-03 (7 min)
 - Trend: Efficient execution
 
 *Updated after each plan completion*
@@ -90,6 +90,10 @@ Recent decisions affecting current work:
 - [03-02]: Stock non-negative constraint respected - no negative movements
 - [03-02]: Django post_save signal for order->inventory integration
 - [03-02]: Guard pattern: check existing movements before processing
+- [03-03]: Celery task as placeholder for production notifications (email/push/WebSocket)
+- [03-03]: TenantContextMixin required for non-ModelViewSet to access restaurant context
+- [03-03]: Model property over queryset annotation when property already exists
+- [03-03]: 90-day max date range limit on movement reports
 
 ### Pending Todos
 
@@ -103,12 +107,13 @@ None yet.
 - Docker not running during 02-02 execution - tests need verification when Docker available
 - Redis required for production WebSocket (configured but needs running instance)
 - WeasyPrint requires GTK libraries on Windows (missing, but not needed for tests)
+- Celery worker needed for production low-stock alerts (task runs eagerly in tests)
 
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Completed 03-02-PLAN.md (Recipe Mapping and Order Stock Deduction)
+Stopped at: Completed 03-03-PLAN.md (Low Stock Alerts and Reports) - Phase 3 Complete
 Resume file: None
 
 ---
-*Next step: Continue Phase 3 - Plan 03 (Low Stock Alerts and Notifications)*
+*Next step: Begin Phase 4 - Payments*
