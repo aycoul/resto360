@@ -1,6 +1,8 @@
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
+import { QueryProvider } from "@/components/providers/QueryProvider";
+import { OfflineIndicator } from "@/components/ui/OfflineIndicator";
 import "../globals.css";
 
 export function generateStaticParams() {
@@ -22,7 +24,10 @@ export default async function LocaleLayout({
     <html lang={locale}>
       <body className="min-h-screen bg-gray-50">
         <NextIntlClientProvider messages={messages}>
-          {children}
+          <QueryProvider>
+            {children}
+            <OfflineIndicator />
+          </QueryProvider>
         </NextIntlClientProvider>
       </body>
     </html>
