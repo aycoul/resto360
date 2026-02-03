@@ -10,7 +10,8 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+# Python lib directories (not apps/web/lib which is Next.js code)
+/lib/
 lib64/
 parts/
 sdist/
