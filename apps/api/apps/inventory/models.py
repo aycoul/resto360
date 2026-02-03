@@ -77,7 +77,7 @@ class StockItem(TenantModel):
         ordering = ["name"]
         constraints = [
             models.CheckConstraint(
-                check=models.Q(current_quantity__gte=0),
+                condition=models.Q(current_quantity__gte=0),
                 name="stock_item_non_negative_quantity",
             ),
             models.UniqueConstraint(
