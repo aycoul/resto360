@@ -274,3 +274,101 @@ def _check_low_stock_alert(stock_item):
         if stock_item.low_stock_alert_sent:
             stock_item.low_stock_alert_sent = False
             stock_item.save(update_fields=["low_stock_alert_sent"])
+
+
+def deduct_ingredients_for_order(order):
+    """
+    Deduct all ingredients for a completed order.
+    Processes each order item's recipe ingredients.
+
+    Does NOT raise exceptions - logs warnings for insufficient stock
+    but allows order completion to proceed.
+
+    Args:
+        order: Order instance with items to process
+    """
+    from apps.inventory.models import MenuItemIngredient
+
+    with transaction.atomic():
+        for order_item in order.items.select_related("menu_item"):
+            if not order_item.menu_item:
+                continue  # Menu item was deleted
+
+            # Get recipe ingredients for this menu item
+            ingredients = MenuItemIngredient.all_objects.filter(
+                menu_item=order_item.menu_item,
+                restaurant=order.restaurant,
+            ).select_related("stock_item")
+
+            if not ingredients.exists():
+                logger.debug(
+                    f"No ingredients mapped for menu item {order_item.menu_item.name} "
+                    f"in order {order.id}"
+                )
+                continue
+
+            for ingredient in ingredients:
+                # Calculate quantity needed: required_per_unit * quantity_ordered
+                quantity_needed = ingredient.quantity_required * order_item.quantity
+
+                try:
+                    deduct_stock(
+                        stock_item_id=ingredient.stock_item_id,
+                        quantity=quantity_needed,
+                        reason=MovementReason.ORDER_USAGE,
+                        user=order.cashier,
+                        notes=f"Order #{order.order_number}",
+                        reference=("Order", order.id),
+                    )
+                except InsufficientStockError:
+                    # Log but continue - don't block order completion
+                    logger.warning(
+                        f"Insufficient stock for order {order.id}: "
+                        f"{ingredient.stock_item.name} needed {quantity_needed}, "
+                        f"available {ingredient.stock_item.current_quantity}"
+                    )
+                    # Create movement anyway to track discrepancy
+                    _create_negative_balance_movement(
+                        ingredient.stock_item,
+                        quantity_needed,
+                        order,
+                        order.cashier,
+                    )
+
+
+def _create_negative_balance_movement(stock_item, quantity, order, user):
+    """
+    Create movement even when stock goes negative (for tracking discrepancies).
+
+    This is used when there's insufficient stock but the order must complete.
+    The movement is recorded for audit purposes, allowing the restaurant
+    to identify stock count discrepancies.
+
+    Args:
+        stock_item: StockItem instance
+        quantity: Quantity to deduct (positive number)
+        order: Order instance
+        user: User who created the order
+    """
+    with transaction.atomic():
+        # Force deduction even if insufficient
+        StockItem.all_objects.filter(id=stock_item.id).update(
+            current_quantity=F("current_quantity") - Decimal(str(quantity))
+        )
+        stock_item.refresh_from_db()
+
+        StockMovement.all_objects.create(
+            restaurant=stock_item.restaurant,
+            stock_item=stock_item,
+            quantity_change=-Decimal(str(quantity)),
+            movement_type=MovementType.OUT,
+            reason=MovementReason.ORDER_USAGE,
+            notes=f"Order #{order.order_number} (INSUFFICIENT STOCK)",
+            reference_type="Order",
+            reference_id=order.id,
+            created_by=user,
+            balance_after=stock_item.current_quantity,
+        )
+
+        # Check for low stock alert
+        _check_low_stock_alert(stock_item)
