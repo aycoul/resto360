@@ -5,33 +5,33 @@
 See: .planning/PROJECT.md (updated 2026-02-03)
 
 **Core value:** Restaurants can take orders, accept payments, and manage deliveries - even when internet is unreliable.
-**Current focus:** Phase 2 - POS Core
+**Current focus:** Phase 2 - POS Core (COMPLETED)
 
 ## Current Position
 
 Phase: 2 of 9 (POS Core)
-Plan: 6 of 7 in current phase
-Status: In progress
-Last activity: 2026-02-03 - Completed 02-06-PLAN.md (Kitchen Display Frontend)
+Plan: 7 of 7 in current phase
+Status: Phase complete
+Last activity: 2026-02-03 - Completed 02-07-PLAN.md (Customer QR Menu)
 
-Progress: [███████░..] 75%
+Progress: [████████..] 83%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
+- Total plans completed: 10
 - Average duration: 10 minutes
-- Total execution time: 1.7 hours
+- Total execution time: 1.8 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation | 3/3 | 33 min | 11 min |
-| 02-pos-core | 6/7 | 68 min | 11 min |
+| 02-pos-core | 7/7 | 75 min | 11 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-02 (12 min), 02-03 (8 min), 02-04 (15 min), 02-05 (5 min), 02-06 (6 min)
+- Last 5 plans: 02-03 (8 min), 02-04 (15 min), 02-05 (5 min), 02-06 (6 min), 02-07 (7 min)
 - Trend: Very efficient execution
 
 *Updated after each plan completion*
@@ -79,6 +79,9 @@ Recent decisions affecting current work:
 - [02-06]: Web Audio API beep for sound notifications - no external audio files
 - [02-06]: 2-second delay before removing completed orders - visual confirmation
 - [02-06]: Exponential backoff 1s-30s for WebSocket reconnection
+- [02-07]: AllowAny permission for public menu endpoints
+- [02-07]: Separate GuestOrderCreateSerializer for unauthenticated orders
+- [02-07]: Bottom sheet modals for mobile-first cart and checkout
 
 ### Pending Todos
 
@@ -91,13 +94,12 @@ None yet.
 - PWA placeholder icons need to be replaced with branded versions before production
 - Docker not running during 02-02 execution - tests need verification when Docker available
 - Redis required for production WebSocket (configured but needs running instance)
-- Pre-existing build errors in menu pages (PublicMenuGrid, CustomerCart missing)
 
 ## Session Continuity
 
 Last session: 2026-02-03
-Stopped at: Completed 02-06-PLAN.md
+Stopped at: Completed 02-07-PLAN.md (Phase 2 Complete)
 Resume file: None
 
 ---
-*Next step: Execute 02-07 (Customer QR Menu) to complete Phase 2*
+*Next step: Begin Phase 3 - Kitchen Display System*
