@@ -12,7 +12,7 @@ RESTO360 is an enterprise restaurant operating system for West Africa, deliverin
 
 - [x] **Phase 1: Foundation** - Multi-tenant infrastructure, auth, roles, CI/CD ✓
 - [x] **Phase 2: POS Core** - Menu management, order creation, offline-first PWA ✓
-- [ ] **Phase 3: Inventory** - Stock tracking, alerts, automatic deduction
+- [x] **Phase 3: Inventory** - Stock tracking, alerts, automatic deduction ✓
 - [ ] **Phase 4: Payments** - Wave, Orange, MTN mobile money integration
 - [ ] **Phase 5: Delivery** - Zones, drivers, GPS tracking, mobile apps
 - [ ] **Phase 6: WhatsApp** - Order via chat, NLP parsing, notifications
@@ -73,9 +73,9 @@ Plans:
 **Plans**: 3 plans in 3 waves
 
 Plans:
-- [ ] 03-01-PLAN.md - Stock item and movement models with atomic services (Wave 1)
-- [ ] 03-02-PLAN.md - Recipe mapping and order completion auto-deduction (Wave 2)
-- [ ] 03-03-PLAN.md - Low stock alerts and inventory reports (Wave 3)
+- [x] 03-01-PLAN.md - Stock item and movement models with atomic services (Wave 1) ✓
+- [x] 03-02-PLAN.md - Recipe mapping and order completion auto-deduction (Wave 2) ✓
+- [x] 03-03-PLAN.md - Low stock alerts and inventory reports (Wave 3) ✓
 
 ### Phase 4: Payments
 **Goal**: Restaurant can accept all major mobile money providers and reconcile daily
@@ -191,7 +191,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | ✓ Complete | 2026-02-03 |
 | 2. POS Core | 7/7 | ✓ Complete | 2026-02-03 |
-| 3. Inventory | 0/3 | Planned | - |
+| 3. Inventory | 3/3 | ✓ Complete | 2026-02-04 |
 | 4. Payments | 0/4 | Not started | - |
 | 5. Delivery | 0/4 | Not started | - |
 | 6. WhatsApp | 0/4 | Not started | - |
@@ -199,8 +199,8 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 | 8. Finance | 0/3 | Not started | - |
 | 9. Analytics | 0/3 | Not started | - |
 
-**Total:** 10/34 plans complete
+**Total:** 13/34 plans complete
 
 ---
 *Roadmap created: 2026-02-03*
-*Last updated: 2026-02-04 (Phase 3 planned)*
+*Last updated: 2026-02-04 (Phase 3 complete)*
