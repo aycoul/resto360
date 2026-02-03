@@ -18,4 +18,5 @@ urlpatterns = [
     path("health/", health_check, name="health-check"),
     path("api/v1/auth/", include("apps.authentication.urls")),
     path("api/v1/menu/", include("apps.menu.urls")),
+    path("api/v1/", include("apps.orders.urls")),
 ]
