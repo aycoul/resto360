@@ -53,6 +53,9 @@ INSTALLED_APPS = [
     "apps.core",
     "apps.authentication",
     "apps.menu",
+    "apps.orders",
+    "apps.receipts",
+    "apps.qr",
 ]
 
 # Custom user model
@@ -203,3 +206,7 @@ CORS_ALLOWED_ORIGINS = env("CORS_ALLOWED_ORIGINS")
 # Redis configuration (for caching and Celery)
 
 REDIS_URL = env("REDIS_URL", default="redis://localhost:6379/0")
+
+
+# Frontend URL for QR codes and links
+FRONTEND_URL = env("FRONTEND_URL", default="http://localhost:3000")

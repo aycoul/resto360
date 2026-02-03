@@ -27,3 +27,9 @@ Pillow>=10.0,<11.0
 
 # Nested serializers
 drf-writable-nested>=0.7.0,<1.0
+
+# PDF generation (receipts)
+weasyprint>=68.0,<69.0
+
+# QR code generation
+segno>=1.6.6,<2.0
