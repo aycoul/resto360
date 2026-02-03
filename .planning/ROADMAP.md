@@ -49,14 +49,16 @@ Plans:
   3. Kitchen display shows order queue with status updates (pending -> preparing -> ready)
   4. Orders created offline sync automatically when connection restored
   5. Customers can scan QR code, view menu, and place order from their phone
-**Plans**: TBD
+**Plans**: 7 plans in 4 waves
 
 Plans:
-- [ ] 02-01: Menu management API and admin UI
-- [ ] 02-02: Order creation and cart management
-- [ ] 02-03: Kitchen display and order lifecycle
-- [ ] 02-04: Offline-first PWA with IndexedDB sync
-- [ ] 02-05: QR menu and customer self-ordering
+- [ ] 02-01-PLAN.md - Menu management backend (Category, MenuItem, Modifier models + API) (Wave 1)
+- [ ] 02-02-PLAN.md - Order management backend (Order, OrderItem, DailySequence + Receipt PDF + QR) (Wave 2)
+- [ ] 02-03-PLAN.md - Kitchen WebSocket (Django Channels real-time order updates) (Wave 3)
+- [ ] 02-04-PLAN.md - Next.js PWA foundation (i18n, Dexie IndexedDB, API client) (Wave 1)
+- [ ] 02-05-PLAN.md - POS cashier interface (Menu grid, cart, offline-first orders) (Wave 3)
+- [ ] 02-06-PLAN.md - Kitchen display frontend (Real-time order queue with WebSocket) (Wave 4)
+- [ ] 02-07-PLAN.md - Customer QR menu (Public menu page, self-ordering) (Wave 4)
 
 ### Phase 3: Inventory
 **Goal**: Restaurant knows stock levels in real-time and never runs out of key ingredients unexpectedly
@@ -188,7 +190,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | ✓ Complete | 2026-02-03 |
-| 2. POS Core | 0/5 | Not started | - |
+| 2. POS Core | 0/7 | Planned | - |
 | 3. Inventory | 0/3 | Not started | - |
 | 4. Payments | 0/4 | Not started | - |
 | 5. Delivery | 0/4 | Not started | - |
@@ -197,8 +199,8 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 | 8. Finance | 0/3 | Not started | - |
 | 9. Analytics | 0/3 | Not started | - |
 
-**Total:** 3/32 plans complete
+**Total:** 3/34 plans complete
 
 ---
 *Roadmap created: 2026-02-03*
-*Last updated: 2026-02-03 (Phase 1 complete)*
+*Last updated: 2026-02-03 (Phase 2 planned)*
