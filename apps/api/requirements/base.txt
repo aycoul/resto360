@@ -20,6 +20,7 @@ gunicorn>=22.0,<23.0
 
 # Caching and async tasks
 redis>=5.0,<6.0
+celery>=5.4,<6.0
 
 # Image processing
 django-imagekit>=5.0,<6.0

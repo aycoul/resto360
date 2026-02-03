@@ -253,7 +253,8 @@ def _check_low_stock_alert(stock_item):
     Check and update low stock alert status.
 
     Sets alert_sent=True if below threshold and not already sent.
-    Clears alert_sent=True if above threshold.
+    Triggers async Celery task for notification.
+    Clears alert_sent if above threshold.
 
     Args:
         stock_item: StockItem instance (must be refreshed)
@@ -263,17 +264,26 @@ def _check_low_stock_alert(stock_item):
 
     if stock_item.current_quantity <= stock_item.low_stock_threshold:
         if not stock_item.low_stock_alert_sent:
-            stock_item.low_stock_alert_sent = True
-            stock_item.save(update_fields=["low_stock_alert_sent"])
+            # Mark alert as sent to prevent spam
+            StockItem.objects.filter(id=stock_item.id).update(low_stock_alert_sent=True)
+
+            # Trigger async notification
+            from apps.inventory.tasks import send_low_stock_alert
+
+            send_low_stock_alert.delay(
+                stock_item_id=str(stock_item.id),
+                current_quantity=float(stock_item.current_quantity),
+                threshold=float(stock_item.low_stock_threshold),
+            )
+
             logger.warning(
                 f"Low stock alert: '{stock_item.name}' at {stock_item.current_quantity} "
                 f"(threshold: {stock_item.low_stock_threshold})"
             )
-            # TODO: Celery task for notifications will be added in Plan 03
     else:
+        # Stock above threshold - clear alert flag if set
         if stock_item.low_stock_alert_sent:
-            stock_item.low_stock_alert_sent = False
-            stock_item.save(update_fields=["low_stock_alert_sent"])
+            StockItem.objects.filter(id=stock_item.id).update(low_stock_alert_sent=False)
 
 
 def deduct_ingredients_for_order(order):
