@@ -57,3 +57,7 @@ envVarGroups:
     envVars:
       - key: SENTRY_DSN
         sync: false  # Add manually when Sentry is configured
+      - key: BETTERSTACK_SOURCE_TOKEN
+        sync: false  # Add manually when BetterStack is configured
+      - key: ENVIRONMENT
+        value: production

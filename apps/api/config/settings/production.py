@@ -4,7 +4,21 @@ Django production settings for RESTO360 project.
 These settings are for production deployment.
 Security settings are enforced regardless of environment variables.
 """
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
 from .base import *  # noqa: F401, F403
+
+# Sentry error tracking
+SENTRY_DSN = env("SENTRY_DSN", default="")  # noqa: F405
+if SENTRY_DSN:
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[DjangoIntegration()],
+        traces_sample_rate=0.1,  # 10% performance monitoring
+        send_default_pii=False,  # GDPR compliance
+        environment=env("ENVIRONMENT", default="production"),  # noqa: F405
+    )
 
 # SECURITY: Debug is always off in production
 DEBUG = False
@@ -27,6 +41,9 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 X_FRAME_OPTIONS = "DENY"
 
+# BetterStack Logs
+BETTERSTACK_SOURCE_TOKEN = env("BETTERSTACK_SOURCE_TOKEN", default="")  # noqa: F405
+
 # Logging configuration for production
 LOGGING = {
     "version": 1,
@@ -34,11 +51,6 @@ LOGGING = {
     "formatters": {
         "verbose": {
             "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
-            "style": "{",
-        },
-        "json": {
-            "()": "django.utils.log.ServerFormatter",
-            "format": "[{server_time}] {message}",
             "style": "{",
         },
     },
@@ -53,11 +65,6 @@ LOGGING = {
         "level": "WARNING",
     },
     "loggers": {
-        "django": {
-            "handlers": ["console"],
-            "level": "WARNING",
-            "propagate": False,
-        },
         "django.security": {
             "handlers": ["console"],
             "level": "WARNING",
@@ -65,3 +72,11 @@ LOGGING = {
         },
     },
 }
+
+# Add BetterStack handler if token is configured
+if BETTERSTACK_SOURCE_TOKEN:
+    LOGGING["handlers"]["betterstack"] = {
+        "class": "logtail.LogtailHandler",
+        "source_token": BETTERSTACK_SOURCE_TOKEN,
+    }
+    LOGGING["root"]["handlers"].append("betterstack")

@@ -3,3 +3,6 @@
 
 # Error tracking
 sentry-sdk>=2.0,<3.0
+
+# Logging (BetterStack)
+logtail-python>=0.3,<1.0
