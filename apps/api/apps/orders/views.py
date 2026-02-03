@@ -18,6 +18,7 @@ from .serializers import (
     OrderStatusUpdateSerializer,
     TableSerializer,
 )
+from .signals import notify_kitchen_order_created, notify_kitchen_status_changed
 
 
 class TableViewSet(TenantModelViewSet):
@@ -103,6 +104,11 @@ class OrderViewSet(TenantModelViewSet):
         serializer.is_valid(raise_exception=True)
         order = serializer.save()
 
+        # Notify kitchen displays of new order via WebSocket
+        # This calls group_send('kitchen_{restaurant_id}', {'type': 'order_created', ...})
+        # which triggers KitchenConsumer.order_created() for all connected clients
+        notify_kitchen_order_created(order)
+
         # Return the full order with items
         output_serializer = OrderSerializer(order)
         return Response(output_serializer.data, status=status.HTTP_201_CREATED)
@@ -111,12 +117,19 @@ class OrderViewSet(TenantModelViewSet):
     def update_status(self, request, pk=None):
         """Update order status with validation."""
         order = self.get_object()
+        previous_status = order.status
+
         serializer = OrderStatusUpdateSerializer(
             data=request.data,
             context={"order": order, "request": request},
         )
         serializer.is_valid(raise_exception=True)
         updated_order = serializer.update(order, serializer.validated_data)
+
+        # Notify kitchen displays of status change via WebSocket
+        # This calls group_send('kitchen_{restaurant_id}', {'type': 'order_status_changed', ...})
+        # which triggers KitchenConsumer.order_status_changed() for all connected clients
+        notify_kitchen_status_changed(updated_order, previous_status=previous_status)
 
         output_serializer = OrderSerializer(updated_order)
         return Response(output_serializer.data)
