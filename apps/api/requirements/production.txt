@@ -1,0 +1,5 @@
+# Production dependencies
+-r base.txt
+
+# Error tracking
+sentry-sdk>=2.0,<3.0

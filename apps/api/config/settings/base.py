@@ -4,7 +4,6 @@ Django base settings for RESTO360 project.
 These settings are shared across all environments.
 Environment-specific settings should override these in their respective modules.
 """
-import os
 from datetime import timedelta
 from pathlib import Path
 
@@ -99,7 +98,8 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME": "django.contrib.auth.password_validation."
+        "UserAttributeSimilarityValidator",
     },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
