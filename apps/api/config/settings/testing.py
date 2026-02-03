@@ -46,3 +46,10 @@ LOGGING = {
 
 # CORS - Allow all for testing
 CORS_ALLOW_ALL_ORIGINS = True
+
+# Use in-memory channel layer for testing
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
+}

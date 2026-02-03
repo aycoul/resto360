@@ -37,6 +37,10 @@ ALLOWED_HOSTS = env("ALLOWED_HOSTS")
 # Application definition
 
 INSTALLED_APPS = [
+    # Channels must be before staticfiles
+    "daphne",
+    "channels",
+    # Django core
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -210,3 +214,18 @@ REDIS_URL = env("REDIS_URL", default="redis://localhost:6379/0")
 
 # Frontend URL for QR codes and links
 FRONTEND_URL = env("FRONTEND_URL", default="http://localhost:3000")
+
+
+# ASGI application for Channels
+ASGI_APPLICATION = "config.asgi.application"
+
+
+# Channel Layers configuration (Redis for production)
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [env("REDIS_URL", default="redis://localhost:6379/1")],
+        },
+    },
+}

@@ -33,3 +33,8 @@ weasyprint>=68.0,<69.0
 
 # QR code generation
 segno>=1.6.6,<2.0
+
+# WebSocket support (Django Channels)
+channels>=4.3.2,<5.0
+channels-redis>=4.2,<5.0
+daphne>=4.1,<5.0
