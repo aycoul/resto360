@@ -1,7 +1,7 @@
 """Tests for WebSocket signal functions."""
 
 import pytest
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 from apps.orders.signals import (
     notify_kitchen_order_created,
@@ -19,6 +19,7 @@ class TestNotifyKitchenOrderCreated:
         """Test order created notification sends to channel layer."""
         with patch("apps.orders.signals.get_channel_layer") as mock_get_layer:
             mock_layer = MagicMock()
+            mock_layer.group_send = AsyncMock()
             mock_get_layer.return_value = mock_layer
 
             notify_kitchen_order_created(order)
@@ -36,6 +37,7 @@ class TestNotifyKitchenOrderCreated:
         """Test notification includes serialized order data."""
         with patch("apps.orders.signals.get_channel_layer") as mock_get_layer:
             mock_layer = MagicMock()
+            mock_layer.group_send = AsyncMock()
             mock_get_layer.return_value = mock_layer
 
             notify_kitchen_order_created(order)
@@ -59,6 +61,7 @@ class TestNotifyKitchenOrderUpdated:
         """Test order updated notification sends to channel layer."""
         with patch("apps.orders.signals.get_channel_layer") as mock_get_layer:
             mock_layer = MagicMock()
+            mock_layer.group_send = AsyncMock()
             mock_get_layer.return_value = mock_layer
 
             notify_kitchen_order_updated(order)
@@ -82,6 +85,7 @@ class TestNotifyKitchenStatusChanged:
         """Test status change notification sends to channel layer."""
         with patch("apps.orders.signals.get_channel_layer") as mock_get_layer:
             mock_layer = MagicMock()
+            mock_layer.group_send = AsyncMock()
             mock_get_layer.return_value = mock_layer
 
             notify_kitchen_status_changed(order)
@@ -97,6 +101,7 @@ class TestNotifyKitchenStatusChanged:
         """Test notification includes previous status when provided."""
         with patch("apps.orders.signals.get_channel_layer") as mock_get_layer:
             mock_layer = MagicMock()
+            mock_layer.group_send = AsyncMock()
             mock_get_layer.return_value = mock_layer
 
             notify_kitchen_status_changed(order, previous_status="pending")
@@ -108,6 +113,7 @@ class TestNotifyKitchenStatusChanged:
         """Test notification works without previous status."""
         with patch("apps.orders.signals.get_channel_layer") as mock_get_layer:
             mock_layer = MagicMock()
+            mock_layer.group_send = AsyncMock()
             mock_get_layer.return_value = mock_layer
 
             notify_kitchen_status_changed(order)

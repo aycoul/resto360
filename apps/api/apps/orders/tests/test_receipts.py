@@ -3,11 +3,20 @@
 import pytest
 from unittest.mock import patch, MagicMock
 
+from apps.receipts.services import WEASYPRINT_AVAILABLE
+
+# Skip PDF-related tests if WeasyPrint is not available (e.g., Windows without GTK)
+pytestmark_weasyprint = pytest.mark.skipif(
+    not WEASYPRINT_AVAILABLE,
+    reason="WeasyPrint requires GTK libraries (not available on this system)"
+)
+
 
 @pytest.mark.django_db
 class TestReceiptDownloadAPI:
     """Tests for the receipt download endpoint (POS-10 verification)."""
 
+    @pytestmark_weasyprint
     def test_download_receipt_pdf(
         self, owner_client, owner, order_factory, cashier_factory
     ):
@@ -23,7 +32,8 @@ class TestReceiptDownloadAPI:
         )
 
         # Mock WeasyPrint to avoid system dependencies in tests
-        with patch("apps.receipts.services.HTML") as mock_html:
+        with patch("apps.receipts.services.HTML") as mock_html, \
+             patch("apps.receipts.services.WEASYPRINT_AVAILABLE", True):
             mock_instance = MagicMock()
             mock_instance.write_pdf = MagicMock()
             mock_html.return_value = mock_instance
@@ -79,6 +89,7 @@ class TestReceiptDownloadAPI:
 class TestReceiptService:
     """Tests for receipt generation service."""
 
+    @pytestmark_weasyprint
     def test_generate_receipt_pdf_content(
         self, order_factory, order_item_factory, cashier_factory, restaurant_factory
     ):
@@ -114,7 +125,8 @@ class TestReceiptService:
         )
 
         # Mock WeasyPrint
-        with patch("apps.receipts.services.HTML") as mock_html:
+        with patch("apps.receipts.services.HTML") as mock_html, \
+             patch("apps.receipts.services.WEASYPRINT_AVAILABLE", True):
             mock_instance = MagicMock()
             mock_instance.write_pdf = MagicMock()
             mock_html.return_value = mock_instance
@@ -132,7 +144,7 @@ class TestReceiptService:
     def test_receipt_filename_format(
         self, order_factory, cashier_factory, restaurant_factory
     ):
-        """Test receipt filename format."""
+        """Test receipt filename format (does not require WeasyPrint)."""
         from apps.receipts.services import get_receipt_filename
 
         restaurant = restaurant_factory()

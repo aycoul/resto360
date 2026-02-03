@@ -32,7 +32,7 @@ class MenuQRCodeView(APIView):
         Generate and return QR code for the restaurant's menu.
 
         Query parameters:
-            format: 'png' (default), 'svg', or 'eps'
+            output: 'png' (default), 'svg', or 'eps' (image format)
             scale: Pixel size per module (default: 10)
             border: Quiet zone modules (default: 2)
 
@@ -41,9 +41,10 @@ class MenuQRCodeView(APIView):
         restaurant = request.user.restaurant
 
         # Parse query parameters
-        format = request.query_params.get("format", "png").lower()
-        if format not in ("png", "svg", "eps"):
-            format = "png"
+        # Note: Use 'output' instead of 'format' to avoid conflict with DRF content negotiation
+        output_format = request.query_params.get("output", "png").lower()
+        if output_format not in ("png", "svg", "eps"):
+            output_format = "png"
 
         try:
             scale = int(request.query_params.get("scale", 10))
@@ -63,13 +64,13 @@ class MenuQRCodeView(APIView):
         # Generate QR code
         qr_content = generate_menu_qr(
             restaurant,
-            format=format,
+            format=output_format,
             scale=scale,
             border=border,
         )
 
-        content_type = get_qr_content_type(format)
-        filename = get_qr_filename(restaurant, format)
+        content_type = get_qr_content_type(output_format)
+        filename = get_qr_filename(restaurant, output_format)
 
         # Return as image response
         response = HttpResponse(qr_content, content_type=content_type)

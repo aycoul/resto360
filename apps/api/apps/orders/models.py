@@ -76,6 +76,10 @@ class Order(TenantModel):
     order_number = models.PositiveIntegerField(
         help_text="Daily order number (resets each day per restaurant)"
     )
+    order_date = models.DateField(
+        help_text="Date of the order (for daily sequence uniqueness)",
+        null=True,  # Allow null for migration, will be auto-set
+    )
     order_type = models.CharField(
         max_length=20,
         choices=OrderType.choices,
@@ -125,7 +129,7 @@ class Order(TenantModel):
 
     class Meta:
         ordering = ["-created_at"]
-        unique_together = [["restaurant", "order_number", "created_at__date"]]
+        unique_together = [["restaurant", "order_number", "order_date"]]
         indexes = [
             models.Index(fields=["restaurant", "status"]),
             models.Index(fields=["restaurant", "created_at"]),
@@ -142,6 +146,9 @@ class Order(TenantModel):
 
     def save(self, *args, **kwargs):
         """Auto-set timestamps based on status changes."""
+        # Auto-set order_date for daily sequence uniqueness
+        if not self.order_date:
+            self.order_date = timezone.now().date()
         if self.status == OrderStatus.COMPLETED and not self.completed_at:
             self.completed_at = timezone.now()
         if self.status == OrderStatus.CANCELLED and not self.cancelled_at:

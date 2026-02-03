@@ -18,7 +18,7 @@ class TestMenuQRCodeAPI:
 
     def test_generate_menu_qr_svg(self, owner_client, owner):
         """Test generating menu QR code as SVG."""
-        response = owner_client.get("/api/v1/menu-qr/?format=svg")
+        response = owner_client.get("/api/v1/menu-qr/?output=svg")
         assert response.status_code == 200
         assert response["Content-Type"] == "image/svg+xml"
 
@@ -45,7 +45,7 @@ class TestMenuQRCodeAPI:
 
     def test_invalid_format_defaults_to_png(self, owner_client, owner):
         """Test invalid format defaults to PNG."""
-        response = owner_client.get("/api/v1/menu-qr/?format=invalid")
+        response = owner_client.get("/api/v1/menu-qr/?output=invalid")
         assert response.status_code == 200
         assert response["Content-Type"] == "image/png"
 

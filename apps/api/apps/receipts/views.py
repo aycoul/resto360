@@ -52,7 +52,14 @@ class ReceiptDownloadView(APIView):
             )
 
         # Generate PDF
-        pdf_content = generate_receipt_pdf(order)
+        try:
+            pdf_content = generate_receipt_pdf(order)
+        except RuntimeError as e:
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+
         filename = get_receipt_filename(order)
 
         # Return as PDF response

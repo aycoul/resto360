@@ -1,10 +1,22 @@
 """Receipt generation services for RESTO360."""
 
 import io
+import logging
 from pathlib import Path
 
 from django.template.loader import render_to_string
-from weasyprint import HTML
+
+logger = logging.getLogger(__name__)
+
+# WeasyPrint requires GTK libraries which may not be available on all platforms
+# (particularly Windows without GTK installed)
+try:
+    from weasyprint import HTML
+    WEASYPRINT_AVAILABLE = True
+except OSError as e:
+    logger.warning(f"WeasyPrint not available (missing GTK libraries): {e}")
+    HTML = None
+    WEASYPRINT_AVAILABLE = False
 
 
 def generate_receipt_pdf(order):
@@ -19,7 +31,16 @@ def generate_receipt_pdf(order):
 
     Returns:
         bytes: PDF file content
+
+    Raises:
+        RuntimeError: If WeasyPrint is not available (missing GTK libraries)
     """
+    if not WEASYPRINT_AVAILABLE:
+        raise RuntimeError(
+            "PDF generation is not available. WeasyPrint requires GTK libraries. "
+            "On Windows, install GTK3: https://github.com/nicowilliams/gtk4-windows"
+        )
+
     # Ensure order has all related data loaded
     restaurant = order.restaurant
 

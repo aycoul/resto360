@@ -11,6 +11,7 @@ from apps.authentication.tests.factories import (
     ManagerFactory,
     OwnerFactory,
     RestaurantFactory,
+    UserFactory,
 )
 from apps.menu.tests.factories import (
     CategoryFactory,
@@ -29,6 +30,7 @@ from .factories import (
 
 # Register authentication factories
 register(RestaurantFactory)
+register(UserFactory)  # Base user factory for subfactory resolution
 register(OwnerFactory, "owner")
 register(ManagerFactory, "manager")
 register(CashierFactory, "cashier")
