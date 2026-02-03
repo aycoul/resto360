@@ -1,7 +1,7 @@
 from django.contrib import admin
 from simple_history.admin import SimpleHistoryAdmin
 
-from .models import StockItem, StockMovement
+from .models import MenuItemIngredient, StockItem, StockMovement
 
 
 @admin.register(StockItem)
@@ -57,3 +57,19 @@ class StockMovementAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         """Prevent deletion - movements are immutable audit records."""
         return False
+
+
+@admin.register(MenuItemIngredient)
+class MenuItemIngredientAdmin(admin.ModelAdmin):
+    """Admin for recipe ingredient mappings."""
+
+    list_display = [
+        "menu_item",
+        "stock_item",
+        "quantity_required",
+        "restaurant",
+    ]
+    list_filter = ["restaurant", "stock_item"]
+    search_fields = ["menu_item__name", "stock_item__name"]
+    autocomplete_fields = ["menu_item", "stock_item"]
+    ordering = ["restaurant", "menu_item__name", "stock_item__name"]

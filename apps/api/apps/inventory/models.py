@@ -152,3 +152,34 @@ class StockMovement(TenantModel):
             if existing:
                 raise ValueError("StockMovement records are immutable and cannot be updated.")
         super().save(*args, **kwargs)
+
+
+class MenuItemIngredient(TenantModel):
+    """Maps a menu item to its required ingredients (recipe/BOM)."""
+
+    menu_item = models.ForeignKey(
+        "menu.MenuItem",
+        on_delete=models.CASCADE,
+        related_name="ingredients",  # menuitem.ingredients.all()
+    )
+    stock_item = models.ForeignKey(
+        "inventory.StockItem",
+        on_delete=models.CASCADE,
+        related_name="menu_usages",  # stockitem.menu_usages.all()
+    )
+    quantity_required = models.DecimalField(
+        max_digits=10,
+        decimal_places=4,
+        help_text="Quantity of this ingredient required per 1 unit of menu item",
+    )
+
+    # Standard managers
+    all_objects = models.Manager()
+    objects = TenantManager()
+
+    class Meta:
+        unique_together = ["menu_item", "stock_item"]
+        ordering = ["stock_item__name"]
+
+    def __str__(self):
+        return f"{self.menu_item.name}: {self.quantity_required} {self.stock_item.unit} of {self.stock_item.name}"
