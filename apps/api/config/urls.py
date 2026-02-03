@@ -19,4 +19,6 @@ urlpatterns = [
     path("api/v1/auth/", include("apps.authentication.urls")),
     path("api/v1/menu/", include("apps.menu.urls")),
     path("api/v1/", include("apps.orders.urls")),
+    path("api/v1/", include("apps.receipts.urls")),
+    path("api/v1/", include("apps.qr.urls")),
 ]

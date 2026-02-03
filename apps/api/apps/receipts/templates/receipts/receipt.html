@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        /* 80mm thermal receipt - typical print width is 72mm (384 dots at 203dpi) */
+        @page {
+            size: 80mm auto;
+            margin: 3mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 11px;
+            line-height: 1.4;
+            width: 72mm;
+            color: #000;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 5mm;
+            padding-bottom: 3mm;
+            border-bottom: 1px dashed #000;
+        }
+
+        .restaurant-name {
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .restaurant-info {
+            font-size: 9px;
+            margin-top: 2mm;
+        }
+
+        .order-info {
+            margin: 3mm 0;
+            padding-bottom: 3mm;
+            border-bottom: 1px dashed #000;
+        }
+
+        .order-number {
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .order-meta {
+            font-size: 10px;
+            margin-top: 2mm;
+        }
+
+        .order-meta-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .items {
+            margin: 3mm 0;
+            padding-bottom: 3mm;
+            border-bottom: 1px dashed #000;
+        }
+
+        .item {
+            margin-bottom: 2mm;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .item-name {
+            font-weight: bold;
+            max-width: 50mm;
+        }
+
+        .item-price {
+            text-align: right;
+        }
+
+        .item-modifiers {
+            font-size: 9px;
+            padding-left: 3mm;
+            color: #333;
+        }
+
+        .modifier {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .item-notes {
+            font-size: 9px;
+            padding-left: 3mm;
+            font-style: italic;
+        }
+
+        .totals {
+            margin: 3mm 0;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1mm;
+        }
+
+        .total-row.grand-total {
+            font-size: 14px;
+            font-weight: bold;
+            border-top: 1px solid #000;
+            padding-top: 2mm;
+            margin-top: 2mm;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 5mm;
+            font-size: 10px;
+        }
+
+        .thank-you {
+            font-weight: bold;
+            margin-bottom: 2mm;
+        }
+
+        .cut-line {
+            border-bottom: 1px dashed #000;
+            margin: 5mm 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="restaurant-name">{{ restaurant.name }}</div>
+        <div class="restaurant-info">
+            {% if restaurant.address %}{{ restaurant.address }}<br>{% endif %}
+            {% if restaurant.phone %}Tel: {{ restaurant.phone }}{% endif %}
+        </div>
+    </div>
+
+    <div class="order-info">
+        <div class="order-number">COMMANDE #{{ order.order_number }}</div>
+        <div class="order-meta">
+            <div class="order-meta-row">
+                <span>Date:</span>
+                <span>{{ order.created_at|date:"d/m/Y H:i" }}</span>
+            </div>
+            <div class="order-meta-row">
+                <span>Type:</span>
+                <span>{{ order.get_order_type_display }}</span>
+            </div>
+            {% if order.table %}
+            <div class="order-meta-row">
+                <span>Table:</span>
+                <span>{{ order.table.number }}</span>
+            </div>
+            {% endif %}
+            {% if order.customer_name %}
+            <div class="order-meta-row">
+                <span>Client:</span>
+                <span>{{ order.customer_name }}</span>
+            </div>
+            {% endif %}
+            {% if order.cashier %}
+            <div class="order-meta-row">
+                <span>Caissier:</span>
+                <span>{{ order.cashier.name }}</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="items">
+        {% for item in order.items.all %}
+        <div class="item">
+            <div class="item-header">
+                <span class="item-name">{{ item.quantity }}x {{ item.name }}</span>
+                <span class="item-price">{{ item.line_total|floatformat:0 }} XOF</span>
+            </div>
+            {% if item.modifiers.all %}
+            <div class="item-modifiers">
+                {% for modifier in item.modifiers.all %}
+                <div class="modifier">
+                    <span>+ {{ modifier.name }}</span>
+                    {% if modifier.price_adjustment != 0 %}
+                    <span>{{ modifier.price_adjustment|floatformat:0 }} XOF</span>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% if item.notes %}
+            <div class="item-notes">Note: {{ item.notes }}</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="totals">
+        <div class="total-row">
+            <span>Sous-total:</span>
+            <span>{{ order.subtotal|floatformat:0 }} XOF</span>
+        </div>
+        {% if order.discount > 0 %}
+        <div class="total-row">
+            <span>Remise:</span>
+            <span>-{{ order.discount|floatformat:0 }} XOF</span>
+        </div>
+        {% endif %}
+        <div class="total-row grand-total">
+            <span>TOTAL:</span>
+            <span>{{ order.total|floatformat:0 }} XOF</span>
+        </div>
+    </div>
+
+    {% if order.notes %}
+    <div class="order-notes">
+        <strong>Notes:</strong> {{ order.notes }}
+    </div>
+    {% endif %}
+
+    <div class="cut-line"></div>
+
+    <div class="footer">
+        <div class="thank-you">Merci de votre visite!</div>
+        <div>{{ restaurant.name }}</div>
+    </div>
+</body>
+</html>
