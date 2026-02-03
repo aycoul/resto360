@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-02-03)
 ## Current Position
 
 Phase: 2 of 9 (POS Core)
-Plan: 5 of 7 in current phase
+Plan: 3 of 7 in current phase
 Status: In progress
-Last activity: 2026-02-03 - Completed 02-01-PLAN.md (Menu Models & API)
+Last activity: 2026-02-03 - Completed 02-02-PLAN.md (Order Backend)
 
-Progress: [████......] 47%
+Progress: [█████.....] 53%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
-- Average duration: 14 minutes
-- Total execution time: 1.17 hours
+- Total plans completed: 6
+- Average duration: 13 minutes
+- Total execution time: 1.37 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation | 3/3 | 33 min | 11 min |
-| 02-pos-core | 2/7 | 37 min | 19 min |
+| 02-pos-core | 3/7 | 49 min | 16 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (18 min), 01-03 (3 min), 02-04 (15 min), 02-01 (22 min)
+- Last 5 plans: 01-03 (3 min), 02-04 (15 min), 02-01 (22 min), 02-02 (12 min)
 - Trend: Efficient execution
 
 *Updated after each plan completion*
@@ -65,6 +65,10 @@ Recent decisions affecting current work:
 - [02-01]: Dual managers: all_objects (unfiltered, first), objects (TenantManager, filtered)
 - [02-01]: ViewSet querysets created in get_queryset(), not class-level
 - [02-01]: XOF prices as integers (no decimals for CFA franc)
+- [02-02]: WeasyPrint for PDF receipt generation (pure Python)
+- [02-02]: Segno for QR codes (PNG/SVG/EPS support)
+- [02-02]: Order item data copied at order time for historical accuracy
+- [02-02]: DailySequence with SELECT FOR UPDATE for atomic order numbers
 
 ### Pending Todos
 
@@ -75,12 +79,13 @@ None yet.
 - GitHub repository secrets need to be configured for Render deploy hooks
 - Render environment variables (ALLOWED_HOSTS, CORS_ALLOWED_ORIGINS) need manual setup
 - PWA placeholder icons need to be replaced with branded versions before production
+- Docker not running during 02-02 execution - tests need verification when Docker available
 
 ## Session Continuity
 
 Last session: 2026-02-03
-Stopped at: Completed 02-01-PLAN.md
+Stopped at: Completed 02-02-PLAN.md
 Resume file: None
 
 ---
-*Next step: Execute 02-02 (Orders) or 02-03 (Kitchen Display)*
+*Next step: Execute 02-03 (Kitchen Display) or 02-05 (Payments)*
