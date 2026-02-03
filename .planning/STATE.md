@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-02-03)
 ## Current Position
 
 Phase: 3 of 9 (Inventory Management)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-02-03 - Completed 03-01-PLAN.md (Inventory Foundation)
+Last activity: 2026-02-04 - Completed 03-02-PLAN.md (Recipe Mapping and Order Stock Deduction)
 
-Progress: [████████░░] 85%
+Progress: [████████░░] 86%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 11
+- Total plans completed: 12
 - Average duration: 10 minutes
-- Total execution time: 2.0 hours
+- Total execution time: 2.2 hours
 
 **By Phase:**
 
@@ -29,10 +29,10 @@ Progress: [████████░░] 85%
 |-------|-------|-------|----------|
 | 01-foundation | 3/3 | 33 min | 11 min |
 | 02-pos-core | 7/7 | 75 min | 11 min |
-| 03-inventory | 1/3 | 13 min | 13 min |
+| 03-inventory | 2/3 | 22 min | 11 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-04 (15 min), 02-05 (5 min), 02-06 (6 min), 02-07 (7 min), 03-01 (13 min)
+- Last 5 plans: 02-05 (5 min), 02-06 (6 min), 02-07 (7 min), 03-01 (13 min), 03-02 (9 min)
 - Trend: Efficient execution
 
 *Updated after each plan completion*
@@ -86,6 +86,10 @@ Recent decisions affecting current work:
 - [03-01]: F() expressions with select_for_update() for race-safe stock updates
 - [03-01]: StockMovement records are immutable (save() raises error on updates)
 - [03-01]: django-simple-history for StockItem audit trail
+- [03-02]: Insufficient stock logs warning but does NOT block order completion
+- [03-02]: Stock non-negative constraint respected - no negative movements
+- [03-02]: Django post_save signal for order->inventory integration
+- [03-02]: Guard pattern: check existing movements before processing
 
 ### Pending Todos
 
@@ -102,9 +106,9 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-03
-Stopped at: Completed 03-01-PLAN.md (Inventory Foundation)
+Last session: 2026-02-04
+Stopped at: Completed 03-02-PLAN.md (Recipe Mapping and Order Stock Deduction)
 Resume file: None
 
 ---
-*Next step: Continue Phase 3 - Plan 02 (Recipe to Stock Item Mapping)*
+*Next step: Continue Phase 3 - Plan 03 (Low Stock Alerts and Notifications)*
