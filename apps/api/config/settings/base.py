@@ -50,7 +50,11 @@ INSTALLED_APPS = [
     "corsheaders",
     # Local apps
     "apps.core",
+    "apps.authentication",
 ]
+
+# Custom user model
+AUTH_USER_MODEL = "authentication.User"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -180,6 +184,7 @@ SIMPLE_JWT = {
     "ALGORITHM": "HS256",
     "AUTH_HEADER_TYPES": ("Bearer",),
     "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
+    "TOKEN_OBTAIN_SERIALIZER": "apps.authentication.serializers.CustomTokenObtainPairSerializer",
 }
 
 

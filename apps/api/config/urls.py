@@ -5,7 +5,7 @@ The `urlpatterns` list routes URLs to views.
 """
 from django.contrib import admin
 from django.http import JsonResponse
-from django.urls import path
+from django.urls import include, path
 
 
 def health_check(request):
@@ -16,4 +16,5 @@ def health_check(request):
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("health/", health_check, name="health-check"),
+    path("api/v1/auth/", include("apps.authentication.urls")),
 ]
