@@ -286,3 +286,129 @@ class OrderStatusUpdateSerializer(serializers.Serializer):
             order.cancelled_reason = validated_data["cancelled_reason"]
         order.save()
         return order
+
+
+class GuestOrderCreateSerializer(serializers.Serializer):
+    """
+    Serializer for creating guest orders from public QR menu.
+    No authentication required - uses restaurant from context.
+    """
+
+    order_type = serializers.ChoiceField(choices=[
+        ("dine_in", "Dine In"),
+        ("takeout", "Takeout"),
+    ])
+    table = serializers.CharField(required=False, allow_blank=True, default="")
+    customer_name = serializers.CharField(required=True, max_length=100)
+    customer_phone = serializers.CharField(required=False, allow_blank=True, default="")
+    items = OrderItemCreateSerializer(many=True, min_length=1)
+
+    def validate(self, data):
+        """Validate guest order data."""
+        # Require table info for dine-in orders
+        if data["order_type"] == "dine_in" and not data.get("table"):
+            raise serializers.ValidationError({
+                "table": "Table number is required for dine-in orders."
+            })
+
+        # Get restaurant from context
+        restaurant = self.context.get("restaurant")
+        if not restaurant:
+            raise serializers.ValidationError("Restaurant context is required.")
+
+        # Validate menu items exist and belong to restaurant
+        for item_data in data["items"]:
+            try:
+                menu_item = MenuItem.all_objects.get(
+                    id=item_data["menu_item_id"],
+                    restaurant=restaurant,
+                    is_available=True,
+                )
+                item_data["menu_item"] = menu_item
+            except MenuItem.DoesNotExist:
+                raise serializers.ValidationError({
+                    "items": f"Menu item {item_data['menu_item_id']} not found or unavailable."
+                })
+
+            # Validate modifier options
+            for mod_data in item_data.get("modifiers", []):
+                try:
+                    mod_option = ModifierOption.all_objects.get(
+                        id=mod_data["modifier_option_id"],
+                        restaurant=restaurant,
+                        is_available=True,
+                    )
+                    mod_data["modifier_option"] = mod_option
+                except ModifierOption.DoesNotExist:
+                    raise serializers.ValidationError({
+                        "items": f"Modifier option {mod_data['modifier_option_id']} not found or unavailable."
+                    })
+
+        return data
+
+    def create(self, validated_data):
+        """Create guest order with items and modifiers."""
+        restaurant = self.context.get("restaurant")
+
+        # Get next order number
+        order_number = get_next_order_number(restaurant)
+
+        # Create order (no cashier for guest orders)
+        order = Order.objects.create(
+            restaurant=restaurant,
+            order_number=order_number,
+            order_type=validated_data["order_type"],
+            table=None,  # Guest orders use customer-provided table string in notes
+            cashier=None,  # No cashier for guest orders
+            customer_name=validated_data.get("customer_name", ""),
+            customer_phone=validated_data.get("customer_phone", ""),
+            notes=f"Table: {validated_data.get('table', '')}" if validated_data.get("table") else "",
+            discount=0,
+        )
+
+        subtotal = 0
+
+        # Create order items
+        for item_data in validated_data["items"]:
+            menu_item = item_data["menu_item"]
+            quantity = item_data["quantity"]
+
+            # Calculate modifiers total for this item
+            modifiers_total = 0
+            for mod_data in item_data.get("modifiers", []):
+                mod_option = mod_data["modifier_option"]
+                modifiers_total += mod_option.price_adjustment
+
+            line_total = max(0, (menu_item.price + modifiers_total) * quantity)
+
+            order_item = OrderItem.objects.create(
+                restaurant=restaurant,
+                order=order,
+                menu_item=menu_item,
+                name=menu_item.name,
+                unit_price=menu_item.price,
+                quantity=quantity,
+                modifiers_total=modifiers_total,
+                line_total=line_total,
+                notes=item_data.get("notes", ""),
+            )
+
+            # Create order item modifiers
+            for mod_data in item_data.get("modifiers", []):
+                mod_option = mod_data["modifier_option"]
+                OrderItemModifier.objects.create(
+                    restaurant=restaurant,
+                    order_item=order_item,
+                    modifier_option=mod_option,
+                    name=mod_option.name,
+                    price_adjustment=mod_option.price_adjustment,
+                )
+
+            subtotal += line_total
+
+        # Update order totals
+        order.subtotal = subtotal
+        order.total = subtotal  # No discount for guest orders
+        order.save(update_fields=["subtotal", "total", "updated_at"])
+
+        return order

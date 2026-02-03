@@ -7,6 +7,8 @@ from .views import (
     MenuItemViewSet,
     ModifierOptionViewSet,
     ModifierViewSet,
+    PublicMenuView,
+    PublicOrderCreateView,
 )
 
 router = DefaultRouter()
@@ -17,5 +19,12 @@ router.register("modifier-options", ModifierOptionViewSet, basename="modifieropt
 
 urlpatterns = [
     path("full/", FullMenuView.as_view(), name="menu-full"),
+    # Public endpoints (no auth required)
+    path("public/<slug:slug>/", PublicMenuView.as_view(), name="public-menu"),
+    path(
+        "public/<slug:slug>/order/",
+        PublicOrderCreateView.as_view(),
+        name="public-order",
+    ),
     path("", include(router.urls)),
 ]

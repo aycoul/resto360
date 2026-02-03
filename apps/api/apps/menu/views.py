@@ -1,9 +1,11 @@
 from django.db.models import Prefetch
+from django.shortcuts import get_object_or_404
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.authentication.models import Restaurant
 from apps.core.context import set_current_restaurant
 from apps.core.permissions import IsOwnerOrManager
 from apps.core.views import TenantModelViewSet
@@ -214,3 +216,93 @@ class FullMenuView(APIView):
 
         serializer = FullMenuSerializer({"categories": categories_qs})
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class PublicMenuView(APIView):
+    """
+    Public endpoint for customer menu viewing.
+    No authentication required.
+    Returns full menu for a restaurant by slug.
+    """
+
+    permission_classes = [AllowAny]
+    authentication_classes = []  # No auth needed
+
+    def get(self, request, slug):
+        restaurant = get_object_or_404(Restaurant, slug=slug, is_active=True)
+
+        # Build optimized queryset for available items only
+        categories = (
+            Category.all_objects.filter(restaurant=restaurant, is_visible=True)
+            .prefetch_related(
+                Prefetch(
+                    "items",
+                    queryset=MenuItem.all_objects.filter(
+                        restaurant=restaurant, is_available=True
+                    ).prefetch_related(
+                        Prefetch(
+                            "modifiers",
+                            queryset=Modifier.all_objects.filter(
+                                restaurant=restaurant
+                            ).prefetch_related(
+                                Prefetch(
+                                    "options",
+                                    queryset=ModifierOption.all_objects.filter(
+                                        restaurant=restaurant, is_available=True
+                                    ),
+                                )
+                            ),
+                        )
+                    ),
+                )
+            )
+            .order_by("display_order", "name")
+        )
+
+        serializer = CategorySerializer(categories, many=True)
+
+        return Response(
+            {
+                "restaurant": {
+                    "id": str(restaurant.id),
+                    "name": restaurant.name,
+                    "slug": restaurant.slug,
+                    "address": restaurant.address,
+                    "phone": restaurant.phone,
+                },
+                "categories": serializer.data,
+            }
+        )
+
+
+class PublicOrderCreateView(APIView):
+    """
+    Public endpoint for customer order creation.
+    No authentication required - creates guest order.
+    """
+
+    permission_classes = [AllowAny]
+    authentication_classes = []
+
+    def post(self, request, slug):
+        from apps.orders.serializers import GuestOrderCreateSerializer
+
+        restaurant = get_object_or_404(Restaurant, slug=slug, is_active=True)
+
+        # Create order with restaurant context (no user)
+        serializer = GuestOrderCreateSerializer(
+            data=request.data, context={"request": request, "restaurant": restaurant}
+        )
+        serializer.is_valid(raise_exception=True)
+        order = serializer.save()
+
+        return Response(
+            {
+                "id": str(order.id),
+                "order_number": order.order_number,
+                "status": order.status,
+                "total": order.total,
+                "estimated_wait": 15,  # Default 15 min, can be dynamic later
+            },
+            status=status.HTTP_201_CREATED,
+        )
