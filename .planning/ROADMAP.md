@@ -70,12 +70,12 @@ Plans:
   3. Low stock alerts appear when items fall below configured threshold
   4. Completing an order automatically deducts ingredients based on menu item recipes
   5. Manager can view current stock levels and movement history reports
-**Plans**: TBD
+**Plans**: 3 plans in 3 waves
 
 Plans:
-- [ ] 03-01: Stock item management and movement tracking
-- [ ] 03-02: Menu-to-ingredient mapping and auto-deduction
-- [ ] 03-03: Low stock alerts and inventory reports
+- [ ] 03-01-PLAN.md - Stock item and movement models with atomic services (Wave 1)
+- [ ] 03-02-PLAN.md - Recipe mapping and order completion auto-deduction (Wave 2)
+- [ ] 03-03-PLAN.md - Low stock alerts and inventory reports (Wave 3)
 
 ### Phase 4: Payments
 **Goal**: Restaurant can accept all major mobile money providers and reconcile daily
@@ -191,7 +191,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | ✓ Complete | 2026-02-03 |
 | 2. POS Core | 7/7 | ✓ Complete | 2026-02-03 |
-| 3. Inventory | 0/3 | Not started | - |
+| 3. Inventory | 0/3 | Planned | - |
 | 4. Payments | 0/4 | Not started | - |
 | 5. Delivery | 0/4 | Not started | - |
 | 6. WhatsApp | 0/4 | Not started | - |
@@ -203,4 +203,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 
 ---
 *Roadmap created: 2026-02-03*
-*Last updated: 2026-02-03 (Phase 2 complete)*
+*Last updated: 2026-02-04 (Phase 3 planned)*
