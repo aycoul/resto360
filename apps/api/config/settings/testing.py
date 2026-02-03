@@ -23,16 +23,8 @@ DATABASES = {
     }
 }
 
-# Disable migrations during tests for speed
-class DisableMigrations:
-    def __contains__(self, item):
-        return True
-
-    def __getitem__(self, item):
-        return None
-
-
-MIGRATION_MODULES = DisableMigrations()
+# Note: Migrations are enabled in tests because we use a custom User model
+# that requires migrations to create the schema correctly.
 
 # Email backend for testing
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
