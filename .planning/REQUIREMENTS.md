@@ -1,7 +1,7 @@
 # Requirements: RESTO360
 
 **Defined:** 2026-02-03
-**Core Value:** Restaurants can take orders, accept payments, and manage deliveries — even when internet is unreliable.
+**Core Value:** Restaurants can take orders, accept payments, and manage deliveries - even when internet is unreliable.
 
 ## v1 Requirements
 
@@ -26,7 +26,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **POS-06**: Table assignment for dine-in orders
 - [ ] **POS-07**: Order number generation (unique per restaurant per day)
 - [ ] **POS-08**: Kitchen display showing order queue by status
-- [ ] **POS-09**: Order status updates (pending → preparing → ready → completed)
+- [ ] **POS-09**: Order status updates (pending -> preparing -> ready -> completed)
 - [ ] **POS-10**: Receipt generation (PDF with order details)
 - [ ] **POS-11**: Offline-first operation with IndexedDB queue
 - [ ] **POS-12**: Background sync when connection restored
@@ -64,7 +64,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **DEL-03**: Driver availability toggle (online/offline)
 - [ ] **DEL-04**: Automatic driver assignment (nearest available)
 - [ ] **DEL-05**: Manual driver assignment override
-- [ ] **DEL-06**: Delivery status tracking (assigned → picked up → en route → delivered)
+- [ ] **DEL-06**: Delivery status tracking (assigned -> picked up -> en route -> delivered)
 - [ ] **DEL-07**: Real-time driver GPS location updates
 - [ ] **DEL-08**: Estimated delivery time calculation
 - [ ] **DEL-09**: Driver app: view assigned deliveries
@@ -93,7 +93,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **SUP-01**: Supplier registration (name, contact, categories)
 - [ ] **SUP-02**: Supplier product catalog
 - [ ] **SUP-03**: Purchase order creation
-- [ ] **SUP-04**: Purchase order status tracking (pending → confirmed → shipped → delivered)
+- [ ] **SUP-04**: Purchase order status tracking (pending -> confirmed -> shipped -> delivered)
 - [ ] **SUP-05**: Automatic stock update on PO delivery
 - [ ] **SUP-06**: Suggested reorders based on low stock
 - [ ] **SUP-07**: Supplier invoice management
@@ -154,7 +154,7 @@ Explicitly excluded. Documented to prevent scope creep.
 | Feature | Reason |
 |---------|--------|
 | Card payments (Visa/MC) | Mobile money is 95%+ of transactions in target market |
-| Multi-country v1 | Focus on Côte d'Ivoire, expand after validation |
+| Multi-country v1 | Focus on Cote d'Ivoire, expand after validation |
 | Native iOS/Android POS | PWA sufficient for tablets, reduces maintenance |
 | Real-time chat support | WhatsApp handles customer communication |
 | Tip collection | Not common practice in target market |
@@ -167,21 +167,99 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FOUND-01 to FOUND-06 | Phase 1 | Pending |
-| POS-01 to POS-15 | Phase 2 | Pending |
-| INV-01 to INV-06 | Phase 3 | Pending |
-| PAY-01 to PAY-11 | Phase 4 | Pending |
-| DEL-01 to DEL-15 | Phase 5 | Pending |
-| WA-01 to WA-10 | Phase 6 | Pending |
-| SUP-01 to SUP-08 | Phase 7 | Pending |
-| FIN-01 to FIN-10 | Phase 8 | Pending |
-| ANA-01 to ANA-06 | Phase 9 | Pending |
+| FOUND-01 | Phase 1 | Pending |
+| FOUND-02 | Phase 1 | Pending |
+| FOUND-03 | Phase 1 | Pending |
+| FOUND-04 | Phase 1 | Pending |
+| FOUND-05 | Phase 1 | Pending |
+| FOUND-06 | Phase 1 | Pending |
+| POS-01 | Phase 2 | Pending |
+| POS-02 | Phase 2 | Pending |
+| POS-03 | Phase 2 | Pending |
+| POS-04 | Phase 2 | Pending |
+| POS-05 | Phase 2 | Pending |
+| POS-06 | Phase 2 | Pending |
+| POS-07 | Phase 2 | Pending |
+| POS-08 | Phase 2 | Pending |
+| POS-09 | Phase 2 | Pending |
+| POS-10 | Phase 2 | Pending |
+| POS-11 | Phase 2 | Pending |
+| POS-12 | Phase 2 | Pending |
+| POS-13 | Phase 2 | Pending |
+| POS-14 | Phase 2 | Pending |
+| POS-15 | Phase 2 | Pending |
+| INV-01 | Phase 3 | Pending |
+| INV-02 | Phase 3 | Pending |
+| INV-03 | Phase 3 | Pending |
+| INV-04 | Phase 3 | Pending |
+| INV-05 | Phase 3 | Pending |
+| INV-06 | Phase 3 | Pending |
+| PAY-01 | Phase 4 | Pending |
+| PAY-02 | Phase 4 | Pending |
+| PAY-03 | Phase 4 | Pending |
+| PAY-04 | Phase 4 | Pending |
+| PAY-05 | Phase 4 | Pending |
+| PAY-06 | Phase 4 | Pending |
+| PAY-07 | Phase 4 | Pending |
+| PAY-08 | Phase 4 | Pending |
+| PAY-09 | Phase 4 | Pending |
+| PAY-10 | Phase 4 | Pending |
+| PAY-11 | Phase 4 | Pending |
+| DEL-01 | Phase 5 | Pending |
+| DEL-02 | Phase 5 | Pending |
+| DEL-03 | Phase 5 | Pending |
+| DEL-04 | Phase 5 | Pending |
+| DEL-05 | Phase 5 | Pending |
+| DEL-06 | Phase 5 | Pending |
+| DEL-07 | Phase 5 | Pending |
+| DEL-08 | Phase 5 | Pending |
+| DEL-09 | Phase 5 | Pending |
+| DEL-10 | Phase 5 | Pending |
+| DEL-11 | Phase 5 | Pending |
+| DEL-12 | Phase 5 | Pending |
+| DEL-13 | Phase 5 | Pending |
+| DEL-14 | Phase 5 | Pending |
+| DEL-15 | Phase 5 | Pending |
+| WA-01 | Phase 6 | Pending |
+| WA-02 | Phase 6 | Pending |
+| WA-03 | Phase 6 | Pending |
+| WA-04 | Phase 6 | Pending |
+| WA-05 | Phase 6 | Pending |
+| WA-06 | Phase 6 | Pending |
+| WA-07 | Phase 6 | Pending |
+| WA-08 | Phase 6 | Pending |
+| WA-09 | Phase 6 | Pending |
+| WA-10 | Phase 6 | Pending |
+| SUP-01 | Phase 7 | Pending |
+| SUP-02 | Phase 7 | Pending |
+| SUP-03 | Phase 7 | Pending |
+| SUP-04 | Phase 7 | Pending |
+| SUP-05 | Phase 7 | Pending |
+| SUP-06 | Phase 7 | Pending |
+| SUP-07 | Phase 7 | Pending |
+| SUP-08 | Phase 7 | Pending |
+| FIN-01 | Phase 8 | Pending |
+| FIN-02 | Phase 8 | Pending |
+| FIN-03 | Phase 8 | Pending |
+| FIN-04 | Phase 8 | Pending |
+| FIN-05 | Phase 8 | Pending |
+| FIN-06 | Phase 8 | Pending |
+| FIN-07 | Phase 8 | Pending |
+| FIN-08 | Phase 8 | Pending |
+| FIN-09 | Phase 8 | Pending |
+| FIN-10 | Phase 8 | Pending |
+| ANA-01 | Phase 9 | Pending |
+| ANA-02 | Phase 9 | Pending |
+| ANA-03 | Phase 9 | Pending |
+| ANA-04 | Phase 9 | Pending |
+| ANA-05 | Phase 9 | Pending |
+| ANA-06 | Phase 9 | Pending |
 
 **Coverage:**
 - v1 requirements: 81 total
 - Mapped to phases: 81
-- Unmapped: 0 ✓
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-03*
-*Last updated: 2026-02-03 after initial definition*
+*Last updated: 2026-02-03 after roadmap creation*
