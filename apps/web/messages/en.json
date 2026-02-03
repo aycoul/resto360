@@ -1,0 +1,56 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "logout": "Logout",
+    "login": "Login"
+  },
+  "pos": {
+    "title": "Point of Sale",
+    "cart": {
+      "title": "Cart",
+      "empty": "Your cart is empty",
+      "total": "Total",
+      "subtotal": "Subtotal",
+      "clear": "Clear cart",
+      "checkout": "Checkout"
+    },
+    "menu": {
+      "title": "Menu",
+      "categories": "Categories",
+      "items": "Items",
+      "unavailable": "Unavailable"
+    },
+    "order": {
+      "type": "Order type",
+      "dineIn": "Dine in",
+      "takeout": "Takeout",
+      "delivery": "Delivery",
+      "table": "Table",
+      "notes": "Notes",
+      "submit": "Submit order"
+    }
+  },
+  "kitchen": {
+    "title": "Kitchen",
+    "queue": "Order Queue",
+    "pending": "Pending",
+    "preparing": "Preparing",
+    "ready": "Ready",
+    "markPreparing": "Start",
+    "markReady": "Ready",
+    "markComplete": "Complete"
+  },
+  "offline": {
+    "status": "Offline",
+    "syncing": "Syncing...",
+    "pendingOrders": "pending orders",
+    "lastSync": "Last sync"
+  }
+}

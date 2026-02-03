@@ -1,0 +1,56 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur s'est produite",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "search": "Rechercher",
+    "logout": "Deconnexion",
+    "login": "Connexion"
+  },
+  "pos": {
+    "title": "Point de Vente",
+    "cart": {
+      "title": "Panier",
+      "empty": "Votre panier est vide",
+      "total": "Total",
+      "subtotal": "Sous-total",
+      "clear": "Vider le panier",
+      "checkout": "Valider la commande"
+    },
+    "menu": {
+      "title": "Menu",
+      "categories": "Categories",
+      "items": "Articles",
+      "unavailable": "Non disponible"
+    },
+    "order": {
+      "type": "Type de commande",
+      "dineIn": "Sur place",
+      "takeout": "A emporter",
+      "delivery": "Livraison",
+      "table": "Table",
+      "notes": "Notes",
+      "submit": "Envoyer la commande"
+    }
+  },
+  "kitchen": {
+    "title": "Cuisine",
+    "queue": "File d'attente",
+    "pending": "En attente",
+    "preparing": "En preparation",
+    "ready": "Pret",
+    "markPreparing": "Commencer",
+    "markReady": "Pret",
+    "markComplete": "Termine"
+  },
+  "offline": {
+    "status": "Hors ligne",
+    "syncing": "Synchronisation...",
+    "pendingOrders": "commandes en attente",
+    "lastSync": "Derniere synchronisation"
+  }
+}
