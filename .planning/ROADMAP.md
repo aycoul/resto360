@@ -32,12 +32,12 @@ RESTO360 is an enterprise restaurant operating system for West Africa, deliverin
   3. Staff can log in and see only features their role permits
   4. Code changes trigger automated tests and deploy to staging
   5. Developer can spin up complete local environment with single command
-**Plans**: TBD
+**Plans**: 3 plans in 2 waves
 
 Plans:
-- [ ] 01-01: Project scaffolding and monorepo setup
-- [ ] 01-02: Multi-tenant database and authentication
-- [ ] 01-03: CI/CD pipeline and development environment
+- [ ] 01-01-PLAN.md - Project scaffolding and monorepo setup (Wave 1)
+- [ ] 01-02-PLAN.md - Multi-tenant database and authentication (Wave 2)
+- [ ] 01-03-PLAN.md - CI/CD pipeline and development environment (Wave 2)
 
 ### Phase 2: POS Core
 **Goal**: Cashiers can take orders and kitchen can prepare them, even when internet is down
@@ -187,7 +187,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/3 | Not started | - |
+| 1. Foundation | 0/3 | Planned | - |
 | 2. POS Core | 0/5 | Not started | - |
 | 3. Inventory | 0/3 | Not started | - |
 | 4. Payments | 0/4 | Not started | - |
@@ -201,4 +201,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 
 ---
 *Roadmap created: 2026-02-03*
-*Last updated: 2026-02-03*
+*Last updated: 2026-02-03 (Phase 1 planned)*
