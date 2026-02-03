@@ -8,10 +8,13 @@ These services ensure thread-safe stock updates using:
 """
 
 import logging
+from datetime import date
 from decimal import Decimal
 
+from django.db import models as db_models
 from django.db import transaction
-from django.db.models import F
+from django.db.models import BooleanField, Case, Count, F, Q, Sum, Value, When
+from django.db.models.functions import Coalesce, TruncDate
 
 from .models import MovementReason, MovementType, StockItem, StockMovement
 
@@ -342,3 +345,139 @@ def deduct_ingredients_for_order(order):
                         f"available {ingredient.stock_item.current_quantity}. "
                         f"Skipping deduction - manual inventory adjustment required."
                     )
+
+
+# =============================================================================
+# Inventory Report Services
+# =============================================================================
+
+
+def get_current_stock_report(restaurant, include_inactive=False, low_stock_only=False):
+    """
+    Get current stock levels for all items.
+
+    Args:
+        restaurant: Restaurant instance
+        include_inactive: Include inactive stock items
+        low_stock_only: Only return items at or below threshold
+
+    Returns:
+        QuerySet of StockItems annotated with is_low_stock boolean
+    """
+    queryset = StockItem.objects.filter(restaurant=restaurant)
+
+    if not include_inactive:
+        queryset = queryset.filter(is_active=True)
+
+    # Annotate with low stock status
+    queryset = queryset.annotate(
+        is_low_stock=Case(
+            When(
+                low_stock_threshold__isnull=False,
+                current_quantity__lte=F("low_stock_threshold"),
+                then=Value(True),
+            ),
+            default=Value(False),
+            output_field=BooleanField(),
+        )
+    )
+
+    if low_stock_only:
+        queryset = queryset.filter(is_low_stock=True)
+
+    return queryset.order_by("name")
+
+
+def get_movement_report(
+    restaurant, start_date: date, end_date: date, stock_item_id=None
+):
+    """
+    Generate stock movement report for date range.
+
+    Args:
+        restaurant: Restaurant instance
+        start_date: Report start date (inclusive)
+        end_date: Report end date (inclusive)
+        stock_item_id: Optional - filter to specific stock item
+
+    Returns:
+        Dict with summary and daily breakdown
+    """
+    queryset = StockMovement.objects.filter(
+        restaurant=restaurant,
+        created_at__date__gte=start_date,
+        created_at__date__lte=end_date,
+    )
+
+    if stock_item_id:
+        queryset = queryset.filter(stock_item_id=stock_item_id)
+
+    # Summary by movement type
+    summary = queryset.values("movement_type").annotate(
+        total_quantity=Coalesce(Sum("quantity_change"), Value(Decimal("0"))),
+        movement_count=Count("id"),
+    )
+
+    # Daily breakdown
+    daily = (
+        queryset.annotate(day=TruncDate("created_at"))
+        .values("day", "movement_type")
+        .annotate(
+            total_quantity=Sum("quantity_change"),
+            movement_count=Count("id"),
+        )
+        .order_by("day", "movement_type")
+    )
+
+    # By stock item
+    by_item = (
+        queryset.values(
+            "stock_item__id",
+            "stock_item__name",
+            "stock_item__unit",
+        )
+        .annotate(
+            total_in=Coalesce(
+                Sum("quantity_change", filter=Q(movement_type="in")),
+                Value(Decimal("0")),
+            ),
+            total_out=Coalesce(
+                Sum("quantity_change", filter=Q(movement_type="out")),
+                Value(Decimal("0")),
+            ),
+            net_change=Coalesce(Sum("quantity_change"), Value(Decimal("0"))),
+            movement_count=Count("id"),
+        )
+        .order_by("stock_item__name")
+    )
+
+    return {
+        "period": {
+            "start_date": start_date.isoformat(),
+            "end_date": end_date.isoformat(),
+        },
+        "summary": list(summary),
+        "daily": list(daily),
+        "by_item": list(by_item),
+    }
+
+
+def get_stock_item_movement_history(stock_item, limit=100, offset=0):
+    """
+    Get movement history for a specific stock item.
+
+    Args:
+        stock_item: StockItem instance
+        limit: Max records to return
+        offset: Starting offset
+
+    Returns:
+        QuerySet of movements
+    """
+    movements = (
+        StockMovement.objects.filter(stock_item=stock_item)
+        .select_related("created_by")
+        .order_by("-created_at")[offset : offset + limit]
+    )
+
+    return movements
