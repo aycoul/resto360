@@ -7,14 +7,14 @@
 
 Requirements for initial release. Each maps to roadmap phases.
 
-### Foundation (FOUND)
+### Foundation (FOUND) ✓
 
-- [ ] **FOUND-01**: Multi-tenant database with restaurant isolation
-- [ ] **FOUND-02**: JWT authentication with role-based permissions
-- [ ] **FOUND-03**: User roles: owner, manager, cashier, kitchen, driver
-- [ ] **FOUND-04**: Restaurant settings (name, address, timezone, currency)
-- [ ] **FOUND-05**: CI/CD pipeline with automated testing
-- [ ] **FOUND-06**: Development environment (Docker Compose)
+- [x] **FOUND-01**: Multi-tenant database with restaurant isolation ✓
+- [x] **FOUND-02**: JWT authentication with role-based permissions ✓
+- [x] **FOUND-03**: User roles: owner, manager, cashier, kitchen, driver ✓
+- [x] **FOUND-04**: Restaurant settings (name, address, timezone, currency) ✓
+- [x] **FOUND-05**: CI/CD pipeline with automated testing ✓
+- [x] **FOUND-06**: Development environment (Docker Compose) ✓
 
 ### POS Core (POS)
 
