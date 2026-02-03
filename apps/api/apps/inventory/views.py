@@ -1,22 +1,31 @@
 from django.db import models as db_models
-from rest_framework import status
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from apps.core.context import get_current_restaurant
 from apps.core.permissions import IsOwnerOrManager
-from apps.core.views import TenantModelViewSet
+from apps.core.views import TenantContextMixin, TenantModelViewSet
 
 from .models import MenuItemIngredient, StockItem, StockMovement
 from .serializers import (
     AddStockSerializer,
     AdjustStockSerializer,
+    CurrentStockReportSerializer,
     MenuItemIngredientSerializer,
+    MovementReportRequestSerializer,
     StockItemListSerializer,
     StockItemSerializer,
     StockMovementSerializer,
 )
-from .services import InsufficientStockError, add_stock, adjust_stock
+from .services import (
+    InsufficientStockError,
+    add_stock,
+    adjust_stock,
+    get_current_stock_report,
+    get_movement_report,
+)
 
 
 class StockItemViewSet(TenantModelViewSet):
@@ -220,3 +229,71 @@ class MenuItemIngredientViewSet(TenantModelViewSet):
             qs = qs.filter(stock_item_id=stock_item_id)
 
         return qs.select_related("menu_item", "stock_item")
+
+
+class ReportViewSet(TenantContextMixin, viewsets.ViewSet):
+    """
+    ViewSet for inventory reports.
+
+    GET /api/inventory/reports/current-stock/ - Current stock levels
+    GET /api/inventory/reports/low-stock/ - Items below threshold
+    GET /api/inventory/reports/movements/?start_date=&end_date= - Movement history
+    """
+
+    permission_classes = [IsAuthenticated, IsOwnerOrManager]
+
+    @action(detail=False, methods=["get"], url_path="current-stock")
+    def current_stock(self, request):
+        """Get current stock levels for all items."""
+        restaurant = get_current_restaurant()
+        include_inactive = (
+            request.query_params.get("include_inactive", "false").lower() == "true"
+        )
+
+        items = get_current_stock_report(restaurant, include_inactive=include_inactive)
+
+        serializer = CurrentStockReportSerializer(items, many=True)
+        return Response(
+            {
+                "count": items.count(),
+                "items": serializer.data,
+            }
+        )
+
+    @action(detail=False, methods=["get"], url_path="low-stock")
+    def low_stock(self, request):
+        """Get items at or below low stock threshold."""
+        restaurant = get_current_restaurant()
+        items = get_current_stock_report(restaurant, low_stock_only=True)
+
+        serializer = CurrentStockReportSerializer(items, many=True)
+        return Response(
+            {
+                "count": items.count(),
+                "items": serializer.data,
+            }
+        )
+
+    @action(detail=False, methods=["get"], url_path="movements")
+    def movements(self, request):
+        """
+        Get movement report for date range.
+
+        Query params:
+        - start_date: YYYY-MM-DD (required)
+        - end_date: YYYY-MM-DD (required)
+        - stock_item: UUID (optional, filter to specific item)
+        """
+        # Validate request params
+        request_serializer = MovementReportRequestSerializer(data=request.query_params)
+        request_serializer.is_valid(raise_exception=True)
+
+        restaurant = get_current_restaurant()
+        report = get_movement_report(
+            restaurant=restaurant,
+            start_date=request_serializer.validated_data["start_date"],
+            end_date=request_serializer.validated_data["end_date"],
+            stock_item_id=request_serializer.validated_data.get("stock_item"),
+        )
+
+        return Response(report)

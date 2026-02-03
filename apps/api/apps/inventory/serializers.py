@@ -164,3 +164,53 @@ class MenuItemIngredientSerializer(serializers.ModelSerializer):
                     "Menu item and stock item must belong to the same restaurant"
                 )
         return data
+
+
+# =============================================================================
+# Report Serializers
+# =============================================================================
+
+
+class CurrentStockReportSerializer(serializers.ModelSerializer):
+    """Stock item with low stock status for reports."""
+
+    is_low_stock = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        model = StockItem
+        fields = [
+            "id",
+            "name",
+            "sku",
+            "unit",
+            "current_quantity",
+            "low_stock_threshold",
+            "is_low_stock",
+            "is_active",
+        ]
+
+
+class MovementReportRequestSerializer(serializers.Serializer):
+    """Request parameters for movement report."""
+
+    start_date = serializers.DateField()
+    end_date = serializers.DateField()
+    stock_item = serializers.UUIDField(required=False)
+
+    def validate(self, data):
+        """Validate date range."""
+        if data["start_date"] > data["end_date"]:
+            raise serializers.ValidationError("start_date must be before end_date")
+        # Limit to 90 days max
+        if (data["end_date"] - data["start_date"]).days > 90:
+            raise serializers.ValidationError("Date range cannot exceed 90 days")
+        return data
+
+
+class MovementReportSerializer(serializers.Serializer):
+    """Movement report response."""
+
+    period = serializers.DictField()
+    summary = serializers.ListField()
+    daily = serializers.ListField()
+    by_item = serializers.ListField()

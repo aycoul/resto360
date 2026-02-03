@@ -362,28 +362,19 @@ def get_current_stock_report(restaurant, include_inactive=False, low_stock_only=
         low_stock_only: Only return items at or below threshold
 
     Returns:
-        QuerySet of StockItems annotated with is_low_stock boolean
+        QuerySet of StockItems (model has is_low_stock property)
     """
     queryset = StockItem.objects.filter(restaurant=restaurant)
 
     if not include_inactive:
         queryset = queryset.filter(is_active=True)
 
-    # Annotate with low stock status
-    queryset = queryset.annotate(
-        is_low_stock=Case(
-            When(
-                low_stock_threshold__isnull=False,
-                current_quantity__lte=F("low_stock_threshold"),
-                then=Value(True),
-            ),
-            default=Value(False),
-            output_field=BooleanField(),
-        )
-    )
-
     if low_stock_only:
-        queryset = queryset.filter(is_low_stock=True)
+        # Filter items where threshold is set and quantity <= threshold
+        queryset = queryset.filter(
+            low_stock_threshold__isnull=False,
+            current_quantity__lte=F("low_stock_threshold"),
+        )
 
     return queryset.order_by("name")
 
