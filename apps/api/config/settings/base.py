@@ -53,6 +53,8 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
     "imagekit",
+    # Audit history
+    "simple_history",
     # Local apps
     "apps.core",
     "apps.authentication",
@@ -60,6 +62,7 @@ INSTALLED_APPS = [
     "apps.orders",
     "apps.receipts",
     "apps.qr",
+    "apps.inventory",
 ]
 
 # Custom user model

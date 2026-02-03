@@ -38,3 +38,6 @@ segno>=1.6.6,<2.0
 channels>=4.3.2,<5.0
 channels-redis>=4.2,<5.0
 daphne>=4.1,<5.0
+
+# Audit history tracking
+django-simple-history>=3.11.0,<4.0
