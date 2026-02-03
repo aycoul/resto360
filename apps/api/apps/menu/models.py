@@ -13,6 +13,8 @@ class Category(TenantModel):
     display_order = models.PositiveIntegerField(default=0)
     is_visible = models.BooleanField(default=True)
 
+    # Use standard manager for related lookups (Django uses first manager)
+    all_objects = models.Manager()
     objects = TenantManager()
 
     class Meta:
@@ -46,6 +48,8 @@ class MenuItem(TenantModel):
     )
     is_available = models.BooleanField(default=True)
 
+    # Use standard manager for related lookups (Django uses first manager)
+    all_objects = models.Manager()
     objects = TenantManager()
 
     class Meta:
@@ -74,6 +78,8 @@ class Modifier(TenantModel):
     )
     display_order = models.PositiveIntegerField(default=0)
 
+    # Use standard manager for related lookups (Django uses first manager)
+    all_objects = models.Manager()
     objects = TenantManager()
 
     class Meta:
@@ -99,6 +105,8 @@ class ModifierOption(TenantModel):
     is_available = models.BooleanField(default=True)
     display_order = models.PositiveIntegerField(default=0)
 
+    # Use standard manager for related lookups (Django uses first manager)
+    all_objects = models.Manager()
     objects = TenantManager()
 
     class Meta:

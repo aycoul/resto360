@@ -119,7 +119,14 @@ class ModifierWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Modifier
-        fields = ["id", "menu_item", "name", "required", "max_selections", "display_order"]
+        fields = [
+            "id",
+            "menu_item",
+            "name",
+            "required",
+            "max_selections",
+            "display_order",
+        ]
 
     def create(self, validated_data):
         """Set restaurant from request context."""
@@ -134,7 +141,14 @@ class ModifierOptionWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ModifierOption
-        fields = ["id", "modifier", "name", "price_adjustment", "is_available", "display_order"]
+        fields = [
+            "id",
+            "modifier",
+            "name",
+            "price_adjustment",
+            "is_available",
+            "display_order",
+        ]
 
     def create(self, validated_data):
         """Set restaurant from request context."""
