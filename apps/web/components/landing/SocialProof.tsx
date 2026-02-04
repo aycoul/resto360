@@ -48,11 +48,11 @@ export function SocialProof() {
             </p>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center text-white font-semibold">
-                M
+                A
               </div>
               <div>
-                <p className="font-semibold text-gray-900">Mame Diarra</p>
-                <p className="text-sm text-gray-500">Restaurant Le Djoloff, Dakar</p>
+                <p className="font-semibold text-gray-900">Adjoua Koffi</p>
+                <p className="text-sm text-gray-500">Maquis Le Kédjenou, Cocody</p>
               </div>
             </div>
           </div>
@@ -94,11 +94,11 @@ export function SocialProof() {
             </p>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center text-white font-semibold">
-                F
+                Y
               </div>
               <div>
-                <p className="font-semibold text-gray-900">Fatou Sall</p>
-                <p className="text-sm text-gray-500">Thieboudienne Palace, Saint-Louis</p>
+                <p className="font-semibold text-gray-900">Yao N'Guessan</p>
+                <p className="text-sm text-gray-500">Garba Express, Treichville</p>
               </div>
             </div>
           </div>

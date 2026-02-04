@@ -9,7 +9,13 @@
     "add": "Add",
     "search": "Search",
     "logout": "Logout",
-    "login": "Login"
+    "login": "Login",
+    "getStarted": "Get Started",
+    "learnMore": "Learn More",
+    "viewDemo": "View Demo",
+    "contactUs": "Contact Us",
+    "startFree": "Start Free",
+    "watchVideo": "Watch Video"
   },
   "pos": {
     "title": "Point of Sale",
@@ -82,27 +88,44 @@
       "title": "Your menu, online in 5 minutes",
       "subtitle": "Create your free digital menu. Your customers scan a QR code and browse instantly.",
       "cta_primary": "Get Started Free",
-      "cta_secondary": "View Demo"
+      "cta_secondary": "View Demo",
+      "trusted_by": "Trusted by 500+ restaurants across West Africa",
+      "no_credit_card": "No credit card required"
     },
     "features": {
       "title": "Everything you need",
+      "subtitle": "Powerful features to help your restaurant succeed in the digital age",
       "qr_title": "QR Code Menu",
       "qr_desc": "Customers scan and browse instantly",
       "updates_title": "Easy Updates",
       "updates_desc": "Change prices and items in seconds",
       "analytics_title": "Analytics",
-      "analytics_desc": "See what's popular with your customers"
+      "analytics_desc": "See what's popular with your customers",
+      "offline_title": "Works Offline",
+      "offline_desc": "Your POS keeps running even without internet",
+      "payments_title": "Mobile Money",
+      "payments_desc": "Accept Wave, Orange Money, MTN MoMo and more",
+      "delivery_title": "Delivery Management",
+      "delivery_desc": "Track drivers and deliveries in real-time",
+      "inventory_title": "Inventory Tracking",
+      "inventory_desc": "Automatic stock deduction and low-stock alerts",
+      "kitchen_title": "Kitchen Display",
+      "kitchen_desc": "Real-time order queue for your kitchen staff",
+      "multilang_title": "Multi-language",
+      "multilang_desc": "Menus in French, English, and more coming"
     },
     "pricing": {
       "title": "Simple Pricing",
+      "subtitle": "Choose the plan that fits your restaurant",
       "free_tier": "Free",
       "pro_tier": "Pro",
+      "enterprise_tier": "Enterprise",
       "per_month": "/month",
       "free_features": [
         "Unlimited menu items",
         "QR code generator",
         "Basic analytics",
-        "RESTO360 branding"
+        "BIZ360 branding"
       ],
       "pro_features": [
         "Everything in Free",
@@ -110,20 +133,516 @@
         "Custom colors",
         "Priority support"
       ],
+      "enterprise_features": [
+        "Everything in Pro",
+        "Full POS system",
+        "Mobile money payments",
+        "Delivery management",
+        "Inventory tracking",
+        "Dedicated support"
+      ],
       "start_free": "Start Free",
       "go_pro": "Go Pro",
-      "full_platform_note": "Need POS, payments, or delivery? Contact us for Full Platform pricing."
+      "contact_sales": "Contact Sales",
+      "full_platform_note": "Need POS, payments, or delivery? Contact us for Full Platform pricing.",
+      "popular": "Most Popular",
+      "custom_pricing": "Custom"
     },
     "social_proof": {
-      "restaurants_count": "100+ restaurants trust RESTO360",
-      "views_count": "10,000+ menus viewed this month"
+      "restaurants_count": "500+ restaurants trust BIZ360",
+      "views_count": "50,000+ menus viewed this month",
+      "orders_count": "10,000+ orders processed",
+      "countries_count": "5 countries"
     },
     "footer": {
       "tagline": "The restaurant platform for West Africa",
       "about": "About",
       "contact": "Contact",
       "privacy": "Privacy",
-      "terms": "Terms"
+      "terms": "Terms",
+      "features": "Features",
+      "pricing": "Pricing",
+      "blog": "Blog",
+      "help": "Help Center",
+      "api": "API Docs",
+      "status": "Status",
+      "product": "Product",
+      "company": "Company",
+      "resources": "Resources",
+      "legal": "Legal",
+      "copyright": "All rights reserved."
+    },
+    "stats": {
+      "restaurants": "Restaurants",
+      "orders": "Orders Processed",
+      "countries": "Countries",
+      "uptime": "Uptime"
+    },
+    "cta_section": {
+      "title": "Ready to digitize your restaurant?",
+      "subtitle": "Join hundreds of restaurants already using BIZ360 to serve their customers better.",
+      "button": "Get Started Free"
+    }
+  },
+  "marketing": {
+    "nav": {
+      "features": "Features",
+      "pricing": "Pricing",
+      "useCases": "Use Cases",
+      "demo": "Demo",
+      "blog": "Blog",
+      "login": "Login",
+      "getStarted": "Get Started"
+    },
+    "hero": {
+      "badge": "The #1 Restaurant Platform for West Africa",
+      "title": "Transform your restaurant with digital menus",
+      "titleHighlight": "digital menus",
+      "subtitle": "Create beautiful QR code menus, manage orders, accept mobile payments, and track deliveries - all in one platform built for African restaurants.",
+      "cta_primary": "Start Free Today",
+      "cta_secondary": "Watch Demo",
+      "stats": {
+        "restaurants": "500+",
+        "restaurantsLabel": "Restaurants",
+        "orders": "50K+",
+        "ordersLabel": "Orders/Month",
+        "countries": "5",
+        "countriesLabel": "Countries"
+      }
+    },
+    "features_page": {
+      "title": "Powerful Features for Modern Restaurants",
+      "subtitle": "Everything you need to run your restaurant efficiently, from digital menus to delivery management.",
+      "categories": {
+        "menu": "Digital Menu",
+        "pos": "Point of Sale",
+        "payments": "Payments",
+        "delivery": "Delivery",
+        "analytics": "Analytics",
+        "inventory": "Inventory"
+      },
+      "menu": {
+        "title": "Digital Menu Management",
+        "description": "Create beautiful, scannable menus that your customers will love",
+        "features": {
+          "qr": {
+            "title": "QR Code Menus",
+            "description": "Generate unique QR codes that customers scan to view your menu instantly on their phones."
+          },
+          "realtime": {
+            "title": "Real-time Updates",
+            "description": "Change prices, add items, or mark items as sold out - updates appear instantly."
+          },
+          "photos": {
+            "title": "Photo Gallery",
+            "description": "Upload beautiful photos of your dishes to entice customers."
+          },
+          "categories": {
+            "title": "Categories & Modifiers",
+            "description": "Organize your menu with categories and add customization options for each item."
+          },
+          "multilang": {
+            "title": "Multi-language Support",
+            "description": "Offer your menu in French, English, and more languages coming soon."
+          }
+        }
+      },
+      "pos": {
+        "title": "Point of Sale System",
+        "description": "A complete POS system designed for the realities of African restaurants",
+        "features": {
+          "offline": {
+            "title": "Works Offline",
+            "description": "Keep taking orders even when the internet goes down. Syncs automatically when back online."
+          },
+          "orders": {
+            "title": "Order Management",
+            "description": "Handle dine-in, takeaway, and delivery orders from one dashboard."
+          },
+          "kitchen": {
+            "title": "Kitchen Display System",
+            "description": "Real-time order queue for your kitchen staff with WebSocket updates."
+          },
+          "receipts": {
+            "title": "Digital Receipts",
+            "description": "Generate PDF receipts for customers and keep digital records."
+          }
+        }
+      },
+      "payments": {
+        "title": "Mobile Money Payments",
+        "description": "Accept the payment methods your customers actually use",
+        "features": {
+          "wave": {
+            "title": "Wave",
+            "description": "Accept Wave payments directly in your app."
+          },
+          "orange": {
+            "title": "Orange Money",
+            "description": "Integrated Orange Money support for seamless payments."
+          },
+          "mtn": {
+            "title": "MTN MoMo",
+            "description": "MTN Mobile Money integration for Ghana and other markets."
+          },
+          "cash": {
+            "title": "Cash Management",
+            "description": "Cash drawer sessions with opening/closing reconciliation."
+          },
+          "refunds": {
+            "title": "Refunds",
+            "description": "Process full or partial refunds easily."
+          }
+        }
+      },
+      "delivery": {
+        "title": "Delivery Management",
+        "description": "Complete delivery tracking from kitchen to customer",
+        "features": {
+          "zones": {
+            "title": "Delivery Zones",
+            "description": "Define delivery areas with polygon boundaries and automatic fee calculation."
+          },
+          "drivers": {
+            "title": "Driver Management",
+            "description": "Track driver locations in real-time and assign orders automatically."
+          },
+          "tracking": {
+            "title": "Customer Tracking",
+            "description": "Share live tracking links so customers can follow their delivery."
+          },
+          "proof": {
+            "title": "Proof of Delivery",
+            "description": "Capture photos or signatures as proof of delivery."
+          }
+        }
+      },
+      "analytics": {
+        "title": "Analytics & Insights",
+        "description": "Understand your business with powerful analytics",
+        "features": {
+          "views": {
+            "title": "Menu Views",
+            "description": "Track how many people view your menu and which items are popular."
+          },
+          "sales": {
+            "title": "Sales Reports",
+            "description": "Daily, weekly, and monthly sales breakdowns."
+          },
+          "items": {
+            "title": "Item Performance",
+            "description": "See which menu items are bestsellers and which need attention."
+          }
+        }
+      },
+      "inventory": {
+        "title": "Inventory Management",
+        "description": "Never run out of ingredients again",
+        "features": {
+          "tracking": {
+            "title": "Stock Tracking",
+            "description": "Track inventory levels for all ingredients with multiple units."
+          },
+          "recipes": {
+            "title": "Recipe Mapping",
+            "description": "Link menu items to ingredients for automatic deduction."
+          },
+          "alerts": {
+            "title": "Low Stock Alerts",
+            "description": "Get notified when ingredients are running low."
+          },
+          "audit": {
+            "title": "Audit Trail",
+            "description": "Complete history of all stock movements."
+          }
+        }
+      }
+    },
+    "pricing_page": {
+      "title": "Simple, Transparent Pricing",
+      "subtitle": "Start free and scale as you grow. No hidden fees, no surprises.",
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "save": "Save 20%",
+      "tiers": {
+        "starter": {
+          "name": "Starter",
+          "price": "0",
+          "priceYearly": "0",
+          "description": "Perfect for getting started with digital menus",
+          "cta": "Start Free",
+          "features": [
+            "Unlimited menu items",
+            "QR code generator",
+            "Basic view analytics",
+            "BIZ360 branding on menu",
+            "Community support"
+          ]
+        },
+        "essential": {
+          "name": "Essential",
+          "price": "29",
+          "priceYearly": "278",
+          "currency": "USD",
+          "description": "For restaurants ready to remove branding",
+          "cta": "Start Free Trial",
+          "popular": true,
+          "features": [
+            "Everything in Starter",
+            "Custom branding",
+            "3 menu templates",
+            "Allergen & dietary tags",
+            "Email support",
+            "Remove BIZ360 branding"
+          ]
+        },
+        "pro": {
+          "name": "Pro",
+          "price": "79",
+          "priceYearly": "758",
+          "currency": "USD",
+          "description": "Complete solution for growing restaurants",
+          "cta": "Start Free Trial",
+          "features": [
+            "Everything in Essential",
+            "AI menu builder",
+            "Table reservations",
+            "Customer reviews",
+            "CRM & loyalty program",
+            "All menu templates",
+            "Priority support"
+          ]
+        },
+        "enterprise": {
+          "name": "Enterprise",
+          "price": "Custom",
+          "description": "For restaurant chains and franchises",
+          "cta": "Contact Sales",
+          "features": [
+            "Everything in Pro",
+            "Multi-location management",
+            "Full POS system",
+            "Mobile money payments",
+            "Delivery management",
+            "Inventory tracking",
+            "API access",
+            "Dedicated account manager",
+            "Custom integrations",
+            "SLA guarantee"
+          ]
+        }
+      },
+      "comparison": {
+        "title": "Compare Plans",
+        "feature": "Feature",
+        "categories": {
+          "menu": "Digital Menu",
+          "marketing": "Marketing & CRM",
+          "operations": "Operations",
+          "support": "Support"
+        }
+      },
+      "faq": {
+        "title": "Frequently Asked Questions",
+        "questions": {
+          "trial": {
+            "q": "Is there a free trial?",
+            "a": "Yes! All paid plans come with a 14-day free trial. No credit card required to start."
+          },
+          "cancel": {
+            "q": "Can I cancel anytime?",
+            "a": "Absolutely. You can cancel your subscription at any time with no penalties."
+          },
+          "payment": {
+            "q": "What payment methods do you accept?",
+            "a": "We accept mobile money (Wave, Orange Money, MTN MoMo), credit cards, and bank transfers."
+          },
+          "upgrade": {
+            "q": "Can I upgrade or downgrade my plan?",
+            "a": "Yes, you can change your plan at any time. Changes take effect at the start of your next billing cycle."
+          },
+          "currency": {
+            "q": "Can I pay in local currency?",
+            "a": "Yes! We accept payments in XOF, XAF, GHS, NGN, and USD."
+          }
+        }
+      }
+    },
+    "use_cases": {
+      "title": "Built for Every Type of Restaurant",
+      "subtitle": "See how restaurants like yours use BIZ360 to serve customers better",
+      "types": {
+        "restaurant": {
+          "title": "Restaurants",
+          "subtitle": "Full-service dining establishments",
+          "description": "From casual dining to fine restaurants, BIZ360 helps you manage your menu, take orders, and delight customers.",
+          "benefits": [
+            "Digital menus reduce printing costs",
+            "Real-time menu updates for daily specials",
+            "Table management and reservations",
+            "Kitchen display for smooth service"
+          ],
+          "quote": "We reduced our menu printing costs by 80% and customers love scanning the QR code.",
+          "quoteAuthor": "Adjoua K.",
+          "quoteRole": "Restaurant Owner, Abidjan"
+        },
+        "cafe": {
+          "title": "Cafes & Coffee Shops",
+          "subtitle": "Quick service and specialty drinks",
+          "description": "Perfect for high-volume cafes that need fast ordering and quick menu changes for seasonal specials.",
+          "benefits": [
+            "Quick order entry for fast service",
+            "Easy updates for daily specials",
+            "Mobile payment integration",
+            "Loyalty program for regulars"
+          ],
+          "quote": "The offline mode is a lifesaver. We never miss an order even when internet is spotty.",
+          "quoteAuthor": "Kouame B.",
+          "quoteRole": "Cafe Owner, Abidjan"
+        },
+        "hotel": {
+          "title": "Hotels & Resorts",
+          "subtitle": "Room service and restaurant operations",
+          "description": "Manage multiple outlets, room service, and restaurant operations from one platform.",
+          "benefits": [
+            "Multi-outlet management",
+            "Room service ordering",
+            "Guest billing integration",
+            "Multi-language menus for tourists"
+          ],
+          "quote": "Managing our restaurant, pool bar, and room service from one dashboard has transformed our operations.",
+          "quoteAuthor": "Jean-Pierre M.",
+          "quoteRole": "Hotel Manager, Accra"
+        },
+        "foodtruck": {
+          "title": "Food Trucks",
+          "subtitle": "Mobile food service",
+          "description": "Built for mobility - works offline, accepts mobile payments, and updates menus on the go.",
+          "benefits": [
+            "Works without internet",
+            "Mobile-first design",
+            "Quick payment processing",
+            "Location-based marketing"
+          ],
+          "quote": "I update my menu from my phone while setting up at different locations. So convenient!",
+          "quoteAuthor": "Aya T.",
+          "quoteRole": "Food Truck Owner, Abidjan"
+        },
+        "darkKitchen": {
+          "title": "Dark Kitchens",
+          "subtitle": "Delivery-only operations",
+          "description": "Optimized for delivery-only restaurants with powerful driver management and tracking.",
+          "benefits": [
+            "Delivery zone management",
+            "Driver tracking and assignment",
+            "Customer delivery tracking",
+            "Integration with delivery apps"
+          ],
+          "quote": "The delivery tracking feature keeps our customers informed and reduces support calls.",
+          "quoteAuthor": "Moussa K.",
+          "quoteRole": "Dark Kitchen Operator, Lagos"
+        },
+        "catering": {
+          "title": "Catering Services",
+          "subtitle": "Event and bulk orders",
+          "description": "Handle large orders, manage inventory for events, and coordinate deliveries for catering businesses.",
+          "benefits": [
+            "Bulk order management",
+            "Inventory planning for events",
+            "Custom pricing for large orders",
+            "Delivery coordination"
+          ],
+          "quote": "We can now handle multiple events simultaneously without losing track of orders.",
+          "quoteAuthor": "Aisha O.",
+          "quoteRole": "Catering Business Owner, Abuja"
+        }
+      },
+      "cta": {
+        "title": "Ready to get started?",
+        "subtitle": "Join hundreds of restaurants already using BIZ360",
+        "button": "Start Free Today"
+      }
+    },
+    "demo": {
+      "title": "See BIZ360 in Action",
+      "subtitle": "Explore a live demo menu to see how your customers will experience your digital menu",
+      "cta": "Try the Demo Menu",
+      "features": {
+        "title": "What you'll see in the demo",
+        "items": [
+          "Beautiful menu layout with categories",
+          "Item photos and descriptions",
+          "Price display in local currency",
+          "Mobile-optimized design"
+        ]
+      }
+    },
+    "testimonials": {
+      "title": "Loved by Restaurants Across West Africa",
+      "subtitle": "See what restaurant owners are saying about BIZ360"
+    },
+    "integrations": {
+      "title": "Integrations",
+      "subtitle": "Connect with the tools you already use",
+      "payments": "Payment Providers",
+      "coming_soon": "Coming Soon"
+    },
+    "about": {
+      "title": "About BIZ360",
+      "mission": {
+        "title": "Our Mission",
+        "description": "To empower African restaurants with world-class technology that works in local conditions."
+      },
+      "story": {
+        "title": "Our Story",
+        "description": "BIZ360 was born from a simple observation: restaurants in West Africa deserve the same powerful tools as restaurants anywhere in the world, but adapted for local realities like intermittent internet, mobile money payments, and French-speaking markets."
+      },
+      "values": {
+        "title": "Our Values",
+        "offline": {
+          "title": "Offline-First",
+          "description": "We build for unreliable internet because that's reality for many businesses."
+        },
+        "local": {
+          "title": "Local-First",
+          "description": "Mobile money, local currencies, and languages that matter here."
+        },
+        "simple": {
+          "title": "Simple-First",
+          "description": "Technology should make life easier, not harder."
+        }
+      }
+    },
+    "contact": {
+      "title": "Contact Us",
+      "subtitle": "Have questions? We'd love to hear from you.",
+      "form": {
+        "name": "Your name",
+        "email": "Email address",
+        "phone": "Phone number",
+        "message": "Message",
+        "submit": "Send Message",
+        "success": "Message sent! We'll get back to you soon."
+      },
+      "info": {
+        "email": "hello@biz360.com",
+        "phone": "+225 07 12 34 56 78",
+        "address": "Abidjan, Côte d'Ivoire"
+      }
+    }
+  },
+  "login": {
+    "title": "Login",
+    "subtitle": "Sign in to your account",
+    "phone": "Phone number",
+    "password": "Password",
+    "submit": "Sign in",
+    "submitting": "Signing in...",
+    "register_link": "Don't have an account?",
+    "register_cta": "Create one",
+    "errors": {
+      "invalid": "Invalid phone number or password",
+      "network": "Connection error. Check your internet connection."
     }
   },
   "register": {
@@ -154,6 +673,20 @@
     "sidebar": {
       "dashboard": "Dashboard",
       "menu": "Menu",
+      "themes": "Themes",
+      "aiBuilder": "AI Builder",
+      "reservations": "Reservations",
+      "reviews": "Reviews",
+      "loyalty": "Loyalty",
+      "website": "Website",
+      "social": "Social Media",
+      "locations": "Locations",
+      "analytics": "Analytics",
+      "forecasting": "Forecasting",
+      "invoicing": "Invoicing",
+      "reorder": "QR Reorder",
+      "marketplace": "Marketplace",
+      "financing": "Financing",
       "qrCodes": "QR Codes",
       "settings": "Settings",
       "upgradeToPro": "Upgrade to Pro"
@@ -203,7 +736,7 @@
       "step2Desc": "Print on menus, tables, or posters",
       "step3Title": "Scan",
       "step3Desc": "Customers scan and view your menu",
-      "brandingNote": "Your menu shows RESTO360 branding on the free plan"
+      "brandingNote": "Your menu shows BIZ360 branding on the free plan"
     },
     "menu": {
       "title": "Menu Editor",
@@ -235,18 +768,102 @@
       "removePhoto": "Remove photo",
       "saving": "Saving...",
       "saved": "Saved!",
-      "error": "An error occurred"
+      "error": "An error occurred",
+      "metadata": {
+        "title": "Item Details",
+        "allergens": "Allergens",
+        "allergensHelp": "Select all allergens present in this item",
+        "dietaryTags": "Dietary Tags",
+        "dietaryTagsHelp": "Select dietary certifications this item meets",
+        "spiceLevel": "Spice Level",
+        "prepTime": "Prep Time (minutes)",
+        "prepTimeHelp": "Estimated preparation time",
+        "ingredients": "Ingredients",
+        "ingredientsHelp": "List main ingredients (comma-separated)",
+        "nutrition": "Nutrition Info",
+        "nutritionHelp": "Per serving (optional)",
+        "calories": "Calories",
+        "protein": "Protein (g)",
+        "carbs": "Carbs (g)",
+        "fat": "Fat (g)",
+        "fiber": "Fiber (g)",
+        "sodium": "Sodium (mg)",
+        "allergenLabels": {
+          "celery": "Celery",
+          "gluten": "Gluten",
+          "crustaceans": "Crustaceans",
+          "eggs": "Eggs",
+          "fish": "Fish",
+          "lupin": "Lupin",
+          "milk": "Milk",
+          "molluscs": "Molluscs",
+          "mustard": "Mustard",
+          "nuts": "Tree Nuts",
+          "peanuts": "Peanuts",
+          "sesame": "Sesame",
+          "soya": "Soya",
+          "sulphites": "Sulphites"
+        },
+        "dietaryLabels": {
+          "vegan": "Vegan",
+          "vegetarian": "Vegetarian",
+          "gluten_free": "Gluten-Free",
+          "dairy_free": "Dairy-Free",
+          "halal": "Halal",
+          "kosher": "Kosher",
+          "keto": "Keto-Friendly",
+          "low_carb": "Low Carb",
+          "nut_free": "Nut-Free",
+          "organic": "Organic"
+        },
+        "spiceLevels": {
+          "0": "Not Spicy",
+          "1": "Mild",
+          "2": "Medium",
+          "3": "Hot",
+          "4": "Very Hot"
+        }
+      }
+    },
+    "settings": {
+      "title": "Settings",
+      "subtitle": "Manage your restaurant and account",
+      "profileSection": "Restaurant Profile",
+      "accountSection": "Account",
+      "profileDesc": "This information appears on your online menu",
+      "restaurantName": "Restaurant name",
+      "phone": "Phone",
+      "email": "Email",
+      "address": "Address",
+      "saving": "Saving...",
+      "saved": "Changes saved!",
+      "saveError": "Error saving changes",
+      "accountInfo": "Account Information",
+      "plan": "Plan",
+      "menuSlug": "Menu URL",
+      "changePassword": "Change Password",
+      "changePasswordDesc": "Update your password to keep your account secure",
+      "currentPassword": "Current password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm password",
+      "updatePassword": "Update Password",
+      "passwordChanged": "Password updated!",
+      "passwordError": "Error changing password",
+      "passwordMismatch": "Passwords do not match",
+      "passwordTooShort": "Password must be at least 8 characters",
+      "dangerZone": "Danger Zone",
+      "dangerZoneDesc": "Log out of your account"
     },
     "upgrade": {
       "bannerTitle": "Upgrade to Pro",
-      "bannerDescription": "Remove RESTO360 branding and customize your menu",
+      "bannerDescription": "Remove BIZ360 branding and customize your menu",
       "cardTitle": "Upgrade to Pro",
       "cardDescription": "Unlock all features for just 6000 XOF/month",
-      "feature1": "Remove RESTO360 branding",
+      "feature1": "Remove BIZ360 branding",
       "feature2": "Custom colors",
       "feature3": "Priority support",
       "upgradeCta": "Upgrade to Pro",
-      "inlineText": "Remove RESTO360 branding"
+      "inlineText": "Remove BIZ360 branding"
     },
     "upgradePage": {
       "title": "Choose Your Plan",
@@ -265,7 +882,7 @@
             "items": "Unlimited menu items",
             "qr": "QR code generator",
             "analytics": "Basic view analytics",
-            "branding": "RESTO360 branding on menu"
+            "branding": "BIZ360 branding on menu"
           },
           "cta": "Current Plan"
         },
@@ -274,7 +891,7 @@
           "description": "For growing restaurants",
           "features": {
             "everything": "Everything in Free",
-            "noBranding": "No RESTO360 branding",
+            "noBranding": "No BIZ360 branding",
             "colors": "Custom brand colors",
             "logo": "Upload your logo",
             "priority": "Priority support"
@@ -323,6 +940,1367 @@
         "notify": "Notify me",
         "thanks": "Thanks for your interest!",
         "weWillContact": "We will contact you when Pro is available."
+      }
+    },
+    "themes": {
+      "title": "Menu Theme",
+      "subtitle": "Customize the look and feel of your menu",
+      "tabs": {
+        "template": "Template",
+        "colors": "Colors",
+        "typography": "Typography",
+        "layout": "Layout"
+      },
+      "selectTemplate": "Select a template",
+      "primaryColor": "Primary Color",
+      "secondaryColor": "Secondary Color",
+      "backgroundColor": "Background Color",
+      "textColor": "Text Color",
+      "colorPresets": "Quick Presets",
+      "headingFont": "Heading Font",
+      "bodyFont": "Body Font",
+      "logoPosition": "Logo Position",
+      "positions": {
+        "left": "Left",
+        "center": "Center",
+        "right": "Right"
+      },
+      "displayOptions": "Display Options",
+      "showPrices": "Show prices",
+      "showDescriptions": "Show descriptions",
+      "showImages": "Show item images",
+      "compactMode": "Compact mode",
+      "previewMenu": "Preview Menu",
+      "preview": "Live Preview",
+      "saving": "Saving...",
+      "saved": "Saved!"
+    },
+    "aiBuilder": {
+      "title": "AI Menu Builder",
+      "subtitle": "Use AI to create and enhance your menu",
+      "tabs": {
+        "import": "Import",
+        "ocr": "Scan Menu",
+        "generate": "Generate",
+        "translate": "Translate"
+      },
+      "importUpload": "Upload your menu file",
+      "importFormats": "Supported formats: CSV, Excel (.xlsx)",
+      "selectFile": "Select File",
+      "uploading": "Uploading...",
+      "importWarnings": "{count} warnings found",
+      "importError": "Failed to parse file. Please check the format.",
+      "reviewImport": "Review {count} items to import",
+      "confirmImport": "Import Items",
+      "importing": "Importing...",
+      "importSuccess": "Successfully imported {count} items!",
+      "importConfirmError": "Failed to import items. Please try again.",
+      "importWarningsTitle": "Import Warnings",
+      "moreErrors": "And {count} more...",
+      "columnName": "Name",
+      "columnPrice": "Price",
+      "columnCategory": "Category",
+      "ocrUpload": "Scan a menu photo",
+      "ocrDescription": "Take a photo of your existing menu and we will extract the items",
+      "uploadPhoto": "Upload Photo",
+      "changeImage": "Change Image",
+      "extractMenu": "Extract Menu",
+      "extracting": "Extracting...",
+      "ocrError": "Failed to extract menu. Please try a clearer image.",
+      "generateDescription": "Generate Description",
+      "itemName": "Item Name",
+      "itemNamePlaceholder": "e.g., Kédjenou de Poulet",
+      "category": "Category",
+      "categoryPlaceholder": "e.g., Main Dishes",
+      "ingredients": "Ingredients",
+      "ingredientsPlaceholder": "e.g., fish, rice, vegetables",
+      "language": "Language",
+      "generateBtn": "Generate",
+      "generating": "Generating...",
+      "generateError": "Failed to generate description. Please try again.",
+      "copyToClipboard": "Copy to clipboard",
+      "suggestPrice": "Price Suggestion",
+      "descriptionOptional": "Description (optional)",
+      "descriptionPlaceholder": "Describe the dish...",
+      "suggestBtn": "Suggest Price",
+      "suggesting": "Suggesting...",
+      "priceError": "Failed to suggest price. Please try again.",
+      "priceRange": "Price range",
+      "fromLanguage": "From",
+      "toLanguage": "To",
+      "translateBtn": "Translate",
+      "translating": "Translating...",
+      "translateError": "Failed to translate. Please try again.",
+      "translatedName": "Translated name",
+      "translatedDescription": "Translated description"
+    },
+    "reservations": {
+      "title": "Reservations",
+      "subtitle": "Manage table bookings",
+      "newReservation": "New Reservation",
+      "today": "Today",
+      "totalReservations": "Total Reservations",
+      "totalGuests": "Total Guests",
+      "confirmed": "Confirmed",
+      "pending": "Pending",
+      "noReservations": "No reservations",
+      "noReservationsDesc": "No reservations for this date",
+      "time": "Time",
+      "guest": "Guest",
+      "party": "Party",
+      "table": "Table",
+      "status": "Status",
+      "actions": "Actions",
+      "code": "Code",
+      "guests": "guests",
+      "confirm": "Confirm",
+      "seat": "Seat",
+      "complete": "Complete",
+      "cancel": "Cancel",
+      "date": "Date",
+      "partySize": "Party Size",
+      "guestName": "Guest Name",
+      "phone": "Phone",
+      "email": "Email",
+      "occasion": "Occasion",
+      "selectOccasion": "Select occasion",
+      "occasionBirthday": "Birthday",
+      "occasionAnniversary": "Anniversary",
+      "occasionBusiness": "Business",
+      "occasionDate": "Date Night",
+      "occasionOther": "Other",
+      "specialRequests": "Special Requests",
+      "creating": "Creating...",
+      "create": "Create Reservation"
+    },
+    "reviews": {
+      "title": "Reviews",
+      "subtitle": "Manage customer reviews and feedback",
+      "totalReviews": "Total Reviews",
+      "averageRating": "Average Rating",
+      "responseRate": "Response Rate",
+      "pendingModeration": "Pending Moderation",
+      "filter": {
+        "all": "All",
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "noReviews": "No reviews yet",
+      "noReviewsDesc": "When customers leave reviews, they will appear here",
+      "verified": "Verified",
+      "featured": "Featured",
+      "food": "Food",
+      "service": "Service",
+      "ambiance": "Ambiance",
+      "value": "Value",
+      "ownerResponse": "Owner Response",
+      "approve": "Approve",
+      "reject": "Reject",
+      "feature": "Feature",
+      "unfeature": "Unfeature",
+      "respond": "Respond",
+      "respondToReview": "Respond to Review",
+      "responderName": "Your Name",
+      "responderNamePlaceholder": "e.g., Restaurant Manager",
+      "yourResponse": "Your Response",
+      "cancel": "Cancel",
+      "sending": "Sending...",
+      "sendResponse": "Send Response"
+    },
+    "loyalty": {
+      "title": "CRM & Loyalty",
+      "subtitle": "Manage customers and loyalty program",
+      "tabs": {
+        "overview": "Overview",
+        "customers": "Customers",
+        "rewards": "Rewards",
+        "settings": "Settings"
+      },
+      "totalCustomers": "Total Customers",
+      "activeCustomers": "Active Customers",
+      "newThisMonth": "New This Month",
+      "avgCustomerValue": "Avg. Customer Value",
+      "pointsOverview": "Points Overview",
+      "totalIssued": "Total Issued",
+      "totalRedeemed": "Total Redeemed",
+      "rewardsRedeemed": "Rewards Redeemed",
+      "customersByTier": "Customers by Tier",
+      "searchCustomers": "Search customers by name, email or phone...",
+      "addCustomer": "Add Customer",
+      "noCustomers": "No customers yet",
+      "noCustomersDesc": "Customers will appear here when they join your loyalty program",
+      "customer": "Customer",
+      "contact": "Contact",
+      "tier": "Tier",
+      "points": "Points",
+      "visits": "Visits",
+      "totalSpent": "Total Spent",
+      "addReward": "Add Reward",
+      "noRewards": "No rewards yet",
+      "noRewardsDesc": "Create rewards for customers to redeem with their points",
+      "active": "Active",
+      "inactive": "Inactive",
+      "redeemed": "redeemed",
+      "loyaltyProgram": "Loyalty Program",
+      "enableDisableProgram": "Enable or disable the loyalty program",
+      "pointsEarning": "Points Earning Rules",
+      "pointsPerUnit": "Points per Unit",
+      "pointsPer": "points per",
+      "signupBonus": "Signup Bonus",
+      "referralBonusReferrer": "Referral Bonus (Referrer)",
+      "referralBonusReferee": "Referral Bonus (Referee)",
+      "birthdayBonus": "Birthday Bonus",
+      "reviewBonus": "Review Bonus",
+      "pointsRedemption": "Points Redemption",
+      "minPointsRedeem": "Minimum Points to Redeem",
+      "pointsValue": "Points Value",
+      "perPoint": "per point",
+      "loyaltyTiers": "Loyalty Tiers",
+      "addTier": "Add Tier",
+      "noTiersDesc": "Create tiers to reward your best customers",
+      "customers": "customers",
+      "customerName": "Customer Name",
+      "email": "Email",
+      "phone": "Phone",
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "save": "Save",
+      "rewardName": "Reward Name",
+      "rewardNamePlaceholder": "e.g., Free Dessert",
+      "description": "Description",
+      "pointsRequired": "Points Required",
+      "rewardType": "Reward Type",
+      "rewardTypes": {
+        "freeItem": "Free Item",
+        "discountAmount": "Discount Amount",
+        "discountPercent": "Discount Percentage",
+        "experience": "Special Experience"
+      }
+    },
+    "website": {
+      "title": "Website Builder",
+      "subtitle": "Create and customize your restaurant website",
+      "tabs": {
+        "design": "Design",
+        "content": "Content",
+        "sections": "Sections",
+        "domain": "Domain",
+        "seo": "SEO"
+      },
+      "viewSite": "View Site",
+      "publish": "Publish",
+      "unpublish": "Unpublish",
+      "statusPublished": "Your website is live",
+      "statusDraft": "Your website is not published yet",
+      "selectTemplate": "Select Template",
+      "colors": "Colors",
+      "primaryColor": "Primary Color",
+      "secondaryColor": "Secondary Color",
+      "backgroundColor": "Background Color",
+      "textColor": "Text Color",
+      "heroSection": "Hero Section",
+      "heroTitle": "Hero Title",
+      "heroTitlePlaceholder": "Welcome to Our Restaurant",
+      "heroSubtitle": "Hero Subtitle",
+      "heroSubtitlePlaceholder": "Experience the finest cuisine in town",
+      "ctaButtonText": "CTA Button Text",
+      "ctaButtonPlaceholder": "View Menu",
+      "ctaButtonLink": "CTA Button Link",
+      "aboutSection": "About Section",
+      "aboutTitle": "About Title",
+      "aboutTitlePlaceholder": "Our Story",
+      "aboutText": "About Text",
+      "aboutTextPlaceholder": "Tell your restaurant's story...",
+      "contactInfo": "Contact Information",
+      "phone": "Phone",
+      "email": "Email",
+      "address": "Address",
+      "socialMedia": "Social Media Links",
+      "toggleSections": "Toggle Website Sections",
+      "showMenu": "Show Menu",
+      "showAbout": "Show About",
+      "showGallery": "Show Gallery",
+      "showHours": "Show Hours",
+      "showReservations": "Show Reservations",
+      "showReviews": "Show Reviews",
+      "showContact": "Show Contact",
+      "showMap": "Show Map",
+      "subdomain": "Subdomain",
+      "subdomainDesc": "Choose a subdomain for your website",
+      "check": "Check",
+      "save": "Save",
+      "subdomainAvailable": "Subdomain is available!",
+      "subdomainTaken": "Subdomain is already taken",
+      "customDomain": "Custom Domain",
+      "customDomainDesc": "Use your own domain name",
+      "customDomainComingSoon": "Custom domain support coming soon. Contact us for early access.",
+      "seoSettings": "SEO Settings",
+      "metaTitle": "Meta Title",
+      "metaTitlePlaceholder": "Your Restaurant - Best Food in Town",
+      "metaDescription": "Meta Description",
+      "metaDescriptionPlaceholder": "Describe your restaurant for search engines",
+      "characters": "characters",
+      "saving": "Saving..."
+    },
+    "social": {
+      "title": "Social Media",
+      "subtitle": "Automate your social media presence",
+      "tabs": {
+        "overview": "Overview",
+        "posts": "Posts",
+        "calendar": "Calendar",
+        "templates": "Templates",
+        "accounts": "Accounts",
+        "analytics": "Analytics"
+      },
+      "dashboard": {
+        "totalPosts": "Total Posts",
+        "scheduledPosts": "Scheduled",
+        "publishedThisMonth": "Published This Month",
+        "totalEngagement": "Total Engagement"
+      },
+      "accounts": {
+        "title": "Connected Accounts",
+        "connect": "Connect Account",
+        "disconnect": "Disconnect",
+        "refreshToken": "Refresh Token",
+        "noAccounts": "No accounts connected",
+        "noAccountsDesc": "Connect your social media accounts to start posting",
+        "connectNew": "Connect New Account",
+        "selectPlatform": "Select Platform",
+        "instagram": "Instagram",
+        "facebook": "Facebook",
+        "tiktok": "TikTok",
+        "twitter": "Twitter/X",
+        "connecting": "Connecting...",
+        "connected": "Connected",
+        "tokenExpired": "Token expired",
+        "lastSync": "Last sync"
+      },
+      "posts": {
+        "title": "Posts",
+        "newPost": "New Post",
+        "drafts": "Drafts",
+        "scheduled": "Scheduled",
+        "published": "Published",
+        "failed": "Failed",
+        "all": "All",
+        "noPosts": "No posts yet",
+        "noPostsDesc": "Create your first post to get started",
+        "createPost": "Create Post"
+      },
+      "postForm": {
+        "title": "Create Post",
+        "editTitle": "Edit Post",
+        "caption": "Caption",
+        "captionPlaceholder": "Write your caption...",
+        "hashtags": "Hashtags",
+        "hashtagsPlaceholder": "#restaurant #food #delicious",
+        "postType": "Post Type",
+        "image": "Image",
+        "carousel": "Carousel",
+        "video": "Video",
+        "story": "Story",
+        "reel": "Reel",
+        "selectAccounts": "Select Accounts",
+        "selectMenuItem": "Link Menu Item (optional)",
+        "selectTemplate": "Use Template",
+        "media": "Media",
+        "uploadMedia": "Upload Media",
+        "removeMedia": "Remove",
+        "generateCaption": "Generate with AI",
+        "saveDraft": "Save Draft",
+        "schedule": "Schedule",
+        "publishNow": "Publish Now"
+      },
+      "calendar": {
+        "title": "Content Calendar",
+        "today": "Today",
+        "addEntry": "Add Entry",
+        "noEntries": "No scheduled content",
+        "plannedContent": "Planned Content",
+        "notes": "Notes"
+      },
+      "templates": {
+        "title": "Post Templates",
+        "newTemplate": "New Template",
+        "noTemplates": "No templates yet",
+        "noTemplatesDesc": "Create reusable templates for your posts",
+        "name": "Template Name",
+        "description": "Description",
+        "captionTemplate": "Caption Template",
+        "captionHelp": "Use {item_name}, {price}, {description} as placeholders",
+        "visualSettings": "Visual Settings",
+        "backgroundColor": "Background Color",
+        "textColor": "Text Color",
+        "accentColor": "Accent Color",
+        "fontStyle": "Font Style",
+        "showPrice": "Show Price",
+        "showLogo": "Show Logo",
+        "overlayOpacity": "Overlay Opacity",
+        "isDefault": "Set as Default"
+      },
+      "aiCaption": {
+        "title": "AI Caption Generator",
+        "selectItem": "Select Menu Item",
+        "tone": "Tone",
+        "tones": {
+          "professional": "Professional",
+          "casual": "Casual",
+          "playful": "Playful",
+          "elegant": "Elegant",
+          "promotional": "Promotional"
+        },
+        "language": "Language",
+        "includeHashtags": "Include Hashtags",
+        "generate": "Generate Caption",
+        "generating": "Generating...",
+        "useCaption": "Use This Caption",
+        "regenerate": "Regenerate"
+      },
+      "analytics": {
+        "title": "Social Analytics",
+        "followers": "Followers",
+        "followersChange": "Change",
+        "engagement": "Engagement Rate",
+        "reach": "Total Reach",
+        "impressions": "Impressions",
+        "likes": "Likes",
+        "comments": "Comments",
+        "shares": "Shares",
+        "periodDays": "Last {days} days"
+      },
+      "status": {
+        "draft": "Draft",
+        "scheduled": "Scheduled",
+        "publishing": "Publishing",
+        "published": "Published",
+        "failed": "Failed"
+      }
+    },
+    "locations": {
+      "title": "Multi-Location Management",
+      "subtitle": "Manage your restaurant chain across multiple locations",
+      "tabs": {
+        "overview": "Overview",
+        "locations": "Locations",
+        "sharedMenu": "Shared Menu",
+        "groups": "Groups",
+        "announcements": "Announcements",
+        "reports": "Reports"
+      },
+      "dashboard": {
+        "totalLocations": "Total Locations",
+        "activeLocations": "Active Locations",
+        "ordersToday": "Orders Today",
+        "revenueToday": "Revenue Today",
+        "ordersMonth": "Orders This Month",
+        "revenueMonth": "Revenue This Month"
+      },
+      "brand": {
+        "title": "Brand Settings",
+        "name": "Brand Name",
+        "description": "Description",
+        "logo": "Brand Logo",
+        "colors": "Brand Colors",
+        "primaryColor": "Primary Color",
+        "secondaryColor": "Secondary Color",
+        "contact": "Contact Information",
+        "owner": "Owner Information"
+      },
+      "locationsList": {
+        "title": "Locations",
+        "addLocation": "Add Location",
+        "noLocations": "No locations yet",
+        "noLocationsDesc": "Add your first location to get started",
+        "flagship": "Flagship",
+        "locationCode": "Location Code",
+        "group": "Group",
+        "status": "Status",
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "groups": {
+        "title": "Location Groups",
+        "addGroup": "Add Group",
+        "noGroups": "No groups yet",
+        "noGroupsDesc": "Create groups to organize locations by region or city",
+        "name": "Group Name",
+        "description": "Description",
+        "locationCount": "{count} location(s)"
+      },
+      "sharedMenu": {
+        "title": "Shared Menus",
+        "addMenu": "Create Shared Menu",
+        "noMenus": "No shared menus",
+        "noMenusDesc": "Create a shared menu to sync across locations",
+        "default": "Default Menu",
+        "categories": "Categories",
+        "items": "Items",
+        "syncedLocations": "Synced to {count} location(s)",
+        "syncToLocation": "Sync to Location",
+        "priceOverrides": "Price Overrides",
+        "availability": "Item Availability"
+      },
+      "announcements": {
+        "title": "Announcements",
+        "addAnnouncement": "New Announcement",
+        "noAnnouncements": "No announcements",
+        "priority": "Priority",
+        "priorities": {
+          "low": "Low",
+          "normal": "Normal",
+          "high": "High",
+          "urgent": "Urgent"
+        },
+        "targetGroups": "Target Groups",
+        "allLocations": "All Locations",
+        "publishAt": "Publish At",
+        "expiresAt": "Expires At"
+      },
+      "reports": {
+        "title": "Consolidated Reports",
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly",
+        "totalOrders": "Total Orders",
+        "totalRevenue": "Total Revenue",
+        "avgOrderValue": "Average Order Value",
+        "topLocations": "Top Performing Locations",
+        "topItems": "Top Selling Items"
+      },
+      "noBrand": {
+        "title": "Multi-Location Not Enabled",
+        "description": "Your restaurant is not part of a brand/chain. Contact support to enable multi-location management.",
+        "contact": "Contact Support"
+      }
+    },
+    "analytics": {
+      "title": "Analytics Dashboard",
+      "subtitle": "Comprehensive insights into your restaurant's performance",
+      "tabs": {
+        "overview": "Overview",
+        "sales": "Sales",
+        "items": "Items",
+        "categories": "Categories",
+        "peakHours": "Peak Hours",
+        "customers": "Customers",
+        "reports": "Reports"
+      },
+      "period": {
+        "last7": "Last 7 days",
+        "last30": "Last 30 days",
+        "last90": "Last 90 days",
+        "custom": "Custom range"
+      },
+      "overview": {
+        "totalRevenue": "Total Revenue",
+        "totalOrders": "Total Orders",
+        "avgOrderValue": "Avg Order Value",
+        "itemsSold": "Items Sold",
+        "vsLastPeriod": "vs last period",
+        "revenueByDay": "Revenue by Day",
+        "ordersByType": "Orders by Type",
+        "dineIn": "Dine-in",
+        "takeaway": "Takeaway",
+        "delivery": "Delivery"
+      },
+      "sales": {
+        "title": "Sales Statistics",
+        "date": "Date",
+        "orders": "Orders",
+        "completed": "Completed",
+        "cancelled": "Cancelled",
+        "revenue": "Revenue",
+        "avgValue": "Avg Value"
+      },
+      "items": {
+        "title": "Item Performance",
+        "topSelling": "Top Selling Items",
+        "rank": "Rank",
+        "name": "Item Name",
+        "category": "Category",
+        "quantity": "Quantity Sold",
+        "revenue": "Revenue",
+        "noData": "No item data available for this period"
+      },
+      "categories": {
+        "title": "Category Performance",
+        "name": "Category",
+        "itemsSold": "Items Sold",
+        "orders": "Orders",
+        "revenue": "Revenue",
+        "percentage": "% of Total"
+      },
+      "peakHours": {
+        "title": "Peak Hours Analysis",
+        "description": "Understand when your restaurant is busiest",
+        "hour": "Hour",
+        "orders": "Orders",
+        "revenue": "Revenue",
+        "busiest": "Busiest hour",
+        "quietest": "Quietest hour"
+      },
+      "customers": {
+        "title": "Customer Analytics",
+        "newCustomers": "New Customers",
+        "returningCustomers": "Returning Customers",
+        "conversionRate": "Conversion Rate",
+        "menuViews": "Menu Views",
+        "ordersPlaced": "Orders Placed",
+        "funnel": "Conversion Funnel"
+      },
+      "reports": {
+        "title": "Reports",
+        "weeklyReports": "Weekly Reports",
+        "exportData": "Export Data",
+        "selectType": "Report Type",
+        "selectFormat": "Format",
+        "dateRange": "Date Range",
+        "from": "From",
+        "to": "To",
+        "generate": "Generate Report",
+        "download": "Download",
+        "pending": "Processing...",
+        "types": {
+          "sales": "Sales Report",
+          "items": "Item Performance",
+          "categories": "Category Performance",
+          "customers": "Customer Analytics",
+          "hourly": "Hourly Breakdown",
+          "full": "Full Report"
+        },
+        "formats": {
+          "csv": "CSV",
+          "pdf": "PDF",
+          "xlsx": "Excel"
+        }
+      },
+      "benchmarks": {
+        "title": "Industry Benchmarks",
+        "metric": "Metric",
+        "yourValue": "Your Value",
+        "industryAvg": "Industry Average",
+        "percentile": "Percentile",
+        "above": "Above Average",
+        "average": "Average",
+        "below": "Below Average"
+      }
+    },
+    "marketplace": {
+      "title": "Supplier Marketplace",
+      "subtitle": "Order supplies directly from verified suppliers",
+      "tabs": {
+        "browse": "Browse",
+        "orders": "My Orders",
+        "favorites": "Favorites",
+        "cart": "Cart"
+      },
+      "search": {
+        "placeholder": "Search products or suppliers...",
+        "filters": "Filters",
+        "category": "Category",
+        "priceRange": "Price Range",
+        "minPrice": "Min Price",
+        "maxPrice": "Max Price",
+        "inStock": "In Stock Only",
+        "city": "City",
+        "sortBy": "Sort By",
+        "sortOptions": {
+          "name": "Name (A-Z)",
+          "nameDesc": "Name (Z-A)",
+          "price": "Price (Low to High)",
+          "priceDesc": "Price (High to Low)",
+          "popularity": "Most Popular"
+        },
+        "results": "{count} products found",
+        "noResults": "No products found",
+        "noResultsDesc": "Try adjusting your filters or search terms"
+      },
+      "categories": {
+        "title": "Categories",
+        "all": "All Categories",
+        "produce": "Produce",
+        "meat": "Meat & Poultry",
+        "seafood": "Seafood",
+        "dairy": "Dairy & Eggs",
+        "beverages": "Beverages",
+        "dryGoods": "Dry Goods",
+        "spices": "Spices & Seasonings",
+        "packaging": "Packaging",
+        "equipment": "Equipment"
+      },
+      "supplier": {
+        "verified": "Verified Supplier",
+        "rating": "Rating",
+        "reviews": "reviews",
+        "minOrder": "Min Order",
+        "leadTime": "Lead Time",
+        "leadTimeDays": "{days} day(s)",
+        "deliveryAreas": "Delivers to",
+        "paymentTerms": "Payment Terms",
+        "yearsInBusiness": "Years in Business",
+        "viewProducts": "View Products",
+        "contact": "Contact Supplier",
+        "addToFavorites": "Add to Favorites",
+        "removeFromFavorites": "Remove from Favorites",
+        "types": {
+          "producer": "Producer/Farmer",
+          "wholesaler": "Wholesaler",
+          "distributor": "Distributor",
+          "manufacturer": "Manufacturer",
+          "importer": "Importer"
+        }
+      },
+      "product": {
+        "addToCart": "Add to Cart",
+        "outOfStock": "Out of Stock",
+        "lowStock": "Low Stock",
+        "madeToOrder": "Made to Order",
+        "unit": "Unit",
+        "minQuantity": "Min Quantity",
+        "bulkPricing": "Bulk Pricing",
+        "bulkPricingNote": "Order {quantity}+ for {price} each",
+        "origin": "Origin",
+        "brand": "Brand",
+        "certifications": "Certifications",
+        "sku": "SKU"
+      },
+      "cart": {
+        "title": "Shopping Cart",
+        "empty": "Your cart is empty",
+        "emptyDesc": "Add products from suppliers to get started",
+        "continueShopping": "Continue Shopping",
+        "subtotal": "Subtotal",
+        "deliveryFee": "Delivery Fee",
+        "total": "Total",
+        "checkout": "Place Order",
+        "clear": "Clear Cart",
+        "quantity": "Qty",
+        "remove": "Remove",
+        "minOrderNote": "Minimum order: {amount}"
+      },
+      "order": {
+        "title": "Order Details",
+        "orderNumber": "Order #",
+        "placed": "Placed",
+        "expectedDelivery": "Expected Delivery",
+        "deliveryAddress": "Delivery Address",
+        "deliveryInstructions": "Delivery Instructions",
+        "items": "Items",
+        "notes": "Notes to Supplier",
+        "status": {
+          "draft": "Draft",
+          "submitted": "Submitted",
+          "confirmed": "Confirmed",
+          "processing": "Processing",
+          "shipped": "Shipped",
+          "delivered": "Delivered",
+          "cancelled": "Cancelled"
+        },
+        "paymentStatus": {
+          "pending": "Payment Pending",
+          "partial": "Partially Paid",
+          "paid": "Paid",
+          "refunded": "Refunded"
+        },
+        "actions": {
+          "cancel": "Cancel Order",
+          "reorder": "Reorder",
+          "track": "Track Order",
+          "invoice": "View Invoice",
+          "review": "Leave Review"
+        },
+        "cancelConfirm": "Are you sure you want to cancel this order?",
+        "cancelSuccess": "Order cancelled successfully"
+      },
+      "orders": {
+        "title": "My Orders",
+        "noOrders": "No orders yet",
+        "noOrdersDesc": "Your supplier orders will appear here",
+        "filter": {
+          "all": "All Orders",
+          "active": "Active",
+          "completed": "Completed",
+          "cancelled": "Cancelled"
+        }
+      },
+      "favorites": {
+        "title": "Favorite Suppliers",
+        "noFavorites": "No favorites yet",
+        "noFavoritesDesc": "Save suppliers you frequently order from for quick access",
+        "notes": "Your notes",
+        "addNote": "Add a note"
+      },
+      "checkout": {
+        "title": "Place Order",
+        "deliveryAddress": "Delivery Address",
+        "deliveryAddressPlaceholder": "Enter your delivery address",
+        "deliveryInstructions": "Delivery Instructions (optional)",
+        "deliveryInstructionsPlaceholder": "E.g., Call when arriving, gate code: 1234",
+        "expectedDelivery": "Preferred Delivery Date",
+        "notes": "Additional Notes",
+        "notesPlaceholder": "Any special requests or notes for the supplier",
+        "placeOrder": "Place Order",
+        "placing": "Placing Order...",
+        "success": "Order placed successfully!",
+        "error": "Failed to place order. Please try again."
+      },
+      "review": {
+        "title": "Review Supplier",
+        "overallRating": "Overall Rating",
+        "qualityRating": "Product Quality",
+        "deliveryRating": "Delivery",
+        "communicationRating": "Communication",
+        "valueRating": "Value for Money",
+        "comment": "Your Review",
+        "commentPlaceholder": "Share your experience with this supplier...",
+        "submit": "Submit Review",
+        "submitting": "Submitting...",
+        "success": "Review submitted successfully!",
+        "verified": "Verified Purchase"
+      }
+    },
+    "financing": {
+      "title": "Restaurant Financing",
+      "subtitle": "Access capital to grow your business",
+      "tabs": {
+        "overview": "Overview",
+        "apply": "Apply",
+        "loans": "My Loans",
+        "calculator": "Calculator",
+        "settings": "Settings"
+      },
+      "dashboard": {
+        "creditScore": "Credit Score",
+        "creditScoreDesc": "Based on your platform performance",
+        "availableCredit": "Available Credit",
+        "activeLoans": "Active Loans",
+        "totalOutstanding": "Total Outstanding",
+        "nextPayment": "Next Payment",
+        "nextPaymentDate": "Due Date",
+        "pendingApplications": "Pending Applications",
+        "eligiblePartners": "Eligible Partners",
+        "refreshScore": "Refresh Score"
+      },
+      "creditScore": {
+        "title": "Your Credit Score",
+        "score": "Score",
+        "band": {
+          "poor": "Poor",
+          "fair": "Fair",
+          "good": "Good",
+          "very_good": "Very Good",
+          "excellent": "Excellent"
+        },
+        "components": {
+          "revenue": "Revenue",
+          "payment": "Payment History",
+          "orders": "Order Volume",
+          "tenure": "Platform Tenure",
+          "activity": "Platform Activity"
+        },
+        "metrics": {
+          "avgMonthlyRevenue": "Avg Monthly Revenue",
+          "revenueGrowth": "Revenue Growth",
+          "avgMonthlyOrders": "Avg Monthly Orders",
+          "platformTenure": "Platform Tenure",
+          "paymentSuccessRate": "Payment Success Rate",
+          "activeDaysRatio": "Active Days Ratio"
+        },
+        "days": "days",
+        "lastUpdated": "Last updated"
+      },
+      "eligibility": {
+        "title": "Loan Eligibility",
+        "eligible": "You are eligible for financing!",
+        "notEligible": "Not currently eligible",
+        "maxAmount": "Maximum Amount",
+        "reasons": "Reasons",
+        "suggestions": "How to improve",
+        "eligibleProducts": "Eligible Products",
+        "checkEligibility": "Check Eligibility"
+      },
+      "partners": {
+        "title": "Finance Partners",
+        "subtitle": "Choose from our verified lending partners",
+        "noPartners": "No partners available",
+        "noPartnersDesc": "Finance partners will appear here when available",
+        "featured": "Featured",
+        "verified": "Verified Partner",
+        "minLoan": "Min Loan",
+        "maxLoan": "Max Loan",
+        "interestRate": "Interest Rate",
+        "terms": "Terms",
+        "months": "months",
+        "requirements": "Requirements",
+        "minScore": "Min Credit Score",
+        "minTenure": "Min Platform Tenure",
+        "minRevenue": "Min Monthly Revenue",
+        "viewProducts": "View Products",
+        "apply": "Apply Now"
+      },
+      "products": {
+        "title": "Loan Products",
+        "types": {
+          "working_capital": "Working Capital",
+          "equipment": "Equipment Financing",
+          "expansion": "Expansion Loan",
+          "inventory": "Inventory Financing",
+          "emergency": "Emergency Fund"
+        },
+        "amount": "Amount",
+        "interestRate": "Interest Rate",
+        "term": "Term",
+        "repaymentFrequency": "Repayment",
+        "frequencies": {
+          "daily": "Daily",
+          "weekly": "Weekly",
+          "biweekly": "Bi-weekly",
+          "monthly": "Monthly"
+        },
+        "autoDeduct": "Auto-deduction",
+        "autoDeductPercent": "of daily sales",
+        "minRequirements": "Minimum Requirements",
+        "applyForProduct": "Apply for This Product"
+      },
+      "application": {
+        "title": "Loan Application",
+        "step1": "Choose Partner",
+        "step2": "Select Product",
+        "step3": "Enter Details",
+        "step4": "Review & Submit",
+        "selectPartner": "Select a Finance Partner",
+        "selectProduct": "Select a Loan Product",
+        "amountRequested": "Amount Requested",
+        "amountMin": "Minimum",
+        "amountMax": "Maximum",
+        "termMonths": "Loan Term (months)",
+        "purpose": "Loan Purpose",
+        "purposes": {
+          "working_capital": "Working Capital",
+          "equipment": "Equipment Purchase",
+          "expansion": "Business Expansion",
+          "inventory": "Inventory",
+          "renovation": "Renovation",
+          "marketing": "Marketing",
+          "other": "Other"
+        },
+        "purposeDetails": "Please describe your plans",
+        "purposeDetailsPlaceholder": "Explain how you plan to use the funds...",
+        "documents": "Supporting Documents",
+        "documentsDesc": "Upload any relevant documents",
+        "review": "Review Application",
+        "reviewDesc": "Please review your application details",
+        "requestedAmount": "Requested Amount",
+        "selectedProduct": "Selected Product",
+        "selectedPartner": "Selected Partner",
+        "estimatedPayment": "Estimated Monthly Payment",
+        "estimatedTotal": "Estimated Total Repayment",
+        "termsAccept": "I agree to the terms and conditions",
+        "submit": "Submit Application",
+        "submitting": "Submitting...",
+        "success": "Application submitted successfully!",
+        "successDesc": "Your application is being reviewed. You will be notified when there's an update.",
+        "error": "Failed to submit application",
+        "back": "Back",
+        "next": "Next",
+        "cancel": "Cancel"
+      },
+      "applications": {
+        "title": "My Applications",
+        "noApplications": "No applications",
+        "noApplicationsDesc": "Your loan applications will appear here",
+        "applicationNumber": "Application #",
+        "submitted": "Submitted",
+        "status": {
+          "draft": "Draft",
+          "submitted": "Submitted",
+          "under_review": "Under Review",
+          "approved": "Approved",
+          "rejected": "Rejected",
+          "cancelled": "Cancelled",
+          "disbursed": "Disbursed"
+        },
+        "view": "View",
+        "edit": "Edit",
+        "cancelApplication": "Cancel Application",
+        "cancelConfirm": "Are you sure you want to cancel this application?"
+      },
+      "loans": {
+        "title": "My Loans",
+        "noLoans": "No active loans",
+        "noLoansDesc": "Your approved loans will appear here",
+        "loanNumber": "Loan #",
+        "principal": "Principal",
+        "outstanding": "Outstanding",
+        "paid": "Paid",
+        "progress": "Progress",
+        "status": {
+          "active": "Active",
+          "paid_off": "Paid Off",
+          "defaulted": "Defaulted",
+          "restructured": "Restructured"
+        },
+        "nextPayment": "Next Payment",
+        "dueDate": "Due Date",
+        "autoDeduct": "Auto-Deduction",
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "toggle": "Toggle",
+        "viewDetails": "View Details",
+        "makePayment": "Make Payment"
+      },
+      "loanDetail": {
+        "title": "Loan Details",
+        "overview": "Overview",
+        "repaymentSchedule": "Repayment Schedule",
+        "recentPayments": "Recent Payments",
+        "terms": {
+          "principal": "Principal Amount",
+          "interestRate": "Interest Rate",
+          "term": "Loan Term",
+          "originationFee": "Origination Fee",
+          "totalInterest": "Total Interest",
+          "totalRepayment": "Total Repayment",
+          "monthlyPayment": "Monthly Payment"
+        },
+        "dates": {
+          "disbursement": "Disbursement Date",
+          "firstPayment": "First Payment",
+          "maturity": "Maturity Date",
+          "paidOff": "Paid Off Date"
+        },
+        "autoDeduction": {
+          "title": "Auto-Deduction Settings",
+          "enabled": "Auto-deduction is enabled",
+          "disabled": "Auto-deduction is disabled",
+          "percentage": "Deduction Percentage",
+          "desc": "Percentage of daily sales automatically applied to loan repayment"
+        }
+      },
+      "repayments": {
+        "title": "Repayment History",
+        "noRepayments": "No repayments yet",
+        "paymentNumber": "Payment #",
+        "type": {
+          "scheduled": "Scheduled",
+          "auto_deduct": "Auto-Deduction",
+          "manual": "Manual",
+          "early": "Early Payment"
+        },
+        "amountDue": "Amount Due",
+        "amountPaid": "Amount Paid",
+        "dueDate": "Due Date",
+        "paidDate": "Paid Date",
+        "status": {
+          "pending": "Pending",
+          "processing": "Processing",
+          "completed": "Completed",
+          "failed": "Failed",
+          "reversed": "Reversed"
+        },
+        "late": "Late",
+        "onTime": "On Time",
+        "daysLate": "{days} days late"
+      },
+      "payment": {
+        "title": "Make Payment",
+        "amount": "Payment Amount",
+        "method": "Payment Method",
+        "methods": {
+          "wave": "Wave",
+          "orange_money": "Orange Money",
+          "mtn_momo": "MTN MoMo",
+          "bank_transfer": "Bank Transfer",
+          "cash": "Cash"
+        },
+        "reference": "Reference (optional)",
+        "referencePlaceholder": "Transaction reference or receipt number",
+        "submit": "Submit Payment",
+        "submitting": "Processing...",
+        "success": "Payment recorded successfully!",
+        "error": "Failed to process payment"
+      },
+      "calculator": {
+        "title": "Loan Calculator",
+        "subtitle": "Estimate your loan repayments",
+        "loanAmount": "Loan Amount",
+        "interestRate": "Annual Interest Rate",
+        "loanTerm": "Loan Term (months)",
+        "calculate": "Calculate",
+        "results": {
+          "title": "Estimated Repayments",
+          "monthlyPayment": "Monthly Payment",
+          "totalInterest": "Total Interest",
+          "totalRepayment": "Total Repayment",
+          "schedule": "Repayment Schedule"
+        },
+        "schedule": {
+          "month": "Month",
+          "payment": "Payment",
+          "principal": "Principal",
+          "interest": "Interest",
+          "balance": "Balance"
+        }
+      },
+      "settings": {
+        "title": "Financing Settings",
+        "enableFinancing": "Enable Financing",
+        "enableFinancingDesc": "Opt-in to financing features and partner offers",
+        "autoDeductConsent": "Auto-Deduction Consent",
+        "autoDeductConsentDesc": "Allow automatic deductions from daily sales for loan repayments",
+        "maxAutoDeduct": "Maximum Auto-Deduction",
+        "maxAutoDeductDesc": "Maximum percentage of daily sales that can be auto-deducted",
+        "preferredPartner": "Preferred Partner",
+        "preferredPartnerDesc": "Your preferred finance partner for loan offers",
+        "selectPartner": "Select Partner",
+        "noPreference": "No preference",
+        "notifications": "Notifications",
+        "notifyPaymentDue": "Payment due reminders",
+        "notifyPaymentProcessed": "Payment processed confirmations",
+        "notifyNewOffers": "New financing offers",
+        "save": "Save Settings",
+        "saving": "Saving...",
+        "saved": "Settings saved!"
+      }
+    },
+    "forecasting": {
+      "title": "Sales Forecasting",
+      "subtitle": "AI-powered predictions based on weather, events, and historical data",
+      "tabs": {
+        "overview": "Overview",
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "events": "Events",
+        "weather": "Weather"
+      },
+      "overview": {
+        "next7DaysRevenue": "Next 7 Days Revenue",
+        "next30DaysRevenue": "Next 30 Days Revenue",
+        "accuracy": "Forecast Accuracy",
+        "last30Days": "Last 30 days",
+        "upcomingEvents": "Upcoming Events",
+        "eventsThisMonth": "Events this month",
+        "orders": "orders",
+        "bestDayPredicted": "Best Day Predicted",
+        "slowestDayPredicted": "Slowest Day Predicted",
+        "expectedRevenue": "Expected Revenue",
+        "next7DaysForecast": "Next 7 Days Forecast",
+        "eventImpact": "Event impact",
+        "weatherImpact": "Weather impact",
+        "forecastFactors": "Forecast Factors",
+        "factorsDescription": "Our AI considers these factors when predicting your sales",
+        "factorDayOfWeek": "Day of Week",
+        "factorDayDesc": "Weekends typically see higher traffic",
+        "factorWeather": "Weather",
+        "factorWeatherDesc": "Rain can reduce foot traffic by 10-20%",
+        "factorEvents": "Events & Holidays",
+        "factorEventsDesc": "Holidays and local events boost sales"
+      },
+      "daily": {
+        "title": "Daily Forecasts",
+        "subtitle": "Predicted revenue and orders for the next 14 days",
+        "date": "Date",
+        "predictedRevenue": "Predicted Revenue",
+        "predictedOrders": "Predicted Orders",
+        "confidence": "Confidence",
+        "factors": "Factors",
+        "actual": "Actual",
+        "weekend": "Weekend",
+        "event": "Event",
+        "rain": "Rain"
+      },
+      "weekly": {
+        "title": "Weekly Forecasts",
+        "subtitle": "Aggregated weekly predictions",
+        "confidence": "confidence",
+        "orders": "orders",
+        "keyEvents": "Key events"
+      },
+      "events": {
+        "title": "Business Events",
+        "subtitle": "Events that impact your sales forecasts",
+        "addEvent": "Add Event",
+        "cancel": "Cancel",
+        "newEvent": "New Event",
+        "eventName": "Event Name",
+        "eventNamePlaceholder": "e.g., National Holiday",
+        "eventDate": "Event Date",
+        "eventType": "Event Type",
+        "expectedImpact": "Expected Impact",
+        "save": "Save Event",
+        "recurring": "Recurring",
+        "typeLocal": "Local Event",
+        "typePromotion": "Promotion",
+        "typeNational": "National Holiday",
+        "typeReligious": "Religious Holiday",
+        "typeCompetition": "Competition Event",
+        "impactVeryPositive": "+50% or more",
+        "impactPositive": "+10-50%",
+        "impactNeutral": "No impact",
+        "impactNegative": "-10-50%",
+        "impactVeryNegative": "-50% or more"
+      },
+      "weather": {
+        "title": "7-Day Weather Forecast",
+        "subtitle": "Weather conditions affect customer traffic and sales",
+        "howItWorks": "How Weather Affects Sales",
+        "sunny": "Sunny Days",
+        "sunnyDesc": "Normal to slightly higher traffic expected",
+        "cloudy": "Cloudy Days",
+        "cloudyDesc": "Minimal impact on sales, around 5% reduction",
+        "rainy": "Rainy Days",
+        "rainyDesc": "Expect 10-20% reduction in foot traffic",
+        "noImpact": "No impact",
+        "reduction": "reduction"
+      }
+    },
+    "invoicing": {
+      "title": "Electronic Invoicing",
+      "subtitle": "DGI-compliant electronic invoices for Ivory Coast",
+      "tabs": {
+        "invoices": "Invoices",
+        "configuration": "Configuration",
+        "reports": "Reports"
+      },
+      "invoices": {
+        "totalInvoices": "Total Invoices",
+        "validated": "Validated",
+        "pending": "Pending",
+        "rejected": "Rejected",
+        "searchPlaceholder": "Search invoices...",
+        "allStatuses": "All Statuses",
+        "statusValidated": "Validated",
+        "statusPending": "Pending",
+        "statusDraft": "Draft",
+        "statusRejected": "Rejected",
+        "statusCancelled": "Cancelled",
+        "number": "Invoice #",
+        "date": "Date",
+        "customer": "Customer",
+        "amountHT": "Amount (HT)",
+        "tva": "VAT (18%)",
+        "amountTTC": "Amount (TTC)",
+        "status": "Status",
+        "actions": "Actions",
+        "download": "Download",
+        "retry": "Retry",
+        "noInvoices": "No invoices found",
+        "statusDraft": "Draft",
+        "statusPendingvalidation": "Pending",
+        "statusValidated": "Validated",
+        "statusRejected": "Rejected",
+        "statusCancelled": "Cancelled"
+      },
+      "config": {
+        "dgiStatus": "DGI Connection Status",
+        "connected": "Connected",
+        "disconnected": "Disconnected",
+        "taxpayerId": "Taxpayer ID",
+        "establishmentId": "Establishment ID",
+        "environment": "Environment",
+        "production": "Production",
+        "sandbox": "Sandbox (Testing)",
+        "lastSync": "Last sync",
+        "dgiConfiguration": "DGI Configuration",
+        "apiKey": "API Key",
+        "apiSecret": "API Secret",
+        "useProduction": "Use Production Environment",
+        "productionWarning": "Production Mode Warning",
+        "productionWarningDesc": "Invoices submitted in production mode are legally binding and reported to DGI.",
+        "testConnection": "Test Connection",
+        "save": "Save Configuration",
+        "saving": "Saving...",
+        "saved": "Configuration saved successfully!",
+        "aboutDGI": "About DGI Electronic Invoicing",
+        "aboutDGIDesc": "The Direction Generale des Impots (DGI) requires businesses in Ivory Coast to submit electronic invoices (FNE/RNE) for tax compliance.",
+        "feature1": "Automatic invoice submission to DGI",
+        "feature2": "QR code verification on invoices",
+        "feature3": "Real-time validation status"
+      },
+      "reports": {
+        "monthlyOverview": "Monthly Invoice Summary",
+        "invoicesValidated": "invoices validated",
+        "totalTTC": "Total (TTC)",
+        "tvaCollected": "VAT Collected",
+        "download": "Download",
+        "taxSummary": "Tax Summary (Year to Date)",
+        "totalHT": "Total Revenue (HT)",
+        "totalTVA": "Total VAT",
+        "exportReports": "Export Reports",
+        "dgiReport": "DGI Compliance Report",
+        "dgiReportDesc": "Official format for tax filing",
+        "excelExport": "Excel Export",
+        "excelExportDesc": "Full invoice data for accounting"
+      }
+    },
+    "reorder": {
+      "title": "QR Reorder",
+      "subtitle": "Let customers reorder products by scanning QR codes on packaging",
+      "tabs": {
+        "qrcodes": "QR Codes",
+        "orders": "Orders",
+        "analytics": "Analytics"
+      },
+      "qrcodes": {
+        "title": "Reorder QR Codes",
+        "subtitle": "Create QR codes that customers can scan to quickly reorder",
+        "createNew": "Create QR Code",
+        "scans": "Scans",
+        "orders": "Orders",
+        "conversionRate": "Conversion",
+        "created": "Created",
+        "copyUrl": "Copy URL",
+        "printQR": "Print QR",
+        "download": "Download",
+        "noQRCodes": "No QR codes yet",
+        "noQRCodesDesc": "Create QR codes for your products to enable quick reordering",
+        "createFirst": "Create Your First QR Code",
+        "createTitle": "Create Reorder QR Code",
+        "selectProduct": "Select Product",
+        "selectProductPlaceholder": "Choose a product...",
+        "defaultQuantity": "Default Quantity",
+        "cancel": "Cancel",
+        "create": "Create",
+        "creating": "Creating..."
+      },
+      "orders": {
+        "title": "Reorder Orders",
+        "subtitle": "Orders placed via QR code scanning",
+        "quantity": "Quantity",
+        "customer": "Customer",
+        "phone": "Phone",
+        "confirm": "Confirm",
+        "cancel": "Cancel",
+        "startPreparing": "Start Preparing",
+        "markReady": "Mark Ready",
+        "markCompleted": "Complete",
+        "noOrders": "No reorder orders yet",
+        "noOrdersDesc": "Orders from QR code scans will appear here",
+        "statusPending": "Pending",
+        "statusConfirmed": "Confirmed",
+        "statusPreparing": "Preparing",
+        "statusReady": "Ready",
+        "statusCompleted": "Completed",
+        "statusCancelled": "Cancelled"
+      },
+      "analytics": {
+        "totalQRCodes": "Active QR Codes",
+        "totalScans": "Total Scans",
+        "totalOrders": "Reorder Orders",
+        "conversionRate": "Conversion Rate",
+        "ordersLast7Days": "Orders (Last 7 Days)",
+        "orders": "orders",
+        "topProducts": "Top Products by Reorders",
+        "howItWorks": "How QR Reorder Works",
+        "step1Title": "Print QR on Packaging",
+        "step1Desc": "Generate and print QR codes on your product packaging",
+        "step2Title": "Customer Scans",
+        "step2Desc": "Customer scans the QR code with their phone",
+        "step3Title": "Quick Reorder",
+        "step3Desc": "Customer places order in seconds, you get notified"
       }
     }
   },
@@ -390,6 +2368,75 @@
       "copied": "Copied!",
       "goToDashboard": "Go to Dashboard",
       "back": "Back"
+    }
+  },
+  "reorder": {
+    "loading": "Loading product...",
+    "errors": {
+      "title": "Oops!",
+      "productNotFound": "This product or QR code was not found.",
+      "orderFailed": "Failed to place order. Please try again.",
+      "retry": "Try Again"
+    },
+    "steps": {
+      "product": "Product",
+      "customer": "Info",
+      "payment": "Payment"
+    },
+    "product": {
+      "quantity": "Quantity",
+      "total": "Total",
+      "continue": "Continue",
+      "soldBy": "Sold by"
+    },
+    "customer": {
+      "title": "Your Information",
+      "subtitle": "We need your details to process the order",
+      "name": "Your Name",
+      "namePlaceholder": "Enter your full name",
+      "phone": "Phone Number",
+      "address": "Delivery Address",
+      "addressPlaceholder": "Enter your delivery address",
+      "notes": "Order Notes (Optional)",
+      "notesPlaceholder": "Any special instructions?",
+      "total": "Total",
+      "continue": "Continue to Payment"
+    },
+    "payment": {
+      "title": "Payment Method",
+      "subtitle": "Choose how you'd like to pay",
+      "methods": {
+        "wave": "Wave",
+        "orange_money": "Orange Money",
+        "mtn_momo": "MTN MoMo",
+        "cash": "Cash on Delivery"
+      },
+      "methodsDesc": {
+        "wave": "Pay instantly with Wave",
+        "orange_money": "Pay with Orange Money",
+        "mtn_momo": "Pay with MTN Mobile Money",
+        "cash": "Pay when you receive your order"
+      },
+      "summary": "Order Summary",
+      "delivery": "Delivery",
+      "free": "Free",
+      "total": "Total",
+      "deliveryTo": "Delivery To",
+      "placeOrder": "Place Order",
+      "processing": "Processing...",
+      "terms": "By placing this order, you agree to our terms of service"
+    },
+    "confirmation": {
+      "title": "Order Confirmed!",
+      "subtitle": "Your order has been placed successfully",
+      "orderNumber": "Order Number",
+      "product": "Product",
+      "total": "Total",
+      "payment": "Payment",
+      "nextSteps": "What's Next?",
+      "nextStepsDesc": "The business will contact you shortly to confirm your order and delivery time.",
+      "callBusiness": "Call Business",
+      "backHome": "Back to Home"
     }
   }
 }
