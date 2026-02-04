@@ -47,12 +47,15 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # GeoDjango for spatial data
+    "django.contrib.gis",
     # Third-party apps
     "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
     "imagekit",
+    "rest_framework_gis",
     # Audit history
     "simple_history",
     # Local apps
@@ -64,6 +67,7 @@ INSTALLED_APPS = [
     "apps.qr",
     "apps.inventory",
     "apps.payments",
+    "apps.delivery",
 ]
 
 # Custom user model
@@ -110,6 +114,11 @@ DATABASE_URL = env("DATABASE_URL", default="sqlite:///db.sqlite3")
 DATABASES = {
     "default": dj_database_url.parse(DATABASE_URL, conn_max_age=600),
 }
+
+# Override database engine to use PostGIS for GeoDjango support
+# This is required for PolygonField and PointField in delivery models
+if DATABASES["default"].get("ENGINE") == "django.db.backends.postgresql":
+    DATABASES["default"]["ENGINE"] = "django.contrib.gis.db.backends.postgis"
 
 
 # Password validation
@@ -252,3 +261,20 @@ MTN_USER_ID = env("MTN_USER_ID", default="")
 MTN_API_SECRET = env("MTN_API_SECRET", default="")
 MTN_ENVIRONMENT = env("MTN_ENVIRONMENT", default="sandbox")  # sandbox or production
 MTN_CALLBACK_URL = env("MTN_CALLBACK_URL", default="")
+
+# Flutterwave Configuration
+FLUTTERWAVE_SECRET_KEY = env("FLUTTERWAVE_SECRET_KEY", default="")
+FLUTTERWAVE_PUBLIC_KEY = env("FLUTTERWAVE_PUBLIC_KEY", default="")
+FLUTTERWAVE_WEBHOOK_SECRET = env("FLUTTERWAVE_WEBHOOK_SECRET", default="")
+FLUTTERWAVE_API_URL = env("FLUTTERWAVE_API_URL", default="https://api.flutterwave.com/v3")
+
+# Paystack Configuration
+PAYSTACK_SECRET_KEY = env("PAYSTACK_SECRET_KEY", default="")
+PAYSTACK_PUBLIC_KEY = env("PAYSTACK_PUBLIC_KEY", default="")
+PAYSTACK_API_URL = env("PAYSTACK_API_URL", default="https://api.paystack.co")
+
+# CinetPay Configuration
+CINETPAY_API_KEY = env("CINETPAY_API_KEY", default="")
+CINETPAY_SITE_ID = env("CINETPAY_SITE_ID", default="")
+CINETPAY_SECRET_KEY = env("CINETPAY_SECRET_KEY", default="")
+CINETPAY_API_URL = env("CINETPAY_API_URL", default="https://api-checkout.cinetpay.com/v2")

@@ -37,6 +37,13 @@ class Restaurant(BaseModel):
     timezone = models.CharField(max_length=50, default="Africa/Abidjan")
     currency = models.CharField(max_length=3, default="XOF")
     is_active = models.BooleanField(default=True)
+    # Location for delivery zone calculations
+    latitude = models.DecimalField(
+        max_digits=9, decimal_places=6, null=True, blank=True
+    )
+    longitude = models.DecimalField(
+        max_digits=9, decimal_places=6, null=True, blank=True
+    )
 
     class Meta:
         ordering = ["name"]

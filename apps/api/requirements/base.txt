@@ -45,3 +45,6 @@ django-simple-history>=3.11.0,<4.0
 
 # Finite state machine for payment status
 django-fsm-2>=3.0,<4.0
+
+# GeoDjango support for delivery zones
+djangorestframework-gis>=1.1.0,<2.0
