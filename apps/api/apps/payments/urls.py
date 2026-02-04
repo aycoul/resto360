@@ -19,6 +19,9 @@ urlpatterns = [
     path("webhooks/wave/", views.WaveWebhookView.as_view(), name="webhook-wave"),
     path("webhooks/orange/", views.OrangeWebhookView.as_view(), name="webhook-orange"),
     path("webhooks/mtn/", views.MTNWebhookView.as_view(), name="webhook-mtn"),
+    path("webhooks/flutterwave/", views.FlutterwaveWebhookView.as_view(), name="webhook-flutterwave"),
+    path("webhooks/paystack/", views.PaystackWebhookView.as_view(), name="webhook-paystack"),
+    path("webhooks/cinetpay/", views.CinetPayWebhookView.as_view(), name="webhook-cinetpay"),
     # Router URLs
     path("", include(router.urls)),
 ]

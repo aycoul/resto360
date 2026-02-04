@@ -306,6 +306,24 @@ class MTNWebhookView(BaseWebhookView):
     provider_code = "mtn"
 
 
+class FlutterwaveWebhookView(BaseWebhookView):
+    """Handle Flutterwave webhooks."""
+
+    provider_code = "flutterwave"
+
+
+class PaystackWebhookView(BaseWebhookView):
+    """Handle Paystack webhooks."""
+
+    provider_code = "paystack"
+
+
+class CinetPayWebhookView(BaseWebhookView):
+    """Handle CinetPay webhooks."""
+
+    provider_code = "cinetpay"
+
+
 class CashDrawerSessionViewSet(TenantContextMixin, viewsets.ModelViewSet):
     """
     ViewSet for managing cash drawer sessions.
