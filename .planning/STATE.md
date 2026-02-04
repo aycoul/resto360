@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-02-03)
 ## Current Position
 
 Phase: 4 of 9 (Payments)
-Plan: 4 of 6 in current phase
+Plan: 5 of 6 in current phase
 Status: In progress
-Last activity: 2026-02-04 - Completed 04-04-PLAN.md (Cash Provider and Drawer Sessions)
+Last activity: 2026-02-04 - Completed 04-05-PLAN.md (Payment API Endpoints)
 
-Progress: [█████████████████░░░░░░░░░░░░░░░░░░░] 47%
+Progress: [██████████████████░░░░░░░░░░░░░░░░░░] 50%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 17
+- Total plans completed: 18
 - Average duration: 9 minutes
-- Total execution time: 2.8 hours
+- Total execution time: 2.9 hours
 
 **By Phase:**
 
@@ -30,10 +30,10 @@ Progress: [█████████████████░░░░░░
 | 01-foundation | 3/3 | 33 min | 11 min |
 | 02-pos-core | 7/7 | 75 min | 11 min |
 | 03-inventory | 3/3 | 29 min | 10 min |
-| 04-payments | 4/6 | 17 min | 4 min |
+| 04-payments | 5/6 | 23 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-02 (9 min), 03-03 (7 min), 04-01 (9 min), 04-04 (8 min)
+- Last 5 plans: 03-03 (7 min), 04-01 (9 min), 04-04 (8 min), 04-05 (6 min)
 - Trend: Efficient execution
 
 *Updated after each plan completion*
@@ -112,6 +112,9 @@ Recent decisions affecting current work:
 - [04-04]: Use idempotency_key as provider_reference for cash payments
 - [04-04]: One open drawer session per cashier enforced at API level
 - [04-04]: ViewSet custom actions for workflow (open/current/close pattern)
+- [04-05]: Idempotency enforced at service layer before DB insert
+- [04-05]: Webhooks return 200 immediately, process async via Celery
+- [04-05]: Polling scheduled for Orange/MTN due to unreliable webhooks
 
 ### Pending Todos
 
@@ -132,8 +135,8 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Completed 04-04-PLAN.md (Cash Provider and Drawer Sessions)
+Stopped at: Completed 04-05-PLAN.md (Payment API Endpoints)
 Resume file: None
 
 ---
-*Next step: Continue Phase 4 - 04-05-PLAN.md (MTN MoMo Provider)*
+*Next step: Continue Phase 4 - 04-06-PLAN.md (Reconciliation and Refunds)*
