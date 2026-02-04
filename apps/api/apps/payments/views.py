@@ -11,6 +11,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
+from apps.core.permissions import IsOwnerOrManager
 from apps.core.views import TenantContextMixin
 from apps.orders.models import Order
 
@@ -23,8 +24,15 @@ from .serializers import (
     PaymentMethodSerializer,
     PaymentSerializer,
     PaymentStatusSerializer,
+    RefundRequestSerializer,
 )
-from .services import get_payment_status, initiate_payment
+from .services import (
+    get_daily_reconciliation,
+    get_payment_status,
+    get_reconciliation_range,
+    initiate_payment,
+    process_refund_request,
+)
 from .tasks import process_webhook_event
 
 logger = logging.getLogger(__name__)
@@ -180,6 +188,48 @@ class PaymentViewSet(TenantContextMixin, viewsets.ModelViewSet):
             )
 
         return Response(result)
+
+    @action(detail=True, methods=["post"])
+    def refund(self, request, pk=None):
+        """
+        Initiate a refund for a payment.
+
+        POST /api/payments/{id}/refund/
+        {
+            "amount": 5000,       # Optional - null or omit for full refund
+            "reason": "Customer request"  # Optional
+        }
+
+        Returns refund result.
+        """
+        # Get the payment
+        payment = self.get_queryset().filter(id=pk).first()
+
+        if not payment:
+            return Response(
+                {"detail": "Payment not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Validate request data
+        serializer = RefundRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        data = serializer.validated_data
+        refund_amount = data.get("amount")
+        reason = data.get("reason", "")
+
+        # Process the refund
+        result = process_refund_request(
+            payment=payment,
+            amount=refund_amount,
+            reason=reason,
+        )
+
+        if result["success"]:
+            return Response(result, status=status.HTTP_200_OK)
+        else:
+            return Response(result, status=status.HTTP_400_BAD_REQUEST)
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -388,3 +438,75 @@ class CashDrawerSessionViewSet(TenantContextMixin, viewsets.ModelViewSet):
         session.save()
 
         return Response(CashDrawerSessionSerializer(session).data)
+
+
+class ReconciliationView(TenantContextMixin, viewsets.ViewSet):
+    """
+    ViewSet for reconciliation reports.
+
+    GET /api/payments/reconciliation/ - Get daily reconciliation report
+    GET /api/payments/reconciliation/?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD - Range report
+    """
+
+    permission_classes = [IsAuthenticated, IsOwnerOrManager]
+
+    def list(self, request):
+        """
+        Get daily reconciliation report.
+
+        GET /api/payments/reconciliation/?date=2026-02-04
+        GET /api/payments/reconciliation/?start_date=2026-02-01&end_date=2026-02-04
+
+        Requires manager or owner role.
+        """
+        from datetime import datetime
+
+        # Check for date range request
+        start_date_str = request.query_params.get("start_date")
+        end_date_str = request.query_params.get("end_date")
+
+        if start_date_str and end_date_str:
+            # Parse dates
+            try:
+                start_date = datetime.strptime(start_date_str, "%Y-%m-%d").date()
+                end_date = datetime.strptime(end_date_str, "%Y-%m-%d").date()
+            except ValueError:
+                return Response(
+                    {"detail": "Invalid date format. Use YYYY-MM-DD."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Get range report
+            try:
+                results = get_reconciliation_range(
+                    restaurant=request.user.restaurant,
+                    start_date=start_date,
+                    end_date=end_date,
+                )
+            except ValueError as e:
+                return Response(
+                    {"detail": str(e)},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            return Response(results)
+
+        # Single date report
+        date_str = request.query_params.get("date")
+        date = None
+
+        if date_str:
+            try:
+                date = datetime.strptime(date_str, "%Y-%m-%d").date()
+            except ValueError:
+                return Response(
+                    {"detail": "Invalid date format. Use YYYY-MM-DD."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+        result = get_daily_reconciliation(
+            restaurant=request.user.restaurant,
+            date=date,
+        )
+
+        return Response(result)

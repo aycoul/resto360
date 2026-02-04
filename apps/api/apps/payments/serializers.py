@@ -161,3 +161,60 @@ class PaymentInitiateResponseSerializer(serializers.Serializer):
     redirect_url = serializers.URLField(read_only=True, allow_null=True)
     status = serializers.CharField(read_only=True)
     is_duplicate = serializers.BooleanField(read_only=True)
+
+
+class RefundRequestSerializer(serializers.Serializer):
+    """Serializer for refund request."""
+
+    amount = serializers.IntegerField(
+        required=False,
+        min_value=1,
+        allow_null=True,
+        help_text="Refund amount in XOF (null or omit for full refund)",
+    )
+    reason = serializers.CharField(
+        max_length=500,
+        required=False,
+        allow_blank=True,
+        default="",
+        help_text="Reason for the refund",
+    )
+
+
+class ProviderBreakdownSerializer(serializers.Serializer):
+    """Serializer for provider breakdown in reconciliation."""
+
+    provider_code = serializers.CharField(read_only=True)
+    provider_name = serializers.CharField(read_only=True)
+    count = serializers.IntegerField(read_only=True)
+    total = serializers.IntegerField(read_only=True)
+
+
+class ReconciliationTotalsSerializer(serializers.Serializer):
+    """Serializer for reconciliation totals."""
+
+    count = serializers.IntegerField(read_only=True)
+    amount = serializers.IntegerField(read_only=True)
+
+
+class ReconciliationSerializer(serializers.Serializer):
+    """Serializer for daily reconciliation report."""
+
+    date = serializers.DateField(read_only=True)
+    restaurant_id = serializers.UUIDField(read_only=True)
+    by_provider = ProviderBreakdownSerializer(many=True, read_only=True)
+    totals = ReconciliationTotalsSerializer(read_only=True)
+    refunds = ReconciliationTotalsSerializer(read_only=True)
+    pending = ReconciliationTotalsSerializer(read_only=True)
+    failed = ReconciliationTotalsSerializer(read_only=True)
+    net_amount = serializers.IntegerField(read_only=True)
+
+
+class RefundResponseSerializer(serializers.Serializer):
+    """Serializer for refund response."""
+
+    success = serializers.BooleanField(read_only=True)
+    refund_type = serializers.CharField(read_only=True, allow_null=True)
+    refunded_amount = serializers.IntegerField(read_only=True, allow_null=True)
+    provider_reference = serializers.CharField(read_only=True, allow_null=True)
+    error = serializers.CharField(read_only=True, allow_null=True)

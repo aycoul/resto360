@@ -7,6 +7,7 @@ from . import views
 
 router = DefaultRouter()
 router.register(r"methods", views.PaymentMethodViewSet, basename="payment-method")
+router.register(r"reconciliation", views.ReconciliationView, basename="reconciliation")
 router.register(r"", views.PaymentViewSet, basename="payment")
 router.register(
     r"drawer-sessions", views.CashDrawerSessionViewSet, basename="drawer-session"
