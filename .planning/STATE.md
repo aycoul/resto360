@@ -98,6 +98,11 @@ Recent decisions affecting current work:
 - [04-01]: FSMField with protected=True for payment status transitions
 - [04-01]: Idempotency dual-path: cache first (fast), DB fallback (recovery)
 - [04-01]: cache.add() for atomic SETNX locking in idempotency
+- [04-02]: HMAC-SHA256 with timestamp for Wave webhook signature verification
+- [04-02]: 5-minute max age for webhook replay attack protection
+- [04-02]: Celery shared_task for async webhook processing
+- [04-02]: Double-check locking pattern for concurrent webhook safety
+- [04-02]: Wave expects amount as STRING, not integer
 - [04-04]: CashProvider returns SUCCESS immediately (no PENDING->confirm flow)
 - [04-04]: Use idempotency_key as provider_reference for cash payments
 - [04-04]: One open drawer session per cashier enforced at API level
