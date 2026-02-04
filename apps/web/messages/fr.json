@@ -52,5 +52,29 @@
     "syncing": "Synchronisation...",
     "pendingOrders": "commandes en attente",
     "lastSync": "Derniere synchronisation"
+  },
+  "delivery": {
+    "loading": "Chargement...",
+    "notFound": "Livraison introuvable",
+    "notFoundDesc": "Ce lien de suivi a peut-être expiré ou la livraison n'existe pas.",
+    "reconnecting": "Reconnexion pour les mises à jour en direct...",
+    "deliveryAddress": "Adresse de livraison",
+    "restaurant": "Restaurant",
+    "yourDriver": "Votre livreur",
+    "callDriver": "Appeler le livreur",
+    "messageDriver": "Envoyer un message au livreur",
+    "deliveryProgress": "Progression de la livraison",
+    "statusPending": "Recherche d'un livreur...",
+    "statusAssigned": "Livreur assigné",
+    "statusPickedUp": "Commande récupérée",
+    "statusEnRoute": "En route",
+    "statusDelivered": "Livrée",
+    "order": "Commande",
+    "eta": "Heure estimée",
+    "findingDriver": "Recherche d'un livreur pour votre commande...",
+    "driverAssigned": "Un livreur a été assigné à votre commande",
+    "orderPickedUp": "Votre commande a été récupérée",
+    "onTheWay": "Votre commande est en route !",
+    "orderDelivered": "Votre commande a été livrée"
   }
 }

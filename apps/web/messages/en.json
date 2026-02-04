@@ -52,5 +52,29 @@
     "syncing": "Syncing...",
     "pendingOrders": "pending orders",
     "lastSync": "Last sync"
+  },
+  "delivery": {
+    "loading": "Loading...",
+    "notFound": "Delivery not found",
+    "notFoundDesc": "This tracking link may have expired or the delivery does not exist.",
+    "reconnecting": "Reconnecting for live updates...",
+    "deliveryAddress": "Delivery Address",
+    "restaurant": "Restaurant",
+    "yourDriver": "Your Driver",
+    "callDriver": "Call driver",
+    "messageDriver": "Message driver",
+    "deliveryProgress": "Delivery Progress",
+    "statusPending": "Finding driver...",
+    "statusAssigned": "Driver assigned",
+    "statusPickedUp": "Order picked up",
+    "statusEnRoute": "On the way",
+    "statusDelivered": "Delivered",
+    "order": "Order",
+    "eta": "ETA",
+    "findingDriver": "Finding a driver for your order...",
+    "driverAssigned": "A driver has been assigned to your order",
+    "orderPickedUp": "Your order has been picked up",
+    "onTheWay": "Your order is on the way!",
+    "orderDelivered": "Your order has been delivered"
   }
 }
