@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-03)
 
 **Core value:** Restaurants can take orders, accept payments, and manage deliveries - even when internet is unreliable.
-**Current focus:** Phase 3 - Inventory Management (COMPLETE)
+**Current focus:** Phase 4 - Payments (IN PROGRESS)
 
 ## Current Position
 
 Phase: 4 of 9 (Payments)
-Plan: 1 of 6 in current phase
+Plan: 4 of 6 in current phase
 Status: In progress
-Last activity: 2026-02-04 - Completed 04-01-PLAN.md (Payment Foundation)
+Last activity: 2026-02-04 - Completed 04-04-PLAN.md (Cash Provider and Drawer Sessions)
 
-Progress: [██████████████░░░░░░░░░░░░░░░░░░░░░░] 39%
+Progress: [█████████████████░░░░░░░░░░░░░░░░░░░] 47%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 14
-- Average duration: 10 minutes
-- Total execution time: 2.5 hours
+- Total plans completed: 17
+- Average duration: 9 minutes
+- Total execution time: 2.8 hours
 
 **By Phase:**
 
@@ -30,10 +30,10 @@ Progress: [██████████████░░░░░░░░░
 | 01-foundation | 3/3 | 33 min | 11 min |
 | 02-pos-core | 7/7 | 75 min | 11 min |
 | 03-inventory | 3/3 | 29 min | 10 min |
-| 04-payments | 1/6 | 9 min | 9 min |
+| 04-payments | 4/6 | 17 min | 4 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-07 (7 min), 03-01 (13 min), 03-02 (9 min), 03-03 (7 min), 04-01 (9 min)
+- Last 5 plans: 03-02 (9 min), 03-03 (7 min), 04-01 (9 min), 04-04 (8 min)
 - Trend: Efficient execution
 
 *Updated after each plan completion*
@@ -98,6 +98,10 @@ Recent decisions affecting current work:
 - [04-01]: FSMField with protected=True for payment status transitions
 - [04-01]: Idempotency dual-path: cache first (fast), DB fallback (recovery)
 - [04-01]: cache.add() for atomic SETNX locking in idempotency
+- [04-04]: CashProvider returns SUCCESS immediately (no PENDING->confirm flow)
+- [04-04]: Use idempotency_key as provider_reference for cash payments
+- [04-04]: One open drawer session per cashier enforced at API level
+- [04-04]: ViewSet custom actions for workflow (open/current/close pattern)
 
 ### Pending Todos
 
@@ -116,8 +120,8 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Completed 04-01-PLAN.md (Payment Foundation)
+Stopped at: Completed 04-04-PLAN.md (Cash Provider and Drawer Sessions)
 Resume file: None
 
 ---
-*Next step: Continue Phase 4 - 04-02-PLAN.md (Wave Money provider)*
+*Next step: Continue Phase 4 - 04-05-PLAN.md (MTN MoMo Provider)*
