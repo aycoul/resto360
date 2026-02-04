@@ -103,6 +103,11 @@ Recent decisions affecting current work:
 - [04-02]: Celery shared_task for async webhook processing
 - [04-02]: Double-check locking pattern for concurrent webhook safety
 - [04-02]: Wave expects amount as STRING, not integer
+- [04-03]: OAuth token caching with 60s pre-expiry refresh
+- [04-03]: Orange uses OUV currency code for XOF (API requirement)
+- [04-03]: MTN sandbox uses EUR, production uses XOF
+- [04-03]: Phone numbers stripped of + prefix for MTN partyId
+- [04-03]: poll_payment_status: 30 retries at 2min intervals = 1 hour window
 - [04-04]: CashProvider returns SUCCESS immediately (no PENDING->confirm flow)
 - [04-04]: Use idempotency_key as provider_reference for cash payments
 - [04-04]: One open drawer session per cashier enforced at API level
@@ -121,6 +126,8 @@ None yet.
 - Redis required for production WebSocket (configured but needs running instance)
 - WeasyPrint requires GTK libraries on Windows (missing, but not needed for tests)
 - Celery worker needed for production low-stock alerts (task runs eagerly in tests)
+- Orange Money API credentials needed for production (see 04-03-USER-SETUP.md)
+- MTN MoMo API credentials needed for production (see 04-03-USER-SETUP.md)
 
 ## Session Continuity
 
