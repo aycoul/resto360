@@ -3,7 +3,7 @@
 from rest_framework import serializers
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
-from .models import DeliveryZone, Driver
+from .models import Delivery, DeliveryZone, Driver
 
 
 class DeliveryZoneSerializer(GeoFeatureModelSerializer):
@@ -138,3 +138,100 @@ class DriverLocationUpdateSerializer(serializers.Serializer):
 
     lat = serializers.FloatField(min_value=-90, max_value=90)
     lng = serializers.FloatField(min_value=-180, max_value=180)
+
+
+class DeliverySerializer(serializers.ModelSerializer):
+    """Serializer for Delivery model."""
+
+    order_number = serializers.IntegerField(source="order.order_number", read_only=True)
+    driver_name = serializers.CharField(
+        source="driver.user.name", read_only=True, allow_null=True
+    )
+    zone_name = serializers.CharField(source="zone.name", read_only=True, allow_null=True)
+    delivery_lat = serializers.SerializerMethodField()
+    delivery_lng = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Delivery
+        fields = [
+            "id",
+            "order",
+            "order_number",
+            "driver",
+            "driver_name",
+            "zone",
+            "zone_name",
+            "status",
+            "pickup_address",
+            "delivery_address",
+            "delivery_lat",
+            "delivery_lng",
+            "delivery_notes",
+            "delivery_fee",
+            "assigned_at",
+            "picked_up_at",
+            "en_route_at",
+            "delivered_at",
+            "estimated_delivery_time",
+            "customer_name",
+            "customer_phone",
+            "proof_type",
+            "recipient_name",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            "status",
+            "assigned_at",
+            "picked_up_at",
+            "en_route_at",
+            "delivered_at",
+            "proof_type",
+            "recipient_name",
+        ]
+
+    def get_delivery_lat(self, obj):
+        if obj.delivery_location:
+            return obj.delivery_location.y
+        return None
+
+    def get_delivery_lng(self, obj):
+        if obj.delivery_location:
+            return obj.delivery_location.x
+        return None
+
+
+class DeliveryCreateSerializer(serializers.Serializer):
+    """Serializer for creating a delivery."""
+
+    order_id = serializers.UUIDField()
+    delivery_address = serializers.CharField(max_length=500)
+    delivery_lat = serializers.FloatField(min_value=-90, max_value=90)
+    delivery_lng = serializers.FloatField(min_value=-180, max_value=180)
+    delivery_notes = serializers.CharField(max_length=500, required=False, allow_blank=True)
+
+
+class DeliveryStatusUpdateSerializer(serializers.Serializer):
+    """Serializer for updating delivery status."""
+
+    status = serializers.ChoiceField(
+        choices=["picked_up", "en_route", "delivered", "cancelled"]
+    )
+    # For delivered status
+    proof_type = serializers.ChoiceField(
+        choices=[("photo", "Photo"), ("signature", "Signature")], required=False
+    )
+    proof_data = serializers.CharField(required=False, allow_blank=True)
+    recipient_name = serializers.CharField(max_length=100, required=False, allow_blank=True)
+    # For cancelled status
+    cancel_reason = serializers.CharField(max_length=500, required=False, allow_blank=True)
+
+
+class DeliveryConfirmSerializer(serializers.Serializer):
+    """Serializer for confirming delivery with proof."""
+
+    proof_type = serializers.ChoiceField(
+        choices=[("photo", "Photo"), ("signature", "Signature")]
+    )
+    proof_data = serializers.CharField(required=False, help_text="Base64 signature data")
+    recipient_name = serializers.CharField(max_length=100, required=False, allow_blank=True)

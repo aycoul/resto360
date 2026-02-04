@@ -4,7 +4,7 @@ import factory
 from django.contrib.gis.geos import Point, Polygon
 
 from apps.authentication.tests.factories import RestaurantFactory, UserFactory
-from apps.delivery.models import DeliveryZone, Driver
+from apps.delivery.models import Delivery, DeliveryZone, Driver
 
 
 class DeliveryZoneFactory(factory.django.DjangoModelFactory):
@@ -48,3 +48,38 @@ class DriverFactory(factory.django.DjangoModelFactory):
     vehicle_plate = factory.Sequence(lambda n: f"AB-{n:04d}-CI")
     is_available = False
     current_location = None
+
+
+class DeliveryFactory(factory.django.DjangoModelFactory):
+    """Factory for Delivery model."""
+
+    class Meta:
+        model = Delivery
+
+    restaurant = factory.SubFactory(RestaurantFactory)
+    order = factory.LazyAttribute(
+        lambda obj: _create_order(obj.restaurant)
+    )
+    zone = factory.SubFactory(
+        DeliveryZoneFactory, restaurant=factory.SelfAttribute("..restaurant")
+    )
+    status = "pending_assignment"
+    pickup_address = factory.LazyAttribute(
+        lambda obj: obj.restaurant.address or "123 Restaurant St"
+    )
+    pickup_location = factory.LazyFunction(lambda: Point(-4.01, 5.33, srid=4326))
+    delivery_address = "456 Customer Ave, Abidjan"
+    delivery_location = factory.LazyFunction(lambda: Point(-4.015, 5.335, srid=4326))
+    delivery_fee = 1500
+    customer_name = factory.Faker("name")
+    customer_phone = factory.Faker("phone_number")
+
+
+def _create_order(restaurant):
+    """Helper to create an order for a delivery."""
+    from apps.orders.tests.factories import OrderFactory
+
+    return OrderFactory(
+        restaurant=restaurant,
+        order_type="delivery",
+    )

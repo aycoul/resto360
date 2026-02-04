@@ -6,14 +6,17 @@ from rest_framework.test import APIClient
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.authentication.tests.factories import RestaurantFactory, UserFactory
+from apps.orders.tests.factories import OrderFactory
 
-from .factories import DeliveryZoneFactory, DriverFactory
+from .factories import DeliveryFactory, DeliveryZoneFactory, DriverFactory
 
 # Register factories as pytest fixtures
 register(RestaurantFactory)
 register(UserFactory)
 register(DeliveryZoneFactory)
 register(DriverFactory, "driver_profile")  # Avoid conflict with auth DriverFactory
+register(OrderFactory)
+register(DeliveryFactory)
 
 
 @pytest.fixture
@@ -29,6 +32,12 @@ def auth_client(api_client, user):
     refresh = RefreshToken.for_user(user)
     api_client.credentials(HTTP_AUTHORIZATION=f"Bearer {refresh.access_token}")
     return api_client
+
+
+@pytest.fixture
+def order(restaurant):
+    """Create an order for testing delivery."""
+    return OrderFactory(restaurant=restaurant, order_type="delivery")
 
 
 @pytest.fixture

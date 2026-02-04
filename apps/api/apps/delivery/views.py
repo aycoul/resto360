@@ -6,15 +6,20 @@ from rest_framework.response import Response
 
 from apps.core.views import TenantModelViewSet
 
-from .models import DeliveryZone, Driver
+from .models import Delivery, DeliveryStatus, DeliveryZone, Driver
 from .serializers import (
     CheckAddressSerializer,
+    DeliveryConfirmSerializer,
+    DeliveryCreateSerializer,
+    DeliverySerializer,
+    DeliveryStatusUpdateSerializer,
     DeliveryZoneListSerializer,
     DeliveryZoneSerializer,
     DriverCreateSerializer,
     DriverLocationUpdateSerializer,
     DriverSerializer,
 )
+from .services import assign_driver_to_delivery, create_delivery_for_order
 
 
 class DeliveryZoneViewSet(TenantModelViewSet):
@@ -155,3 +160,219 @@ class DriverViewSet(TenantModelViewSet):
             return Response(
                 {"error": "No driver profile found"}, status=status.HTTP_404_NOT_FOUND
             )
+
+
+class DeliveryViewSet(TenantModelViewSet):
+    """
+    ViewSet for delivery management.
+
+    list: Return all deliveries
+    retrieve: Return single delivery
+    create: Create delivery for an order
+    active: Return driver's active deliveries
+    update_status: Transition delivery status
+    confirm: Confirm delivery with proof
+    assign: Manually trigger driver assignment
+    """
+
+    serializer_class = DeliverySerializer
+
+    def get_queryset(self):
+        return Delivery.objects.filter(
+            restaurant=self.request.restaurant
+        ).select_related("order", "driver__user", "zone")
+
+    def get_serializer_class(self):
+        if self.action == "create":
+            return DeliveryCreateSerializer
+        if self.action == "update_status":
+            return DeliveryStatusUpdateSerializer
+        if self.action == "confirm":
+            return DeliveryConfirmSerializer
+        return DeliverySerializer
+
+    def create(self, request):
+        """Create a delivery for an order."""
+        serializer = DeliveryCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        from apps.orders.models import Order
+
+        try:
+            order = Order.objects.get(
+                id=serializer.validated_data["order_id"],
+                restaurant=request.restaurant,
+            )
+        except Order.DoesNotExist:
+            return Response(
+                {"error": "Order not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        try:
+            delivery = create_delivery_for_order(
+                order=order,
+                delivery_address=serializer.validated_data["delivery_address"],
+                delivery_lat=serializer.validated_data["delivery_lat"],
+                delivery_lng=serializer.validated_data["delivery_lng"],
+                delivery_notes=serializer.validated_data.get("delivery_notes", ""),
+            )
+        except ValueError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(
+            DeliverySerializer(delivery).data, status=status.HTTP_201_CREATED
+        )
+
+    @action(detail=False, methods=["get"])
+    def active(self, request):
+        """
+        Get active deliveries for current driver.
+
+        GET /api/v1/delivery/deliveries/active/
+        """
+        try:
+            driver = Driver.objects.get(
+                restaurant=request.restaurant, user=request.user
+            )
+        except Driver.DoesNotExist:
+            return Response(
+                {"error": "No driver profile found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        deliveries = Delivery.objects.filter(
+            restaurant=request.restaurant,
+            driver=driver,
+            status__in=[
+                DeliveryStatus.ASSIGNED,
+                DeliveryStatus.PICKED_UP,
+                DeliveryStatus.EN_ROUTE,
+            ],
+        ).select_related("order", "zone")
+
+        return Response(DeliverySerializer(deliveries, many=True).data)
+
+    @action(detail=True, methods=["post"])
+    def update_status(self, request, pk=None):
+        """
+        Update delivery status.
+
+        POST /api/v1/delivery/deliveries/{id}/update_status/
+        Body: {"status": "picked_up"}
+        """
+        delivery = self.get_object()
+        serializer = DeliveryStatusUpdateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        new_status = serializer.validated_data["status"]
+
+        try:
+            if new_status == "picked_up":
+                delivery.mark_picked_up()
+            elif new_status == "en_route":
+                delivery.mark_en_route()
+            elif new_status == "delivered":
+                delivery.mark_delivered(
+                    proof_type=serializer.validated_data.get("proof_type", "none"),
+                    proof_data=serializer.validated_data.get("proof_data", ""),
+                    recipient_name=serializer.validated_data.get("recipient_name", ""),
+                )
+            elif new_status == "cancelled":
+                delivery.cancel(
+                    reason=serializer.validated_data.get("cancel_reason", "")
+                )
+
+            delivery.save()
+
+            # Broadcast status update via WebSocket
+            from asgiref.sync import async_to_sync
+            from channels.layers import get_channel_layer
+            from django.utils import timezone
+
+            if delivery.driver_id:
+                channel_layer = get_channel_layer()
+                async_to_sync(channel_layer.group_send)(
+                    f"driver_location_{delivery.driver_id}",
+                    {
+                        "type": "delivery_status_update",
+                        "status": delivery.status,
+                        "timestamp": timezone.now().isoformat(),
+                    },
+                )
+
+            return Response(DeliverySerializer(delivery).data)
+
+        except Exception as e:
+            return Response(
+                {"error": f"Invalid status transition: {str(e)}"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    @action(detail=True, methods=["post"])
+    def confirm(self, request, pk=None):
+        """
+        Confirm delivery with proof (photo or signature).
+
+        POST /api/v1/delivery/deliveries/{id}/confirm/
+        Body: {"proof_type": "signature", "proof_data": "base64...", "recipient_name": "John"}
+        """
+        delivery = self.get_object()
+        serializer = DeliveryConfirmSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        if delivery.status != DeliveryStatus.EN_ROUTE:
+            return Response(
+                {"error": "Delivery must be en_route to confirm"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            delivery.mark_delivered(
+                proof_type=serializer.validated_data["proof_type"],
+                proof_data=serializer.validated_data.get("proof_data", ""),
+                recipient_name=serializer.validated_data.get("recipient_name", ""),
+            )
+
+            # Handle photo upload if provided
+            if "proof_photo" in request.FILES:
+                delivery.proof_photo = request.FILES["proof_photo"]
+
+            delivery.save()
+
+            # Update driver stats and make available
+            if delivery.driver:
+                delivery.driver.total_deliveries += 1
+                delivery.driver.is_available = True
+                delivery.driver.save(update_fields=["total_deliveries", "is_available"])
+
+            return Response(DeliverySerializer(delivery).data)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=["post"])
+    def assign(self, request, pk=None):
+        """
+        Manually trigger driver assignment.
+
+        POST /api/v1/delivery/deliveries/{id}/assign/
+
+        This endpoint allows managers to manually trigger auto-assignment
+        or can be extended to accept a specific driver_id for manual override.
+        """
+        delivery = self.get_object()
+
+        if delivery.status != DeliveryStatus.PENDING_ASSIGNMENT:
+            return Response(
+                {"error": "Delivery already assigned or not pending"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        result = assign_driver_to_delivery(delivery.id)
+
+        if result is None:
+            return Response(
+                {"error": "No available drivers found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        return Response(DeliverySerializer(result).data)
