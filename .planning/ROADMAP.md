@@ -14,7 +14,8 @@ RESTO360 is an enterprise restaurant operating system for West Africa, deliverin
 - [x] **Phase 2: POS Core** - Menu management, order creation, offline-first PWA ✓
 - [x] **Phase 3: Inventory** - Stock tracking, alerts, automatic deduction ✓
 - [x] **Phase 4: Payments** - Wave, Orange, MTN mobile money integration ✓
-- [ ] **Phase 5: Delivery** - Zones, drivers, GPS tracking, mobile apps
+- [x] **Phase 5: Delivery** - Zones, drivers, GPS tracking, mobile apps ✓
+- [ ] **Phase 5.5: RESTO360 Lite** - Self-service digital menu platform (INSERTED)
 - [ ] **Phase 6: WhatsApp** - Order via chat, NLP parsing, notifications
 - [ ] **Phase 7: Suppliers** - Catalog, purchase orders, reorder suggestions
 - [ ] **Phase 8: Finance** - Credit scoring, loans, cash advances
@@ -116,6 +117,25 @@ Plans:
 - [x] 05-03b-PLAN.md - Driver navigation and delivery confirmation (Wave 4) ✓
 - [x] 05-04-PLAN.md - Customer tracking page in PWA with real-time map (Wave 4) ✓
 
+### Phase 5.5: RESTO360 Lite (INSERTED)
+**Goal**: Anyone can create a free digital menu in 5 minutes, with upgrade path to full platform
+**Depends on**: Phase 1, Phase 2
+**Requirements**: LITE-01, LITE-02, LITE-03, LITE-04, LITE-05
+**Success Criteria** (what must be TRUE):
+  1. Visitor can register and create menu without assistance (public self-service)
+  2. Restaurant has live QR menu within 5 minutes of starting registration
+  3. Owner can see how many times menu was viewed (basic analytics)
+  4. Owner can upgrade to Pro (custom branding) or Full (POS/payments) tier
+  5. 50+ restaurant signups in first month post-launch
+**Plans**: 5 plans in 3 waves
+
+Plans:
+- [ ] 05.5-01-PLAN.md - Plan system and public registration API (Wave 1)
+- [ ] 05.5-02-PLAN.md - Marketing landing page with pricing (Wave 1)
+- [ ] 05.5-03-PLAN.md - Onboarding wizard and QR generator (Wave 2)
+- [ ] 05.5-04-PLAN.md - Lite dashboard and menu editor (Wave 2)
+- [ ] 05.5-05-PLAN.md - Menu analytics and upgrade flow (Wave 3)
+
 ### Phase 6: WhatsApp
 **Goal**: Customers can order via WhatsApp conversation and receive status updates
 **Depends on**: Phase 2, Phase 4, Phase 5
@@ -188,7 +208,7 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 5.5 -> 6 -> 7 -> 8 -> 9
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -197,13 +217,14 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 | 3. Inventory | 3/3 | ✓ Complete | 2026-02-04 |
 | 4. Payments | 6/6 | ✓ Complete | 2026-02-04 |
 | 5. Delivery | 5/5 | ✓ Complete | 2026-02-04 |
+| 5.5 RESTO360 Lite | 0/5 | Planned | - |
 | 6. WhatsApp | 0/4 | Not started | - |
 | 7. Suppliers | 0/3 | Not started | - |
 | 8. Finance | 0/3 | Not started | - |
 | 9. Analytics | 0/3 | Not started | - |
 
-**Total:** 25/37 plans complete
+**Total:** 25/42 plans complete
 
 ---
 *Roadmap created: 2026-02-03*
-*Last updated: 2026-02-04 (Phase 5 complete)*
+*Last updated: 2026-02-04 (Phase 5.5 planned)*
