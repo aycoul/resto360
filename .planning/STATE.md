@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-03)
 
 **Core value:** Restaurants can take orders, accept payments, and manage deliveries - even when internet is unreliable.
-**Current focus:** Phase 4 - Payments (IN PROGRESS)
+**Current focus:** Phase 4 - Payments (COMPLETE)
 
 ## Current Position
 
 Phase: 4 of 9 (Payments)
-Plan: 5 of 6 in current phase
-Status: In progress
-Last activity: 2026-02-04 - Completed 04-05-PLAN.md (Payment API Endpoints)
+Plan: 6 of 6 in current phase
+Status: Phase complete
+Last activity: 2026-02-04 - Completed 04-06-PLAN.md (Reconciliation and Refunds)
 
-Progress: [██████████████████░░░░░░░░░░░░░░░░░░] 50%
+Progress: [███████████████████░░░░░░░░░░░░░░░░░] 53%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 18
+- Total plans completed: 19
 - Average duration: 9 minutes
-- Total execution time: 2.9 hours
+- Total execution time: 3.1 hours
 
 **By Phase:**
 
@@ -30,10 +30,10 @@ Progress: [██████████████████░░░░░
 | 01-foundation | 3/3 | 33 min | 11 min |
 | 02-pos-core | 7/7 | 75 min | 11 min |
 | 03-inventory | 3/3 | 29 min | 10 min |
-| 04-payments | 5/6 | 23 min | 5 min |
+| 04-payments | 6/6 | 35 min | 6 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-03 (7 min), 04-01 (9 min), 04-04 (8 min), 04-05 (6 min)
+- Last 5 plans: 04-01 (9 min), 04-04 (8 min), 04-05 (6 min), 04-06 (12 min)
 - Trend: Efficient execution
 
 *Updated after each plan completion*
@@ -115,6 +115,10 @@ Recent decisions affecting current work:
 - [04-05]: Idempotency enforced at service layer before DB insert
 - [04-05]: Webhooks return 200 immediately, process async via Celery
 - [04-05]: Polling scheduled for Orange/MTN due to unreliable webhooks
+- [04-06]: Net amount = totals.amount - refunds.amount (can be negative)
+- [04-06]: FSM transitions extended for PARTIALLY_REFUNDED -> PARTIALLY_REFUNDED and -> REFUNDED
+- [04-06]: Router registration order: specific paths before empty path
+- [04-06]: Use Model.all_objects.get(pk=pk) instead of refresh_from_db() for FSM fields
 
 ### Pending Todos
 
@@ -135,8 +139,8 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Completed 04-05-PLAN.md (Payment API Endpoints)
+Stopped at: Completed 04-06-PLAN.md (Reconciliation and Refunds)
 Resume file: None
 
 ---
-*Next step: Continue Phase 4 - 04-06-PLAN.md (Reconciliation and Refunds)*
+*Next step: Phase 4 complete - ready for Phase 5 (WhatsApp Notifications)*
