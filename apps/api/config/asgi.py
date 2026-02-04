@@ -20,14 +20,20 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.production")
 django_asgi_app = get_asgi_application()
 
 # Import routing after Django is set up
-from apps.orders.routing import websocket_urlpatterns
+from apps.delivery import routing as delivery_routing
+from apps.orders import routing as orders_routing
 from apps.orders.middleware import JWTAuthMiddleware
 
 application = ProtocolTypeRouter(
     {
         "http": django_asgi_app,
         "websocket": AllowedHostsOriginValidator(
-            JWTAuthMiddleware(URLRouter(websocket_urlpatterns))
+            JWTAuthMiddleware(
+                URLRouter(
+                    orders_routing.websocket_urlpatterns
+                    + delivery_routing.websocket_urlpatterns
+                )
+            )
         ),
     }
 )
