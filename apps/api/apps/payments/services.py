@@ -308,3 +308,252 @@ def get_payment_status(
     except Exception as e:
         logger.error("Error getting payment status for %s: %s", payment_id, str(e))
         return None
+
+
+def get_daily_reconciliation(restaurant: "Restaurant", date=None) -> dict:
+    """
+    Generate daily payment reconciliation report.
+
+    Args:
+        restaurant: Restaurant instance
+        date: Date to report on (defaults to today)
+
+    Returns:
+        dict with by_provider breakdown, totals, refunds, and net_amount
+    """
+    from datetime import timedelta
+
+    from django.db.models import Count, Sum
+    from django.utils import timezone
+
+    from .models import Payment, PaymentStatus
+
+    if date is None:
+        date = timezone.localdate()
+
+    # Build datetime range for the day
+    start = timezone.make_aware(
+        timezone.datetime.combine(date, timezone.datetime.min.time())
+    )
+    end = start + timedelta(days=1)
+
+    # Get successful payments for the day
+    payments = Payment.all_objects.filter(
+        restaurant=restaurant,
+        status=PaymentStatus.SUCCESS,
+        completed_at__gte=start,
+        completed_at__lt=end,
+    )
+
+    # Aggregate by provider
+    by_provider = payments.values("provider_code").annotate(
+        count=Count("id"),
+        total=Sum("amount"),
+    ).order_by("provider_code")
+
+    # Format provider names
+    provider_names = {
+        "wave": "Wave Money",
+        "orange": "Orange Money",
+        "mtn": "MTN MoMo",
+        "cash": "Cash",
+    }
+
+    by_provider_formatted = [
+        {
+            "provider_code": item["provider_code"],
+            "provider_name": provider_names.get(item["provider_code"], item["provider_code"]),
+            "count": item["count"],
+            "total": item["total"] or 0,
+        }
+        for item in by_provider
+    ]
+
+    # Calculate totals
+    totals = payments.aggregate(
+        total_count=Count("id"),
+        total_amount=Sum("amount"),
+    )
+
+    # Get refunds (same day)
+    refunds = Payment.all_objects.filter(
+        restaurant=restaurant,
+        status__in=[PaymentStatus.REFUNDED, PaymentStatus.PARTIALLY_REFUNDED],
+        completed_at__gte=start,
+        completed_at__lt=end,
+    ).aggregate(
+        refund_count=Count("id"),
+        refund_amount=Sum("refunded_amount"),
+    )
+
+    # Get pending payments (initiated but not completed)
+    pending = Payment.all_objects.filter(
+        restaurant=restaurant,
+        status=PaymentStatus.PROCESSING,
+        initiated_at__gte=start,
+        initiated_at__lt=end,
+    ).aggregate(
+        pending_count=Count("id"),
+        pending_amount=Sum("amount"),
+    )
+
+    # Get failed payments
+    failed = Payment.all_objects.filter(
+        restaurant=restaurant,
+        status__in=[PaymentStatus.FAILED, PaymentStatus.EXPIRED],
+        initiated_at__gte=start,
+        initiated_at__lt=end,
+    ).aggregate(
+        failed_count=Count("id"),
+        failed_amount=Sum("amount"),
+    )
+
+    total_amount = totals["total_amount"] or 0
+    refund_amount = refunds["refund_amount"] or 0
+
+    return {
+        "date": date.isoformat(),
+        "restaurant_id": str(restaurant.id),
+        "by_provider": by_provider_formatted,
+        "totals": {
+            "count": totals["total_count"] or 0,
+            "amount": total_amount,
+        },
+        "refunds": {
+            "count": refunds["refund_count"] or 0,
+            "amount": refund_amount,
+        },
+        "pending": {
+            "count": pending["pending_count"] or 0,
+            "amount": pending["pending_amount"] or 0,
+        },
+        "failed": {
+            "count": failed["failed_count"] or 0,
+            "amount": failed["failed_amount"] or 0,
+        },
+        "net_amount": total_amount - refund_amount,
+    }
+
+
+def get_reconciliation_range(restaurant: "Restaurant", start_date, end_date) -> list:
+    """
+    Get reconciliation for a date range (max 90 days).
+
+    Args:
+        restaurant: Restaurant instance
+        start_date: Start date for the range
+        end_date: End date for the range
+
+    Returns:
+        list of daily reconciliation dicts
+
+    Raises:
+        ValueError: If date range exceeds 90 days
+    """
+    from datetime import timedelta
+
+    # Enforce max 90 days
+    if (end_date - start_date).days > 90:
+        raise ValueError("Date range cannot exceed 90 days")
+
+    results = []
+    current = start_date
+    while current <= end_date:
+        results.append(get_daily_reconciliation(restaurant, current))
+        current += timedelta(days=1)
+
+    return results
+
+
+def process_refund_request(payment: "Payment", amount: int = None, reason: str = "") -> dict:
+    """
+    Process a refund request for a payment.
+
+    Args:
+        payment: Payment instance
+        amount: Refund amount (None = full refund)
+        reason: Reason for refund
+
+    Returns:
+        dict with success status and details
+    """
+    from .models import PaymentStatus
+    from .providers import get_provider
+
+    # Validate payment can be refunded
+    if payment.status not in [PaymentStatus.SUCCESS, PaymentStatus.PARTIALLY_REFUNDED]:
+        return {
+            "success": False,
+            "error": f"Cannot refund payment with status {payment.status}",
+        }
+
+    # Determine refund amount
+    max_refundable = payment.amount - payment.refunded_amount
+    if amount is None:
+        amount = max_refundable
+    else:
+        if amount > max_refundable:
+            return {
+                "success": False,
+                "error": f"Refund amount {amount} exceeds refundable amount {max_refundable}",
+            }
+
+    if amount <= 0:
+        return {
+            "success": False,
+            "error": "Refund amount must be positive",
+        }
+
+    # Cash refunds are immediate (just mark as refunded)
+    if payment.provider_code == "cash":
+        new_refunded_total = payment.refunded_amount + amount
+        if new_refunded_total == payment.amount:
+            payment.mark_refunded()
+        else:
+            payment.mark_partially_refunded(new_refunded_total)
+        payment.provider_response["refund_reason"] = reason
+        payment.save()
+        return {
+            "success": True,
+            "refund_type": "full" if payment.status == PaymentStatus.REFUNDED else "partial",
+            "refunded_amount": amount,
+        }
+
+    # Mobile money refund via provider
+    try:
+        provider = get_provider(payment.provider_code)
+        result = provider.process_refund(payment.provider_reference, amount)
+    except Exception as e:
+        logger.error(
+            "Provider refund failed for payment %s: %s",
+            payment.idempotency_key,
+            str(e),
+        )
+        return {
+            "success": False,
+            "error": str(e),
+        }
+
+    if not result.success:
+        return {
+            "success": False,
+            "error": result.error_message or "Provider refund failed",
+        }
+
+    # Update payment status
+    new_refunded_total = payment.refunded_amount + amount
+    if new_refunded_total == payment.amount:
+        payment.mark_refunded()
+    else:
+        payment.mark_partially_refunded(new_refunded_total)
+
+    payment.provider_response["refund_reference"] = result.provider_reference
+    payment.provider_response["refund_reason"] = reason
+    payment.save()
+
+    return {
+        "success": True,
+        "refund_type": "full" if payment.status == PaymentStatus.REFUNDED else "partial",
+        "refunded_amount": amount,
+        "provider_reference": result.provider_reference,
+    }
