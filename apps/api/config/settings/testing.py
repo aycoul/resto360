@@ -59,6 +59,7 @@ if SKIP_GIS_APPS:
         "apps.inventory",
         "apps.payments",
         # Skip: "apps.delivery",
+        "apps.analytics",
     ]
 
     AUTH_USER_MODEL = "authentication.User"

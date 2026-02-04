@@ -26,6 +26,7 @@ urlpatterns = [
     path("api/v1/", include("apps.qr.urls")),
     path("api/v1/inventory/", include("apps.inventory.urls")),
     path("api/v1/payments/", include("apps.payments.urls")),
+    path("api/v1/analytics/", include("apps.analytics.urls")),
 ]
 
 # Only include delivery URLs if GIS apps are available

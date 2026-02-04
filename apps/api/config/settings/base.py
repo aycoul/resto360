@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     "apps.inventory",
     "apps.payments",
     "apps.delivery",
+    "apps.analytics",
 ]
 
 # Custom user model
