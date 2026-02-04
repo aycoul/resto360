@@ -9,6 +9,8 @@ export interface Delivery {
   order_number: number;
   status: string;
   pickup_address: string;
+  pickup_lat?: number;
+  pickup_lng?: number;
   delivery_address: string;
   delivery_lat: number;
   delivery_lng: number;
