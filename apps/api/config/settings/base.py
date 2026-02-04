@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     "apps.receipts",
     "apps.qr",
     "apps.inventory",
+    "apps.payments",
 ]
 
 # Custom user model
