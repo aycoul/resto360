@@ -87,13 +87,15 @@ Plans:
   3. Customer can pay via MTN MoMo and transaction completes within 30 seconds
   4. Cashier can record cash payments with drawer tracking
   5. Manager can view daily reconciliation report showing all payments by method
-**Plans**: TBD
+**Plans**: 6 plans in 3 waves
 
 Plans:
-- [ ] 04-01: Payment model and provider abstraction
-- [ ] 04-02: Wave Money integration
-- [ ] 04-03: Orange Money and MTN MoMo integration
-- [ ] 04-04: Cash payments, receipts, and reconciliation
+- [x] 04-01-PLAN.md - Payment models, provider base class, and idempotency service (Wave 1) ✓
+- [ ] 04-02-PLAN.md - Wave Money provider with webhook handling (Wave 2)
+- [ ] 04-03-PLAN.md - Orange Money and MTN MoMo providers with polling (Wave 2)
+- [ ] 04-04-PLAN.md - Cash provider and drawer session management (Wave 2)
+- [ ] 04-05-PLAN.md - Payment API endpoints and status tracking (Wave 3)
+- [ ] 04-06-PLAN.md - Daily reconciliation report and refund functionality (Wave 3)
 
 ### Phase 5: Delivery
 **Goal**: Restaurant can manage delivery orders end-to-end with real-time tracking
@@ -192,15 +194,15 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 | 1. Foundation | 3/3 | ✓ Complete | 2026-02-03 |
 | 2. POS Core | 7/7 | ✓ Complete | 2026-02-03 |
 | 3. Inventory | 3/3 | ✓ Complete | 2026-02-04 |
-| 4. Payments | 0/4 | Not started | - |
+| 4. Payments | 1/6 | In progress | - |
 | 5. Delivery | 0/4 | Not started | - |
 | 6. WhatsApp | 0/4 | Not started | - |
 | 7. Suppliers | 0/3 | Not started | - |
 | 8. Finance | 0/3 | Not started | - |
 | 9. Analytics | 0/3 | Not started | - |
 
-**Total:** 13/34 plans complete
+**Total:** 14/36 plans complete
 
 ---
 *Roadmap created: 2026-02-03*
-*Last updated: 2026-02-04 (Phase 3 complete)*
+*Last updated: 2026-02-04 (Phase 4 planned)*
