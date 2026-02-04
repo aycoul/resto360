@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-03)
 
 **Core value:** Restaurants can take orders, accept payments, and manage deliveries - even when internet is unreliable.
-**Current focus:** Phase 5 - Delivery (COMPLETE)
+**Current focus:** Phase 5.5 - RESTO360 Lite (In progress)
 
 ## Current Position
 
-Phase: 5 of 9 (Delivery)
-Plan: 4 of 4 in current phase
-Status: Phase complete
-Last activity: 2026-02-04 - Completed 05-04-PLAN.md (Customer Tracking Page)
+Phase: 5.5 of 9 (RESTO360 Lite)
+Plan: 2 of 5 in current phase
+Status: In progress
+Last activity: 2026-02-04 - Completed 05.5-02-PLAN.md (Landing Page)
 
-Progress: [██████████████████████████████░░░░░░] 69%
+Progress: [███████████████████████████░░░░░░░░░] 62%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 22
+- Total plans completed: 23
 - Average duration: 9 minutes
-- Total execution time: 3.5 hours
+- Total execution time: 3.6 hours
 
 **By Phase:**
 
@@ -32,9 +32,10 @@ Progress: [███████████████████████
 | 03-inventory | 3/3 | 29 min | 10 min |
 | 04-payments | 6/6 | 35 min | 6 min |
 | 05-delivery | 5/5 | 69 min | 14 min |
+| 05.5-resto360-lite | 1/5 | 6 min | 6 min |
 
 **Recent Trend:**
-- Last 5 plans: 05-02 (8 min), 05-03 (10 min), 05-03b (16 min), 05-04 (28 min)
+- Last 5 plans: 05-03 (10 min), 05-03b (16 min), 05-04 (28 min), 05.5-02 (6 min)
 - Trend: Efficient execution
 
 *Updated after each plan completion*
@@ -141,6 +142,8 @@ Recent decisions affecting current work:
 - [05-04]: Delivery ID serves as access key for public tracking (no auth required)
 - [05-04]: Google Maps loaded via script tag instead of npm package (lighter weight)
 - [05-04]: tel: and sms: links for native mobile contact integration
+- [05.5-02]: 6000 XOF/month for Pro tier (pricing adapted for West Africa)
+- [05.5-02]: Landing page composition pattern: Section components in page.tsx
 
 ### Pending Todos
 
@@ -163,8 +166,15 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Completed 05-04-PLAN.md (Customer Tracking Page) - Phase 5 complete
+Stopped at: Completed 05.5-02-PLAN.md (Landing Page)
 Resume file: None
 
+### Roadmap Evolution
+
+- Phase 5.5 inserted after Phase 5: RESTO360 Lite - self-service digital menu platform (INSERTED)
+  - Rationale: Capture SMB market with free tier, create upgrade path to full platform
+  - Leverages: Phase 1 auth, Phase 2 menu models
+  - Synergies: Menu analytics foundation for Phase 9
+
 ---
-*Next step: Ready for Phase 6 (WhatsApp) planning*
+*Next step: Execute 05.5-03-PLAN.md (Registration)*
