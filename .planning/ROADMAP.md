@@ -15,7 +15,7 @@ RESTO360 is an enterprise restaurant operating system for West Africa, deliverin
 - [x] **Phase 3: Inventory** - Stock tracking, alerts, automatic deduction ✓
 - [x] **Phase 4: Payments** - Wave, Orange, MTN mobile money integration ✓
 - [x] **Phase 5: Delivery** - Zones, drivers, GPS tracking, mobile apps ✓
-- [ ] **Phase 5.5: RESTO360 Lite** - Self-service digital menu platform (INSERTED)
+- [x] **Phase 5.5: RESTO360 Lite** - Self-service digital menu platform (INSERTED) ✓
 - [ ] **Phase 6: WhatsApp** - Order via chat, NLP parsing, notifications
 - [ ] **Phase 7: Suppliers** - Catalog, purchase orders, reorder suggestions
 - [ ] **Phase 8: Finance** - Credit scoring, loans, cash advances
@@ -130,11 +130,11 @@ Plans:
 **Plans**: 5 plans in 3 waves
 
 Plans:
-- [ ] 05.5-01-PLAN.md - Plan system and public registration API (Wave 1)
-- [ ] 05.5-02-PLAN.md - Marketing landing page with pricing (Wave 1)
-- [ ] 05.5-03-PLAN.md - Onboarding wizard and QR generator (Wave 2)
-- [ ] 05.5-04-PLAN.md - Lite dashboard and menu editor (Wave 2)
-- [ ] 05.5-05-PLAN.md - Menu analytics and upgrade flow (Wave 3)
+- [x] 05.5-01-PLAN.md - Plan system and public registration API (Wave 1) ✓
+- [x] 05.5-02-PLAN.md - Marketing landing page with pricing (Wave 1) ✓
+- [x] 05.5-03-PLAN.md - Onboarding wizard and QR generator (Wave 2) ✓
+- [x] 05.5-04-PLAN.md - Lite dashboard and menu editor (Wave 2) ✓
+- [x] 05.5-05-PLAN.md - Menu analytics and upgrade flow (Wave 3) ✓
 
 ### Phase 6: WhatsApp
 **Goal**: Customers can order via WhatsApp conversation and receive status updates
@@ -217,14 +217,14 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 5.5 -> 6 -> 7 -> 8 -> 
 | 3. Inventory | 3/3 | ✓ Complete | 2026-02-04 |
 | 4. Payments | 6/6 | ✓ Complete | 2026-02-04 |
 | 5. Delivery | 5/5 | ✓ Complete | 2026-02-04 |
-| 5.5 RESTO360 Lite | 0/5 | Planned | - |
+| 5.5 RESTO360 Lite | 5/5 | ✓ Complete | 2026-02-04 |
 | 6. WhatsApp | 0/4 | Not started | - |
 | 7. Suppliers | 0/3 | Not started | - |
 | 8. Finance | 0/3 | Not started | - |
 | 9. Analytics | 0/3 | Not started | - |
 
-**Total:** 25/42 plans complete
+**Total:** 30/42 plans complete
 
 ---
 *Roadmap created: 2026-02-03*
-*Last updated: 2026-02-04 (Phase 5.5 planned)*
+*Last updated: 2026-02-04 (Phase 5.5 complete)*
