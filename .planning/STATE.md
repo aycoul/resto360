@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-03)
 
 **Core value:** Restaurants can take orders, accept payments, and manage deliveries - even when internet is unreliable.
-**Current focus:** Phase 5.5 - RESTO360 Lite (In progress)
+**Current focus:** Phase 5.5 - RESTO360 Lite (Complete)
 
 ## Current Position
 
 Phase: 5.5 of 9 (RESTO360 Lite)
-Plan: 4 of 5 in current phase (05.5-01, 05.5-02, 05.5-03, 05.5-04 complete)
-Status: In progress
-Last activity: 2026-02-04 - Completed 05.5-04-PLAN.md (Lite Dashboard)
+Plan: 5 of 5 in current phase (05.5-01, 05.5-02, 05.5-03, 05.5-04, 05.5-05 complete)
+Status: Phase complete
+Last activity: 2026-02-04 - Completed 05.5-05-PLAN.md (Menu Analytics)
 
-Progress: [████████████████████████████████░░░░] 72%
+Progress: [██████████████████████████████████░░] 75%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 26
+- Total plans completed: 27
 - Average duration: 9 minutes
-- Total execution time: 4.0 hours
+- Total execution time: 4.2 hours
 
 **By Phase:**
 
@@ -32,11 +32,11 @@ Progress: [███████████████████████
 | 03-inventory | 3/3 | 29 min | 10 min |
 | 04-payments | 6/6 | 35 min | 6 min |
 | 05-delivery | 5/5 | 69 min | 14 min |
-| 05.5-resto360-lite | 4/5 | 34 min | 8.5 min |
+| 05.5-resto360-lite | 5/5 | 44 min | 9 min |
 
 **Recent Trend:**
-- Last 5 plans: 05.5-02 (6 min), 05.5-01 (10 min), 05.5-03 (9 min), 05.5-04 (9 min)
-- Trend: Efficient execution
+- Last 5 plans: 05.5-01 (10 min), 05.5-03 (9 min), 05.5-04 (9 min), 05.5-05 (10 min)
+- Trend: Consistent execution
 
 *Updated after each plan completion*
 
@@ -154,6 +154,11 @@ Recent decisions affecting current work:
 - [05.5-04]: LiteContext for shared restaurant/user state across lite routes
 - [05.5-04]: Client-side QR generation with qrcode library for instant downloads
 - [05.5-04]: Upgrade prompts in three variants: banner, card, inline
+- [05.5-05]: JSONField instead of ArrayField for top_items (SQLite test compatibility)
+- [05.5-05]: Session ID stored in localStorage for persistent unique visitor tracking
+- [05.5-05]: Source detection from URL params (?source=qr) and referrer
+- [05.5-05]: Tracking endpoint is public (AllowAny) for anonymous menu visitors
+- [05.5-05]: useRef for tracking de-duplication on component mount
 
 ### Pending Todos
 
@@ -172,19 +177,20 @@ None yet.
 - MTN MoMo API credentials needed for production (see 04-03-USER-SETUP.md)
 - Google Maps API keys needed for driver app maps (see app.json placeholders)
 - Driver app requires development builds (Expo Go doesn't support background location)
+- Pro tier payment processing not implemented (Coming Soon placeholder in upgrade page)
 
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Completed 05.5-04-PLAN.md (Lite Dashboard)
+Stopped at: Completed 05.5-05-PLAN.md (Menu Analytics) - Phase 5.5 Complete
 Resume file: None
 
 ### Roadmap Evolution
 
-- Phase 5.5 inserted after Phase 5: RESTO360 Lite - self-service digital menu platform (INSERTED)
+- Phase 5.5 inserted after Phase 5: RESTO360 Lite - self-service digital menu platform (COMPLETE)
   - Rationale: Capture SMB market with free tier, create upgrade path to full platform
   - Leverages: Phase 1 auth, Phase 2 menu models
   - Synergies: Menu analytics foundation for Phase 9
 
 ---
-*Next step: Execute 05.5-05-PLAN.md (Menu Analytics)*
+*Next step: Execute Phase 06 (WhatsApp Ordering)*
