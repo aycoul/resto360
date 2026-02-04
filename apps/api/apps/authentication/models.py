@@ -29,6 +29,12 @@ class UserManager(BaseUserManager):
 class Restaurant(BaseModel):
     """A restaurant tenant in the system."""
 
+    PLAN_TYPE_CHOICES = [
+        ("free", "Free"),
+        ("pro", "Pro"),
+        ("full", "Full Platform"),
+    ]
+
     name = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
     phone = models.CharField(max_length=20)
@@ -43,6 +49,18 @@ class Restaurant(BaseModel):
     )
     longitude = models.DecimalField(
         max_digits=9, decimal_places=6, null=True, blank=True
+    )
+    # Plan type for freemium model
+    plan_type = models.CharField(
+        max_length=10, choices=PLAN_TYPE_CHOICES, default="free"
+    )
+    # Pro tier branding options
+    logo = models.ImageField(upload_to="restaurant_logos/", blank=True, null=True)
+    primary_color = models.CharField(
+        max_length=7, blank=True, help_text="Hex color code"
+    )
+    show_branding = models.BooleanField(
+        default=True, help_text="Show RESTO360 branding on free tier"
     )
 
     class Meta:
