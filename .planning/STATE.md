@@ -138,6 +138,9 @@ Recent decisions affecting current work:
 - [05-03b]: Linking.openURL for external maps - Google Maps first, Apple Maps fallback
 - [05-03b]: Tab-based confirmation UI for photo or signature proof-of-delivery
 - [05-03b]: MapView with calculated region to show all markers
+- [05-04]: Delivery ID serves as access key for public tracking (no auth required)
+- [05-04]: Google Maps loaded via script tag instead of npm package (lighter weight)
+- [05-04]: tel: and sms: links for native mobile contact integration
 
 ### Pending Todos
 
@@ -160,8 +163,8 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Completed 05-03b-PLAN.md (Driver Navigation and Confirmation)
+Stopped at: Completed 05-04-PLAN.md (Customer Tracking Page) - Phase 5 complete
 Resume file: None
 
 ---
-*Next step: Ready for 05-04-PLAN.md (Customer Tracking Page)*
+*Next step: Ready for Phase 6 (WhatsApp) planning*
