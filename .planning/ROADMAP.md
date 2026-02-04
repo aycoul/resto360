@@ -111,9 +111,10 @@ Plans:
 
 Plans:
 - [x] 05-01-PLAN.md - Delivery zones and driver management (GeoDjango + PostGIS) (Wave 1) ✓
-- [ ] 05-02-PLAN.md - Assignment algorithm and status tracking (FSM + WebSocket) (Wave 2)
-- [ ] 05-03-PLAN.md - Driver mobile app (React Native/Expo with background GPS) (Wave 3)
-- [ ] 05-04-PLAN.md - Customer tracking page in PWA with real-time map (Wave 3)
+- [x] 05-02-PLAN.md - Assignment algorithm and status tracking (FSM + WebSocket) (Wave 2) ✓
+- [x] 05-03-PLAN.md - Driver mobile app (React Native/Expo with background GPS) (Wave 3) ✓
+- [x] 05-03b-PLAN.md - Driver navigation and delivery confirmation (Wave 4) ✓
+- [ ] 05-04-PLAN.md - Customer tracking page in PWA with real-time map (Wave 4)
 
 ### Phase 6: WhatsApp
 **Goal**: Customers can order via WhatsApp conversation and receive status updates
@@ -195,13 +196,13 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 | 2. POS Core | 7/7 | ✓ Complete | 2026-02-03 |
 | 3. Inventory | 3/3 | ✓ Complete | 2026-02-04 |
 | 4. Payments | 6/6 | ✓ Complete | 2026-02-04 |
-| 5. Delivery | 1/4 | In progress | - |
+| 5. Delivery | 4/5 | In progress | - |
 | 6. WhatsApp | 0/4 | Not started | - |
 | 7. Suppliers | 0/3 | Not started | - |
 | 8. Finance | 0/3 | Not started | - |
 | 9. Analytics | 0/3 | Not started | - |
 
-**Total:** 20/36 plans complete
+**Total:** 24/37 plans complete
 
 ---
 *Roadmap created: 2026-02-03*

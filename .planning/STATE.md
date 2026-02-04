@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-03)
 
 **Core value:** Restaurants can take orders, accept payments, and manage deliveries - even when internet is unreliable.
-**Current focus:** Phase 5 - Delivery (IN PROGRESS)
+**Current focus:** Phase 5 - Delivery (COMPLETE)
 
 ## Current Position
 
 Phase: 5 of 9 (Delivery)
-Plan: 3 of 4 in current phase
-Status: In progress
-Last activity: 2026-02-04 - Completed 05-03-PLAN.md (Driver Mobile App)
+Plan: 4 of 4 in current phase
+Status: Phase complete
+Last activity: 2026-02-04 - Completed 05-04-PLAN.md (Customer Tracking Page)
 
-Progress: [████████████████████████░░░░░░░░░░░░] 61%
+Progress: [██████████████████████████████░░░░░░] 69%
 
 ## Performance Metrics
 
@@ -31,10 +31,10 @@ Progress: [███████████████████████
 | 02-pos-core | 7/7 | 75 min | 11 min |
 | 03-inventory | 3/3 | 29 min | 10 min |
 | 04-payments | 6/6 | 35 min | 6 min |
-| 05-delivery | 3/4 | 25 min | 8 min |
+| 05-delivery | 5/5 | 69 min | 14 min |
 
 **Recent Trend:**
-- Last 5 plans: 04-06 (12 min), 05-01 (7 min), 05-02 (8 min), 05-03 (10 min)
+- Last 5 plans: 05-02 (8 min), 05-03 (10 min), 05-03b (16 min), 05-04 (28 min)
 - Trend: Efficient execution
 
 *Updated after each plan completion*
@@ -135,6 +135,9 @@ Recent decisions affecting current work:
 - [05-03]: expo-secure-store for encrypted JWT token storage
 - [05-03]: TaskManager.defineTask for background location updates
 - [05-03]: WebSocket auto-reconnect with exponential backoff 1s-30s
+- [05-03b]: Linking.openURL for external maps - Google Maps first, Apple Maps fallback
+- [05-03b]: Tab-based confirmation UI for photo or signature proof-of-delivery
+- [05-03b]: MapView with calculated region to show all markers
 
 ### Pending Todos
 
@@ -157,8 +160,8 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Completed 05-03-PLAN.md (Driver Mobile App)
+Stopped at: Completed 05-03b-PLAN.md (Driver Navigation and Confirmation)
 Resume file: None
 
 ---
-*Next step: Ready for 05-03b-PLAN.md (Delivery Detail and Navigation) or 05-04-PLAN.md*
+*Next step: Ready for 05-04-PLAN.md (Customer Tracking Page)*
