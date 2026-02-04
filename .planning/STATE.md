@@ -9,19 +9,19 @@ See: .planning/PROJECT.md (updated 2026-02-03)
 
 ## Current Position
 
-Phase: 4 of 9 (Payments)
-Plan: 6 of 6 in current phase
-Status: Phase complete
-Last activity: 2026-02-04 - Completed 04-06-PLAN.md (Reconciliation and Refunds)
+Phase: 5 of 9 (Delivery)
+Plan: 1 of 4 in current phase
+Status: In progress
+Last activity: 2026-02-04 - Completed 05-01-PLAN.md (Delivery Foundation)
 
-Progress: [███████████████████░░░░░░░░░░░░░░░░░] 53%
+Progress: [████████████████████░░░░░░░░░░░░░░░░] 56%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 19
+- Total plans completed: 20
 - Average duration: 9 minutes
-- Total execution time: 3.1 hours
+- Total execution time: 3.2 hours
 
 **By Phase:**
 
@@ -31,9 +31,10 @@ Progress: [███████████████████░░░░
 | 02-pos-core | 7/7 | 75 min | 11 min |
 | 03-inventory | 3/3 | 29 min | 10 min |
 | 04-payments | 6/6 | 35 min | 6 min |
+| 05-delivery | 1/4 | 7 min | 7 min |
 
 **Recent Trend:**
-- Last 5 plans: 04-01 (9 min), 04-04 (8 min), 04-05 (6 min), 04-06 (12 min)
+- Last 5 plans: 04-04 (8 min), 04-05 (6 min), 04-06 (12 min), 05-01 (7 min)
 - Trend: Efficient execution
 
 *Updated after each plan completion*
@@ -119,6 +120,11 @@ Recent decisions affecting current work:
 - [04-06]: FSM transitions extended for PARTIALLY_REFUNDED -> PARTIALLY_REFUNDED and -> REFUNDED
 - [04-06]: Router registration order: specific paths before empty path
 - [04-06]: Use Model.all_objects.get(pk=pk) instead of refresh_from_db() for FSM fields
+- [05-01]: PostGIS geography type (geography=True) for automatic meter-based distance calculations
+- [05-01]: GIS coordinate order is (lng, lat) - documented in all spatial methods
+- [05-01]: Database engine conditionally switched to PostGIS only when PostgreSQL detected
+- [05-01]: GeoFeatureModelSerializer for GeoJSON Feature output from GeoDjango models
+- [05-01]: polygon__contains PostGIS spatial query for point-in-polygon checking
 
 ### Pending Todos
 
@@ -139,8 +145,8 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Completed 04-06-PLAN.md (Reconciliation and Refunds)
+Stopped at: Completed 05-01-PLAN.md (Delivery Foundation)
 Resume file: None
 
 ---
-*Next step: Phase 4 complete - ready for Phase 5 (WhatsApp Notifications)*
+*Next step: Ready for 05-02-PLAN.md (Assignment and Tracking)*
