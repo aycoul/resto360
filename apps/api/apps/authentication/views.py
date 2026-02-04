@@ -11,6 +11,7 @@ from .models import User
 from .serializers import (
     CustomTokenObtainPairSerializer,
     OwnerRegistrationSerializer,
+    PublicRegistrationSerializer,
     RestaurantSerializer,
     StaffInviteSerializer,
     UserSerializer,
@@ -45,6 +46,41 @@ class RegisterOwnerView(generics.CreateAPIView):
                     "refresh": str(refresh),
                     "access": str(refresh.access_token),
                 },
+            },
+            status=status.HTTP_201_CREATED,
+        )
+
+
+class PublicRegistrationView(APIView):
+    """Public registration for self-service signup (RESTO360 Lite)."""
+
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = PublicRegistrationSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        result = serializer.save()
+
+        user = result["user"]
+        restaurant = result["restaurant"]
+
+        # Generate JWT tokens for immediate login
+        refresh = RefreshToken.for_user(user)
+
+        return Response(
+            {
+                "restaurant": {
+                    "id": str(restaurant.id),
+                    "slug": restaurant.slug,
+                    "name": restaurant.name,
+                },
+                "user": {
+                    "id": str(user.id),
+                    "name": user.name,
+                    "role": user.role,
+                },
+                "access": str(refresh.access_token),
+                "refresh": str(refresh),
             },
             status=status.HTTP_201_CREATED,
         )

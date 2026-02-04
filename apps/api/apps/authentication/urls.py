@@ -6,6 +6,7 @@ from .views import (
     CustomTokenObtainPairView,
     InviteStaffView,
     LogoutView,
+    PublicRegistrationView,
     RegisterOwnerView,
     RestaurantSettingsView,
     StaffListView,
@@ -19,7 +20,9 @@ urlpatterns = [
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("logout/", LogoutView.as_view(), name="logout"),
     # Registration
-    path("register/", RegisterOwnerView.as_view(), name="register_owner"),
+    path("register/", PublicRegistrationView.as_view(), name="public-register"),
+    # Legacy registration (requires restaurant_slug)
+    path("register/owner/", RegisterOwnerView.as_view(), name="register_owner"),
     # User management
     path("me/", CurrentUserView.as_view(), name="current_user"),
     path("staff/", StaffListView.as_view(), name="staff_list"),
