@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { usePublicMenu } from '@/lib/hooks/usePublicMenu';
@@ -8,6 +8,7 @@ import { useCart } from '@/lib/hooks/useCart';
 import { PublicMenuGrid } from '@/components/menu/PublicMenuGrid';
 import { CustomerCart } from '@/components/menu/CustomerCart';
 import { LocaleSwitcher } from '@/components/ui/LocaleSwitcher';
+import { trackMenuView, getOrCreateSessionId, detectSource } from '@/lib/hooks/useAnalytics';
 
 export default function PublicMenuPage() {
   const params = useParams();
@@ -16,6 +17,21 @@ export default function PublicMenuPage() {
   const { data, isLoading, error } = usePublicMenu(slug);
   const { itemCount, total } = useCart();
   const [showCart, setShowCart] = useState(false);
+  const hasTracked = useRef(false);
+
+  // Track menu view on page load (only once)
+  useEffect(() => {
+    if (!hasTracked.current && slug) {
+      hasTracked.current = true;
+      const sessionId = getOrCreateSessionId();
+      const source = detectSource();
+      trackMenuView({
+        restaurant_slug: slug,
+        session_id: sessionId,
+        source,
+      });
+    }
+  }, [slug]);
 
   if (isLoading) {
     return (
