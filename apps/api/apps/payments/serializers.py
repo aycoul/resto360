@@ -100,3 +100,64 @@ class CloseDrawerSerializer(serializers.Serializer):
 
     closing_balance = serializers.IntegerField(min_value=0, required=True)
     variance_notes = serializers.CharField(required=False, allow_blank=True, default="")
+
+
+class InitiatePaymentSerializer(serializers.Serializer):
+    """Serializer for initiating a payment."""
+
+    order_id = serializers.UUIDField(
+        required=True,
+        help_text="UUID of the order to pay",
+    )
+    provider_code = serializers.CharField(
+        required=True,
+        max_length=20,
+        help_text="Payment provider code (wave, orange, mtn, cash)",
+    )
+    idempotency_key = serializers.CharField(
+        required=True,
+        max_length=255,
+        help_text="Unique key to prevent duplicate payments",
+    )
+    callback_url = serializers.URLField(
+        required=False,
+        allow_blank=True,
+        default="",
+        help_text="URL for webhook notifications",
+    )
+    success_url = serializers.URLField(
+        required=False,
+        allow_blank=True,
+        default="",
+        help_text="URL to redirect after successful payment",
+    )
+    error_url = serializers.URLField(
+        required=False,
+        allow_blank=True,
+        default="",
+        help_text="URL to redirect after failed payment",
+    )
+
+
+class PaymentStatusSerializer(serializers.Serializer):
+    """Serializer for payment status response."""
+
+    id = serializers.UUIDField(read_only=True)
+    order_id = serializers.UUIDField(read_only=True)
+    amount = serializers.IntegerField(read_only=True)
+    status = serializers.CharField(read_only=True)
+    provider_code = serializers.CharField(read_only=True)
+    provider_reference = serializers.CharField(read_only=True)
+    initiated_at = serializers.DateTimeField(read_only=True)
+    completed_at = serializers.DateTimeField(read_only=True, allow_null=True)
+    error_code = serializers.CharField(read_only=True, allow_blank=True)
+    error_message = serializers.CharField(read_only=True, allow_blank=True)
+
+
+class PaymentInitiateResponseSerializer(serializers.Serializer):
+    """Serializer for payment initiation response."""
+
+    payment = PaymentSerializer(read_only=True)
+    redirect_url = serializers.URLField(read_only=True, allow_null=True)
+    status = serializers.CharField(read_only=True)
+    is_duplicate = serializers.BooleanField(read_only=True)
