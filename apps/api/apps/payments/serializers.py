@@ -19,6 +19,13 @@ class PaymentMethodSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["id"]
 
+    def create(self, validated_data):
+        """Set restaurant from request context."""
+        request = self.context.get("request")
+        if request and hasattr(request.user, "restaurant"):
+            validated_data["restaurant"] = request.user.restaurant
+        return super().create(validated_data)
+
 
 class PaymentSerializer(serializers.ModelSerializer):
     """Serializer for Payment model."""
