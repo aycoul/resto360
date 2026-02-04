@@ -1,0 +1,42 @@
+import { NextRequest, NextResponse } from 'next/server';
+
+// Mock users for testing
+const USERS = {
+  'owner@teranga.com': { password: 'owner123', role: 'owner', name: 'Abdou Diop' },
+  'manager@teranga.com': { password: 'manager123', role: 'manager', name: 'Aissatou Fall' },
+  'cashier@teranga.com': { password: 'cashier123', role: 'cashier', name: 'Moussa Ndiaye' },
+  'kitchen@teranga.com': { password: 'kitchen123', role: 'kitchen', name: 'Fatima Seck' },
+  'driver@teranga.com': { password: 'driver123', role: 'driver', name: 'Mamadou Diallo' },
+};
+
+export async function POST(request: NextRequest) {
+  const body = await request.json();
+  const { email, password } = body;
+
+  const user = USERS[email as keyof typeof USERS];
+
+  if (!user || user.password !== password) {
+    return NextResponse.json(
+      { detail: 'Invalid credentials' },
+      { status: 401 }
+    );
+  }
+
+  // Generate mock JWT tokens
+  const mockToken = Buffer.from(JSON.stringify({
+    email,
+    role: user.role,
+    name: user.name,
+    exp: Date.now() + 3600000, // 1 hour
+  })).toString('base64');
+
+  return NextResponse.json({
+    access: `mock.${mockToken}.signature`,
+    refresh: `refresh.${mockToken}.signature`,
+    user: {
+      email,
+      name: user.name,
+      role: user.role,
+    },
+  });
+}

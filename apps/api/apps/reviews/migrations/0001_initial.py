@@ -1,0 +1,183 @@
+# Generated manually for Phase 11: Customer Reviews
+
+import django.core.validators
+import django.db.models.deletion
+import django.db.models.manager
+import uuid
+from django.db import migrations, models
+
+
+class Migration(migrations.Migration):
+
+    initial = True
+
+    dependencies = [
+        ('authentication', '0001_initial'),
+    ]
+
+    operations = [
+        migrations.CreateModel(
+            name='Review',
+            fields=[
+                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('updated_at', models.DateTimeField(auto_now=True)),
+                ('rating', models.PositiveIntegerField(help_text='Star rating from 1 to 5', validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(5)])),
+                ('title', models.CharField(blank=True, max_length=200)),
+                ('content', models.TextField(blank=True, help_text='Written review text')),
+                ('reviewer_name', models.CharField(max_length=100)),
+                ('reviewer_email', models.EmailField(blank=True, max_length=254)),
+                ('reviewer_phone', models.CharField(blank=True, max_length=20)),
+                ('is_verified', models.BooleanField(default=False, help_text='Whether reviewer made a verified order/reservation')),
+                ('visit_date', models.DateField(blank=True, null=True)),
+                ('order_id', models.UUIDField(blank=True, help_text='Related order if any', null=True)),
+                ('reservation_id', models.UUIDField(blank=True, help_text='Related reservation if any', null=True)),
+                ('food_rating', models.PositiveIntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(5)])),
+                ('service_rating', models.PositiveIntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(5)])),
+                ('ambiance_rating', models.PositiveIntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(5)])),
+                ('value_rating', models.PositiveIntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(5)])),
+                ('status', models.CharField(choices=[('pending', 'Pending Moderation'), ('approved', 'Approved'), ('rejected', 'Rejected'), ('flagged', 'Flagged for Review')], default='pending', max_length=20)),
+                ('source', models.CharField(choices=[('website', 'Website'), ('qr_code', 'QR Code'), ('email', 'Email Request'), ('sms', 'SMS Request'), ('google', 'Google Reviews')], default='website', max_length=20)),
+                ('moderated_at', models.DateTimeField(blank=True, null=True)),
+                ('moderation_notes', models.TextField(blank=True)),
+                ('is_featured', models.BooleanField(default=False, help_text='Show prominently on menu')),
+                ('external_id', models.CharField(blank=True, max_length=255)),
+                ('external_url', models.URLField(blank=True)),
+                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reviews', to='authentication.restaurant')),
+            ],
+            options={
+                'verbose_name': 'Review',
+                'verbose_name_plural': 'Reviews',
+                'ordering': ['-created_at'],
+            },
+            managers=[
+                ('all_objects', django.db.models.manager.Manager()),
+            ],
+        ),
+        migrations.AddIndex(
+            model_name='review',
+            index=models.Index(fields=['restaurant', 'status', '-created_at'], name='reviews_rev_restaur_abc123_idx'),
+        ),
+        migrations.AddIndex(
+            model_name='review',
+            index=models.Index(fields=['restaurant', 'rating'], name='reviews_rev_restaur_def456_idx'),
+        ),
+        migrations.CreateModel(
+            name='ReviewPhoto',
+            fields=[
+                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('updated_at', models.DateTimeField(auto_now=True)),
+                ('image', models.ImageField(upload_to='review_photos/')),
+                ('caption', models.CharField(blank=True, max_length=200)),
+                ('display_order', models.PositiveIntegerField(default=0)),
+                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='review_photos', to='authentication.restaurant')),
+                ('review', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='photos', to='reviews.review')),
+            ],
+            options={
+                'verbose_name': 'Review Photo',
+                'verbose_name_plural': 'Review Photos',
+                'ordering': ['display_order'],
+            },
+            managers=[
+                ('all_objects', django.db.models.manager.Manager()),
+            ],
+        ),
+        migrations.CreateModel(
+            name='ReviewResponse',
+            fields=[
+                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('updated_at', models.DateTimeField(auto_now=True)),
+                ('content', models.TextField(help_text='Response text')),
+                ('responder_name', models.CharField(blank=True, help_text="Name to display (e.g., 'The Manager')", max_length=100)),
+                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='review_responses', to='authentication.restaurant')),
+                ('review', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='response', to='reviews.review')),
+            ],
+            options={
+                'verbose_name': 'Review Response',
+                'verbose_name_plural': 'Review Responses',
+            },
+            managers=[
+                ('all_objects', django.db.models.manager.Manager()),
+            ],
+        ),
+        migrations.CreateModel(
+            name='FeedbackRequest',
+            fields=[
+                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('updated_at', models.DateTimeField(auto_now=True)),
+                ('customer_name', models.CharField(max_length=100)),
+                ('customer_email', models.EmailField(blank=True, max_length=254)),
+                ('customer_phone', models.CharField(blank=True, max_length=20)),
+                ('order_id', models.UUIDField(blank=True, null=True)),
+                ('reservation_id', models.UUIDField(blank=True, null=True)),
+                ('channel', models.CharField(choices=[('email', 'Email'), ('sms', 'SMS')], default='email', max_length=20)),
+                ('sent_at', models.DateTimeField(blank=True, null=True)),
+                ('opened_at', models.DateTimeField(blank=True, null=True)),
+                ('completed_at', models.DateTimeField(blank=True, null=True)),
+                ('token', models.CharField(editable=False, max_length=64, unique=True)),
+                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='feedback_requests', to='authentication.restaurant')),
+                ('review', models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='feedback_request', to='reviews.review')),
+            ],
+            options={
+                'verbose_name': 'Feedback Request',
+                'verbose_name_plural': 'Feedback Requests',
+                'ordering': ['-created_at'],
+            },
+            managers=[
+                ('all_objects', django.db.models.manager.Manager()),
+            ],
+        ),
+        migrations.CreateModel(
+            name='ReviewSettings',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('updated_at', models.DateTimeField(auto_now=True)),
+                ('auto_approve', models.BooleanField(default=False, help_text='Automatically approve reviews')),
+                ('min_rating_auto_approve', models.PositiveIntegerField(default=4, help_text='Minimum rating for auto-approval', validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(5)])),
+                ('auto_request_feedback', models.BooleanField(default=True, help_text='Automatically request feedback after orders')),
+                ('request_delay_hours', models.PositiveIntegerField(default=24, help_text='Hours after order to send request')),
+                ('request_channel', models.CharField(choices=[('email', 'Email'), ('sms', 'SMS'), ('both', 'Both')], default='email', max_length=20)),
+                ('show_reviews_on_menu', models.BooleanField(default=True, help_text='Show reviews on public menu')),
+                ('min_reviews_to_show', models.PositiveIntegerField(default=3, help_text='Minimum reviews before showing')),
+                ('show_average_rating', models.BooleanField(default=True)),
+                ('response_template', models.TextField(blank=True, help_text='Default template for owner responses')),
+                ('restaurant', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='review_settings', to='authentication.restaurant')),
+            ],
+            options={
+                'verbose_name': 'Review Settings',
+                'verbose_name_plural': 'Review Settings',
+            },
+            managers=[
+                ('all_objects', django.db.models.manager.Manager()),
+            ],
+        ),
+        migrations.CreateModel(
+            name='ReviewSummary',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('updated_at', models.DateTimeField(auto_now=True)),
+                ('total_reviews', models.PositiveIntegerField(default=0)),
+                ('average_rating', models.DecimalField(decimal_places=2, default=0, max_digits=3)),
+                ('rating_distribution', models.JSONField(default=dict, help_text='Distribution: {1: count, 2: count, ...}')),
+                ('avg_food_rating', models.DecimalField(blank=True, decimal_places=2, max_digits=3, null=True)),
+                ('avg_service_rating', models.DecimalField(blank=True, decimal_places=2, max_digits=3, null=True)),
+                ('avg_ambiance_rating', models.DecimalField(blank=True, decimal_places=2, max_digits=3, null=True)),
+                ('avg_value_rating', models.DecimalField(blank=True, decimal_places=2, max_digits=3, null=True)),
+                ('response_rate', models.DecimalField(decimal_places=2, default=0, help_text='Percentage of reviews with responses', max_digits=5)),
+                ('last_updated', models.DateTimeField(auto_now=True)),
+                ('restaurant', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='review_summary', to='authentication.restaurant')),
+            ],
+            options={
+                'verbose_name': 'Review Summary',
+                'verbose_name_plural': 'Review Summaries',
+            },
+            managers=[
+                ('all_objects', django.db.models.manager.Manager()),
+            ],
+        ),
+    ]

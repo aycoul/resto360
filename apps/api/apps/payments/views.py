@@ -324,6 +324,17 @@ class CinetPayWebhookView(BaseWebhookView):
     provider_code = "cinetpay"
 
 
+class DigitalPayeWebhookView(BaseWebhookView):
+    """
+    Handle DigitalPaye webhooks.
+
+    DigitalPaye is a unified API for Wave, Orange Money, and MTN Mobile Money.
+    A single webhook endpoint handles all three operators.
+    """
+
+    provider_code = "digitalpaye"
+
+
 class CashDrawerSessionViewSet(TenantContextMixin, viewsets.ModelViewSet):
     """
     ViewSet for managing cash drawer sessions.

@@ -173,6 +173,12 @@ if SKIP_GIS_APPS:
     CINETPAY_SITE_ID = ""
     CINETPAY_SECRET_KEY = ""
     CINETPAY_API_URL = "https://api-checkout.cinetpay.com/v2"
+    # DigitalPaye
+    DIGITALPAYE_API_KEY = ""
+    DIGITALPAYE_API_SECRET = ""
+    DIGITALPAYE_WEBHOOK_SECRET = ""
+    DIGITALPAYE_API_URL = "https://api.digitalpaye.com/v1"
+    DIGITALPAYE_ENVIRONMENT = "sandbox"
 else:
     from .base import *  # noqa: F401, F403
 

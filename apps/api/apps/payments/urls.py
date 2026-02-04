@@ -22,6 +22,7 @@ urlpatterns = [
     path("webhooks/flutterwave/", views.FlutterwaveWebhookView.as_view(), name="webhook-flutterwave"),
     path("webhooks/paystack/", views.PaystackWebhookView.as_view(), name="webhook-paystack"),
     path("webhooks/cinetpay/", views.CinetPayWebhookView.as_view(), name="webhook-cinetpay"),
+    path("webhooks/digitalpaye/", views.DigitalPayeWebhookView.as_view(), name="webhook-digitalpaye"),
     # Router URLs
     path("", include(router.urls)),
 ]

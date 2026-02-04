@@ -101,6 +101,45 @@ export async function apiRequest<T>(
   return response.json();
 }
 
+// Form data request (for file uploads)
+export async function apiFormDataRequest<T>(
+  path: string,
+  formData: FormData
+): Promise<T> {
+  const token = getAccessToken();
+  const headers: Record<string, string> = {};
+
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  let response = await fetch(`${API_BASE}${path}`, {
+    method: "POST",
+    headers,
+    body: formData,
+  });
+
+  // Handle 401 - try to refresh token
+  if (response.status === 401 && token) {
+    const refreshed = await refreshAccessToken();
+    if (refreshed) {
+      headers["Authorization"] = `Bearer ${getAccessToken()}`;
+      response = await fetch(`${API_BASE}${path}`, {
+        method: "POST",
+        headers,
+        body: formData,
+      });
+    }
+  }
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ detail: "Request failed" }));
+    throw new Error(error.detail || `HTTP ${response.status}`);
+  }
+
+  return response.json();
+}
+
 // Convenience methods
 export const api = {
   get: <T>(path: string) => apiRequest<T>(path),
@@ -109,4 +148,6 @@ export const api = {
   patch: <T>(path: string, data: unknown) =>
     apiRequest<T>(path, { method: "PATCH", body: JSON.stringify(data) }),
   delete: <T>(path: string) => apiRequest<T>(path, { method: "DELETE" }),
+  postFormData: <T>(path: string, formData: FormData) =>
+    apiFormDataRequest<T>(path, formData),
 };

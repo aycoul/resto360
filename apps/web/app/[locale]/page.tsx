@@ -1,9 +1,5 @@
 import { setRequestLocale } from "next-intl/server";
-import { Hero } from "@/components/landing/Hero";
-import { Features } from "@/components/landing/Features";
-import { Pricing } from "@/components/landing/Pricing";
-import { SocialProof } from "@/components/landing/SocialProof";
-import { Footer } from "@/components/landing/Footer";
+import { Navbar, HeroSection, FeaturesGrid, StatsSection, Testimonials, IntegrationsSection, CTASection, MarketingFooter } from "@/components/marketing";
 
 export default async function LandingPage({
   params,
@@ -14,12 +10,17 @@ export default async function LandingPage({
   setRequestLocale(locale);
 
   return (
-    <main>
-      <Hero />
-      <Features />
-      <SocialProof />
-      <Pricing />
-      <Footer />
-    </main>
+    <>
+      <Navbar />
+      <main>
+        <HeroSection />
+        <StatsSection />
+        <FeaturesGrid />
+        <Testimonials />
+        <IntegrationsSection />
+        <CTASection />
+      </main>
+      <MarketingFooter />
+    </>
   );
 }

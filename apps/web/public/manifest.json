@@ -1,7 +1,7 @@
 {
-  "name": "RESTO360 POS",
-  "short_name": "RESTO360",
-  "description": "Restaurant POS System",
+  "name": "BIZ360",
+  "short_name": "BIZ360",
+  "description": "Universal Business Operating System",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

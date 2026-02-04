@@ -317,3 +317,108 @@ def handle_mtn_webhook(webhook_data: dict) -> Optional[Payment]:
             return None
 
     return payment
+
+
+def handle_digitalpaye_webhook(webhook_data: dict) -> Optional[Payment]:
+    """
+    Handle a DigitalPaye webhook event.
+
+    DigitalPaye is a unified API for Wave, Orange Money, and MTN Mobile Money.
+    Updates the Payment status based on the webhook event.
+    This handler is idempotent - processing the same event twice
+    will not cause duplicate updates.
+
+    Args:
+        webhook_data: Normalized webhook data from DigitalPayeProvider.parse_webhook()
+            - event_type: Type of event (payment.completed, payment.failed, etc.)
+            - payment_reference: The transaction ID
+            - status: Normalized status (success, failed, pending, expired)
+            - amount: Payment amount
+            - operator: The operator used (WAVE_MONEY_CI, ORANGE_MONEY_CI, MTN_MONEY_CI)
+
+    Returns:
+        Updated Payment instance, or None if payment not found/already processed
+    """
+    event_type = webhook_data.get("event_type", "")
+    payment_reference = webhook_data.get("payment_reference", "")
+    status = webhook_data.get("status", "")
+    operator = webhook_data.get("operator", "")
+
+    if not payment_reference:
+        logger.warning("DigitalPaye webhook missing payment_reference")
+        return None
+
+    logger.info(
+        "Processing DigitalPaye webhook: event=%s, reference=%s, status=%s, operator=%s",
+        event_type,
+        payment_reference,
+        status,
+        operator,
+    )
+
+    # Find the payment by provider reference
+    try:
+        payment = Payment.all_objects.select_for_update().get(
+            provider_reference=payment_reference
+        )
+    except Payment.DoesNotExist:
+        logger.warning("Payment not found for provider_reference: %s", payment_reference)
+        return None
+    except Payment.MultipleObjectsReturned:
+        logger.error("Multiple payments found for provider_reference: %s", payment_reference)
+        return None
+
+    # Check if payment is in a terminal state (idempotency)
+    if payment.status in TERMINAL_STATES:
+        logger.info(
+            "Payment %s already in terminal state: %s",
+            payment.idempotency_key,
+            payment.status,
+        )
+        return payment
+
+    # Apply status transition based on webhook status
+    with transaction.atomic():
+        # Re-fetch with lock
+        payment = Payment.all_objects.select_for_update().get(pk=payment.pk)
+
+        # Check again after lock (double-check locking)
+        if payment.status in TERMINAL_STATES:
+            return payment
+
+        # Ensure payment is in PROCESSING state before transitioning
+        if payment.status == PaymentStatus.PENDING:
+            payment.start_processing()
+            payment.save()
+
+        if status == "success":
+            payment.mark_success()
+            payment.provider_response = webhook_data.get("raw", {})
+            payment.save()
+            logger.info("Payment %s marked as SUCCESS via DigitalPaye", payment.idempotency_key)
+
+        elif status == "expired":
+            payment.mark_expired()
+            payment.provider_response = webhook_data.get("raw", {})
+            payment.save()
+            logger.info("Payment %s marked as EXPIRED via DigitalPaye", payment.idempotency_key)
+
+        elif status == "failed":
+            error_data = webhook_data.get("raw", {})
+            payment.mark_failed(
+                error_code=error_data.get("error_code", "unknown"),
+                error_message=error_data.get("message", error_data.get("error", "Payment failed")),
+            )
+            payment.provider_response = error_data
+            payment.save()
+            logger.info("Payment %s marked as FAILED via DigitalPaye", payment.idempotency_key)
+
+        else:
+            logger.warning(
+                "Unknown DigitalPaye webhook status %s for payment %s",
+                status,
+                payment.idempotency_key,
+            )
+            return None
+
+    return payment

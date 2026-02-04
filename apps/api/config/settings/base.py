@@ -69,6 +69,19 @@ INSTALLED_APPS = [
     "apps.payments",
     "apps.delivery",
     "apps.analytics",
+    "apps.ai",
+    "apps.reservations",
+    "apps.reviews",
+    "apps.crm",
+    "apps.website",
+    "apps.social",
+    "apps.locations",
+    "apps.marketplace",
+    "apps.financing",
+    # BIZ360 new apps
+    "apps.invoicing",
+    "apps.forecasting",
+    "apps.reorder",
 ]
 
 # Custom user model
@@ -279,3 +292,33 @@ CINETPAY_API_KEY = env("CINETPAY_API_KEY", default="")
 CINETPAY_SITE_ID = env("CINETPAY_SITE_ID", default="")
 CINETPAY_SECRET_KEY = env("CINETPAY_SECRET_KEY", default="")
 CINETPAY_API_URL = env("CINETPAY_API_URL", default="https://api-checkout.cinetpay.com/v2")
+
+# DigitalPaye Configuration (Unified West Africa Mobile Money)
+# Supports: Wave, Orange Money, MTN Mobile Money
+# Docs: https://docs.digitalpaye.com
+DIGITALPAYE_API_KEY = env("DIGITALPAYE_API_KEY", default="")
+DIGITALPAYE_API_SECRET = env("DIGITALPAYE_API_SECRET", default="")
+DIGITALPAYE_WEBHOOK_SECRET = env("DIGITALPAYE_WEBHOOK_SECRET", default="")
+DIGITALPAYE_API_URL = env("DIGITALPAYE_API_URL", default="https://api.digitalpaye.com/v1")
+DIGITALPAYE_ENVIRONMENT = env("DIGITALPAYE_ENVIRONMENT", default="sandbox")  # sandbox or production
+
+
+# OpenAI Configuration (Phase 9: AI Menu Builder)
+OPENAI_API_KEY = env("OPENAI_API_KEY", default="")
+OPENAI_MODEL = env("OPENAI_MODEL", default="gpt-4o-mini")
+OPENAI_VISION_MODEL = env("OPENAI_VISION_MODEL", default="gpt-4o")
+
+
+# DGI Electronic Invoice Configuration (Ivory Coast)
+DGI_API_URL = env("DGI_API_URL", default="https://api.dgi.gouv.ci/facture/v1")
+DGI_SANDBOX_URL = env("DGI_SANDBOX_URL", default="https://test-api.dgi.gouv.ci/facture/v1")
+DGI_TIMEOUT = env.int("DGI_TIMEOUT", default=30)
+
+
+# Weather API Configuration (OpenWeatherMap)
+OPENWEATHERMAP_API_KEY = env("OPENWEATHERMAP_API_KEY", default="")
+
+
+# BIZ360 Branding
+APP_NAME = env("APP_NAME", default="BIZ360")
+APP_DESCRIPTION = env("APP_DESCRIPTION", default="Universal Business Operating System")

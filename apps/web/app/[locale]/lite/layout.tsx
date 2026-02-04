@@ -11,6 +11,9 @@ interface Restaurant {
   id: string;
   name: string;
   slug: string;
+  phone?: string;
+  email?: string;
+  address?: string;
   plan_type: 'free' | 'pro' | 'full';
   logo?: string;
   primary_color?: string;
@@ -21,6 +24,7 @@ interface User {
   id: string;
   name: string;
   email: string;
+  phone: string;
   role: string;
 }
 
@@ -28,6 +32,7 @@ interface LiteContextValue {
   restaurant: Restaurant | null;
   user: User | null;
   isLoading: boolean;
+  refreshUser?: () => Promise<void>;
 }
 
 const LiteContext = createContext<LiteContextValue>({
@@ -48,36 +53,40 @@ export default function LiteLayout({ children }: { children: React.ReactNode }) 
   const [isLoading, setIsLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  useEffect(() => {
-    async function loadUserData() {
-      const token = getAccessToken();
+  const loadUserData = async () => {
+    const token = getAccessToken();
 
-      if (!token) {
-        router.push(`/${locale}/register`);
-        return;
-      }
-
-      try {
-        // Fetch user and restaurant info
-        const userData = await api.get<{ user: User; restaurant: Restaurant }>('/api/v1/auth/me/');
-
-        setUser(userData.user);
-        setRestaurant(userData.restaurant);
-
-        // If user has full plan, redirect to main POS dashboard
-        if (userData.restaurant.plan_type === 'full') {
-          router.push(`/${locale}/pos`);
-          return;
-        }
-      } catch (error) {
-        console.error('Failed to load user data:', error);
-        router.push(`/${locale}/register`);
-        return;
-      } finally {
-        setIsLoading(false);
-      }
+    if (!token) {
+      router.push(`/${locale}/register`);
+      return;
     }
 
+    try {
+      // Fetch user and restaurant info
+      const userData = await api.get<{ user: User; restaurant: Restaurant }>('/api/v1/auth/me/');
+
+      setUser(userData.user);
+      setRestaurant(userData.restaurant);
+
+      // If user has full plan, redirect to main POS dashboard
+      if (userData.restaurant.plan_type === 'full') {
+        router.push(`/${locale}/pos`);
+        return;
+      }
+    } catch (error) {
+      console.error('Failed to load user data:', error);
+      router.push(`/${locale}/register`);
+      return;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const refreshUser = async () => {
+    await loadUserData();
+  };
+
+  useEffect(() => {
     loadUserData();
   }, [router, locale]);
 
@@ -93,7 +102,7 @@ export default function LiteLayout({ children }: { children: React.ReactNode }) 
   }
 
   return (
-    <LiteContext.Provider value={{ restaurant, user, isLoading }}>
+    <LiteContext.Provider value={{ restaurant, user, isLoading, refreshUser }}>
       <div className="min-h-screen bg-gray-50">
         {/* Mobile sidebar overlay */}
         {sidebarOpen && (

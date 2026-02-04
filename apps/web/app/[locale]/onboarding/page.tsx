@@ -138,7 +138,7 @@ export default function OnboardingPage() {
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="text-center mb-4">
-          <h1 className="text-xl font-bold text-emerald-600">RESTO360</h1>
+          <h1 className="text-xl font-bold text-emerald-600">BIZ360</h1>
         </div>
 
         {/* Step Indicator */}

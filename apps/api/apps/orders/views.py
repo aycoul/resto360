@@ -7,7 +7,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.core.context import set_current_restaurant
+from apps.core.context import set_current_business
+
+# Backwards compatibility alias
+set_current_restaurant = set_current_business
 from apps.core.permissions import IsCashier, IsOwnerOrManager
 from apps.core.views import TenantModelViewSet
 
@@ -144,13 +147,13 @@ class KitchenQueueView(APIView):
         """Set tenant context after authentication."""
         super().initial(request, *args, **kwargs)
         if request.user.is_authenticated:
-            if hasattr(request.user, "restaurant") and request.user.restaurant:
-                set_current_restaurant(request.user.restaurant)
+            if hasattr(request.user, "business") and request.user.business:
+                set_current_business(request.user.business)
 
     def finalize_response(self, request, response, *args, **kwargs):
         """Clear tenant context after response."""
         response = super().finalize_response(request, response, *args, **kwargs)
-        set_current_restaurant(None)
+        set_current_business(None)
         return response
 
     def get(self, request):

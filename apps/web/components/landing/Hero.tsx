@@ -32,7 +32,7 @@ export function Hero() {
       <div className="relative z-10 max-w-4xl mx-auto px-4 text-center text-white">
         {/* Logo */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold tracking-wide">RESTO360</h2>
+          <h2 className="text-2xl font-bold tracking-wide">BIZ360</h2>
         </div>
 
         {/* Headline */}

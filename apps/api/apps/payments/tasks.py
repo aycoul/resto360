@@ -7,6 +7,7 @@ from celery import shared_task
 from apps.payments.providers import get_provider
 from apps.payments.providers.base import ProviderStatus
 from apps.payments.webhooks.handlers import (
+    handle_digitalpaye_webhook,
     handle_mtn_webhook,
     handle_orange_webhook,
     handle_wave_webhook,
@@ -76,6 +77,8 @@ def process_webhook_event(
         result = handle_orange_webhook(webhook_data)
     elif provider_code == "mtn":
         result = handle_mtn_webhook(webhook_data)
+    elif provider_code in ("digitalpaye", "digitalpaye_wave", "digitalpaye_orange", "digitalpaye_mtn"):
+        result = handle_digitalpaye_webhook(webhook_data)
 
     if result:
         return {

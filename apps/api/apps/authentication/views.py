@@ -9,13 +9,16 @@ from apps.core.permissions import IsOwner, IsOwnerOrManager
 
 from .models import User
 from .serializers import (
+    BusinessSerializer,
     CustomTokenObtainPairSerializer,
     OwnerRegistrationSerializer,
     PublicRegistrationSerializer,
-    RestaurantSerializer,
     StaffInviteSerializer,
     UserSerializer,
 )
+
+# Backwards compatibility alias
+RestaurantSerializer = BusinessSerializer
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -25,7 +28,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 
 class RegisterOwnerView(generics.CreateAPIView):
-    """Register new restaurant owner with restaurant."""
+    """Register new business owner with their business."""
 
     permission_classes = [AllowAny]
     serializer_class = OwnerRegistrationSerializer
@@ -52,7 +55,7 @@ class RegisterOwnerView(generics.CreateAPIView):
 
 
 class PublicRegistrationView(APIView):
-    """Public registration for self-service signup (RESTO360 Lite)."""
+    """Public registration for self-service signup (BIZ360 Lite)."""
 
     permission_classes = [AllowAny]
 
@@ -62,17 +65,24 @@ class PublicRegistrationView(APIView):
         result = serializer.save()
 
         user = result["user"]
-        restaurant = result["restaurant"]
+        business = result["business"]
 
         # Generate JWT tokens for immediate login
         refresh = RefreshToken.for_user(user)
 
         return Response(
             {
-                "restaurant": {
-                    "id": str(restaurant.id),
-                    "slug": restaurant.slug,
-                    "name": restaurant.name,
+                # Both keys for backwards compatibility
+                "business": {
+                    "id": str(business.id),
+                    "slug": business.slug,
+                    "name": business.name,
+                    "business_type": business.business_type,
+                },
+                "restaurant": {  # Backwards compatibility
+                    "id": str(business.id),
+                    "slug": business.slug,
+                    "name": business.name,
                 },
                 "user": {
                     "id": str(user.id),
@@ -102,13 +112,13 @@ class InviteStaffView(generics.CreateAPIView):
 
 
 class StaffListView(generics.ListAPIView):
-    """List staff members in current restaurant."""
+    """List staff members in current business."""
 
     permission_classes = [IsAuthenticated, IsOwnerOrManager]
     serializer_class = UserSerializer
 
     def get_queryset(self):
-        return User.objects.filter(restaurant=self.request.user.restaurant)
+        return User.objects.filter(business=self.request.user.business)
 
 
 class CurrentUserView(APIView):
@@ -120,14 +130,18 @@ class CurrentUserView(APIView):
         return Response(UserSerializer(request.user).data)
 
 
-class RestaurantSettingsView(generics.RetrieveUpdateAPIView):
-    """Get/update current restaurant settings (owner only)."""
+class BusinessSettingsView(generics.RetrieveUpdateAPIView):
+    """Get/update current business settings (owner only)."""
 
     permission_classes = [IsAuthenticated, IsOwner]
-    serializer_class = RestaurantSerializer
+    serializer_class = BusinessSerializer
 
     def get_object(self):
-        return self.request.user.restaurant
+        return self.request.user.business
+
+
+# Backwards compatibility alias
+RestaurantSettingsView = BusinessSettingsView
 
 
 class LogoutView(APIView):

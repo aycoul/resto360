@@ -40,13 +40,21 @@ export default function LiteMenuPage() {
       setIsLoading(true);
       setError(null);
 
-      const [categoriesData, itemsData] = await Promise.all([
-        api.get<Category[]>('/api/v1/menu/categories/'),
-        api.get<MenuItem[]>('/api/v1/menu/items/'),
+      // API returns paginated response {count, next, previous, results}
+      interface PaginatedResponse<T> {
+        count: number;
+        next: string | null;
+        previous: string | null;
+        results: T[];
+      }
+
+      const [categoriesResponse, itemsResponse] = await Promise.all([
+        api.get<PaginatedResponse<Category>>('/api/v1/menu/categories/'),
+        api.get<PaginatedResponse<MenuItem>>('/api/v1/menu/items/'),
       ]);
 
-      setCategories(categoriesData);
-      setItems(itemsData);
+      setCategories(categoriesResponse.results || []);
+      setItems(itemsResponse.results || []);
     } catch (err) {
       console.error('Failed to load menu:', err);
       setError(t('error'));

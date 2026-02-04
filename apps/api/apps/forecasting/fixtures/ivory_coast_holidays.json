@@ -1,0 +1,255 @@
+[
+    {
+        "model": "forecasting.businessevent",
+        "fields": {
+            "name": "Jour de l'An",
+            "description": "New Year's Day",
+            "event_type": "national_holiday",
+            "date": "2026-01-01",
+            "expected_impact": "positive",
+            "impact_factor": "1.25",
+            "is_recurring": true,
+            "recurrence_pattern": "yearly",
+            "applies_to_region": "CI"
+        }
+    },
+    {
+        "model": "forecasting.businessevent",
+        "fields": {
+            "name": "Fête du Travail",
+            "description": "Labour Day",
+            "event_type": "national_holiday",
+            "date": "2026-05-01",
+            "expected_impact": "positive",
+            "impact_factor": "1.20",
+            "is_recurring": true,
+            "recurrence_pattern": "yearly",
+            "applies_to_region": "CI"
+        }
+    },
+    {
+        "model": "forecasting.businessevent",
+        "fields": {
+            "name": "Fête de l'Indépendance",
+            "description": "Independence Day - Ivory Coast's most important national holiday",
+            "event_type": "national_holiday",
+            "date": "2026-08-07",
+            "expected_impact": "very_positive",
+            "impact_factor": "1.60",
+            "is_recurring": true,
+            "recurrence_pattern": "yearly",
+            "applies_to_region": "CI"
+        }
+    },
+    {
+        "model": "forecasting.businessevent",
+        "fields": {
+            "name": "Assomption",
+            "description": "Assumption of Mary",
+            "event_type": "religious_holiday",
+            "date": "2026-08-15",
+            "expected_impact": "positive",
+            "impact_factor": "1.15",
+            "is_recurring": true,
+            "recurrence_pattern": "yearly",
+            "applies_to_region": "CI"
+        }
+    },
+    {
+        "model": "forecasting.businessevent",
+        "fields": {
+            "name": "Toussaint",
+            "description": "All Saints' Day",
+            "event_type": "religious_holiday",
+            "date": "2026-11-01",
+            "expected_impact": "neutral",
+            "impact_factor": "1.00",
+            "is_recurring": true,
+            "recurrence_pattern": "yearly",
+            "applies_to_region": "CI"
+        }
+    },
+    {
+        "model": "forecasting.businessevent",
+        "fields": {
+            "name": "Journée Nationale de la Paix",
+            "description": "National Day of Peace",
+            "event_type": "national_holiday",
+            "date": "2026-11-15",
+            "expected_impact": "positive",
+            "impact_factor": "1.15",
+            "is_recurring": true,
+            "recurrence_pattern": "yearly",
+            "applies_to_region": "CI"
+        }
+    },
+    {
+        "model": "forecasting.businessevent",
+        "fields": {
+            "name": "Noël",
+            "description": "Christmas Day - Major celebration with family gatherings",
+            "event_type": "religious_holiday",
+            "date": "2026-12-25",
+            "expected_impact": "very_positive",
+            "impact_factor": "1.50",
+            "is_recurring": true,
+            "recurrence_pattern": "yearly",
+            "applies_to_region": "CI"
+        }
+    },
+    {
+        "model": "forecasting.businessevent",
+        "fields": {
+            "name": "Veille de Noël",
+            "description": "Christmas Eve - Evening celebrations",
+            "event_type": "religious_holiday",
+            "date": "2026-12-24",
+            "expected_impact": "positive",
+            "impact_factor": "1.30",
+            "is_recurring": true,
+            "recurrence_pattern": "yearly",
+            "applies_to_region": "CI"
+        }
+    },
+    {
+        "model": "forecasting.businessevent",
+        "fields": {
+            "name": "Saint-Sylvestre",
+            "description": "New Year's Eve - Major celebration",
+            "event_type": "religious_holiday",
+            "date": "2026-12-31",
+            "expected_impact": "very_positive",
+            "impact_factor": "1.70",
+            "is_recurring": true,
+            "recurrence_pattern": "yearly",
+            "applies_to_region": "CI"
+        }
+    },
+    {
+        "model": "forecasting.businessevent",
+        "fields": {
+            "name": "Eid al-Fitr",
+            "description": "End of Ramadan - Major Islamic holiday (date varies)",
+            "event_type": "religious_holiday",
+            "date": "2026-03-30",
+            "expected_impact": "very_positive",
+            "impact_factor": "1.60",
+            "is_recurring": true,
+            "recurrence_pattern": "islamic",
+            "applies_to_region": "CI"
+        }
+    },
+    {
+        "model": "forecasting.businessevent",
+        "fields": {
+            "name": "Eid al-Adha",
+            "description": "Feast of Sacrifice - Major Islamic holiday (date varies)",
+            "event_type": "religious_holiday",
+            "date": "2026-06-06",
+            "expected_impact": "very_positive",
+            "impact_factor": "1.50",
+            "is_recurring": true,
+            "recurrence_pattern": "islamic",
+            "applies_to_region": "CI"
+        }
+    },
+    {
+        "model": "forecasting.businessevent",
+        "fields": {
+            "name": "Mawlid (Maouloud)",
+            "description": "Prophet's Birthday (date varies)",
+            "event_type": "religious_holiday",
+            "date": "2026-09-04",
+            "expected_impact": "positive",
+            "impact_factor": "1.20",
+            "is_recurring": true,
+            "recurrence_pattern": "islamic",
+            "applies_to_region": "CI"
+        }
+    },
+    {
+        "model": "forecasting.businessevent",
+        "fields": {
+            "name": "Lundi de Pâques",
+            "description": "Easter Monday (date varies)",
+            "event_type": "religious_holiday",
+            "date": "2026-04-06",
+            "expected_impact": "positive",
+            "impact_factor": "1.30",
+            "is_recurring": true,
+            "recurrence_pattern": "yearly_weekday",
+            "applies_to_region": "CI"
+        }
+    },
+    {
+        "model": "forecasting.businessevent",
+        "fields": {
+            "name": "Ascension",
+            "description": "Ascension Day (40 days after Easter)",
+            "event_type": "religious_holiday",
+            "date": "2026-05-14",
+            "expected_impact": "positive",
+            "impact_factor": "1.15",
+            "is_recurring": true,
+            "recurrence_pattern": "yearly_weekday",
+            "applies_to_region": "CI"
+        }
+    },
+    {
+        "model": "forecasting.businessevent",
+        "fields": {
+            "name": "Lundi de Pentecôte",
+            "description": "Whit Monday (50 days after Easter)",
+            "event_type": "religious_holiday",
+            "date": "2026-05-25",
+            "expected_impact": "positive",
+            "impact_factor": "1.15",
+            "is_recurring": true,
+            "recurrence_pattern": "yearly_weekday",
+            "applies_to_region": "CI"
+        }
+    },
+    {
+        "model": "forecasting.businessevent",
+        "fields": {
+            "name": "Coupe d'Afrique des Nations",
+            "description": "AFCON - Major football event (impact during matches)",
+            "event_type": "sports_event",
+            "date": "2026-01-15",
+            "end_date": "2026-02-15",
+            "expected_impact": "very_positive",
+            "impact_factor": "1.40",
+            "is_recurring": false,
+            "applies_to_region": "CI"
+        }
+    },
+    {
+        "model": "forecasting.businessevent",
+        "fields": {
+            "name": "Rentrée Scolaire",
+            "description": "Back to School - Increased family activities",
+            "event_type": "school_holiday",
+            "date": "2026-09-07",
+            "expected_impact": "negative",
+            "impact_factor": "0.85",
+            "is_recurring": true,
+            "recurrence_pattern": "yearly",
+            "applies_to_region": "CI"
+        }
+    },
+    {
+        "model": "forecasting.businessevent",
+        "fields": {
+            "name": "Vacances de Noël",
+            "description": "Christmas School Holidays",
+            "event_type": "school_holiday",
+            "date": "2026-12-20",
+            "end_date": "2027-01-05",
+            "expected_impact": "positive",
+            "impact_factor": "1.25",
+            "is_recurring": true,
+            "recurrence_pattern": "yearly",
+            "applies_to_region": "CI"
+        }
+    }
+]

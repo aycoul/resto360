@@ -11,7 +11,9 @@ def get_provider(provider_code: str) -> "PaymentProvider":
     Get the payment provider instance for the given provider code.
 
     Args:
-        provider_code: The provider identifier (wave, orange, mtn, cash, flutterwave, paystack, cinetpay)
+        provider_code: The provider identifier (wave, orange, mtn, cash, flutterwave,
+                       paystack, cinetpay, digitalpaye, digitalpaye_wave,
+                       digitalpaye_orange, digitalpaye_mtn)
 
     Returns:
         PaymentProvider instance
@@ -22,6 +24,12 @@ def get_provider(provider_code: str) -> "PaymentProvider":
     # Import here to avoid circular imports
     from .cash import CashProvider
     from .cinetpay import CinetPayProvider
+    from .digitalpaye import (
+        DigitalPayeMTNProvider,
+        DigitalPayeOrangeProvider,
+        DigitalPayeProvider,
+        DigitalPayeWaveProvider,
+    )
     from .flutterwave import FlutterwaveProvider
     from .mtn import MTNProvider
     from .orange import OrangeProvider
@@ -36,6 +44,11 @@ def get_provider(provider_code: str) -> "PaymentProvider":
         "flutterwave": FlutterwaveProvider,
         "paystack": PaystackProvider,
         "cinetpay": CinetPayProvider,
+        # DigitalPaye unified API (default to Wave)
+        "digitalpaye": DigitalPayeWaveProvider,
+        "digitalpaye_wave": DigitalPayeWaveProvider,
+        "digitalpaye_orange": DigitalPayeOrangeProvider,
+        "digitalpaye_mtn": DigitalPayeMTNProvider,
     }
 
     provider_class = providers.get(provider_code)

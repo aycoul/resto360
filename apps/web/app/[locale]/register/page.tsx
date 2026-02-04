@@ -149,7 +149,7 @@ export default function RegisterPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href={`/${locale}`} className="inline-block">
-            <h1 className="text-3xl font-bold text-emerald-600">RESTO360</h1>
+            <h1 className="text-3xl font-bold text-emerald-600">BIZ360</h1>
           </Link>
         </div>
 

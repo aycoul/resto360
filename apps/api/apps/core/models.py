@@ -16,13 +16,31 @@ class BaseModel(models.Model):
 
 
 class TenantModel(BaseModel):
-    """Abstract base for tenant-scoped models."""
+    """
+    Abstract base for tenant-scoped models.
 
-    restaurant = models.ForeignKey(
-        "authentication.Restaurant",
+    All models that belong to a specific business should inherit from this.
+    The 'business' field provides multi-tenant isolation via TenantManager.
+
+    Note: The 'restaurant' property is provided for backwards compatibility
+    during the transition from RESTO360 to BIZ360.
+    """
+
+    business = models.ForeignKey(
+        "authentication.Business",
         on_delete=models.CASCADE,
         related_name="%(class)ss",
     )
 
     class Meta:
         abstract = True
+
+    @property
+    def restaurant(self):
+        """Backwards compatibility: alias for business."""
+        return self.business
+
+    @restaurant.setter
+    def restaurant(self, value):
+        """Backwards compatibility: alias for business."""
+        self.business = value

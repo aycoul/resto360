@@ -5,22 +5,30 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.authentication.models import Restaurant
-from apps.core.context import set_current_restaurant
+from apps.authentication.models import Business
+from apps.core.context import set_current_business
+
+# Backwards compatibility alias
+Restaurant = Business
+set_current_restaurant = set_current_business
 from apps.core.permissions import IsOwnerOrManager
 from apps.core.views import TenantModelViewSet
 
-from .models import Category, MenuItem, Modifier, ModifierOption
+from .models import Category, MenuItem, MenuTheme, Modifier, ModifierOption
 from .serializers import (
     CategorySerializer,
     CategoryWriteSerializer,
     FullMenuSerializer,
     MenuItemSerializer,
     MenuItemWriteSerializer,
+    MenuMetadataChoicesSerializer,
+    MenuThemeSerializer,
+    MenuThemeWriteSerializer,
     ModifierOptionSerializer,
     ModifierOptionWriteSerializer,
     ModifierSerializer,
     ModifierWriteSerializer,
+    ThemeChoicesSerializer,
 )
 
 
@@ -161,13 +169,13 @@ class FullMenuView(APIView):
         """Set tenant context after authentication."""
         super().initial(request, *args, **kwargs)
         if request.user.is_authenticated:
-            if hasattr(request.user, "restaurant") and request.user.restaurant:
-                set_current_restaurant(request.user.restaurant)
+            if hasattr(request.user, "business") and request.user.business:
+                set_current_business(request.user.business)
 
     def finalize_response(self, request, response, *args, **kwargs):
         """Clear tenant context after response."""
         response = super().finalize_response(request, response, *args, **kwargs)
-        set_current_restaurant(None)
+        set_current_business(None)
         return response
 
     def get(self, request):
@@ -222,33 +230,33 @@ class PublicMenuView(APIView):
     """
     Public endpoint for customer menu viewing.
     No authentication required.
-    Returns full menu for a restaurant by slug.
+    Returns full menu for a business by slug.
     """
 
     permission_classes = [AllowAny]
     authentication_classes = []  # No auth needed
 
     def get(self, request, slug):
-        restaurant = get_object_or_404(Restaurant, slug=slug, is_active=True)
+        business = get_object_or_404(Business, slug=slug, is_active=True)
 
         # Build optimized queryset for available items only
         categories = (
-            Category.all_objects.filter(restaurant=restaurant, is_visible=True)
+            Category.all_objects.filter(business=business, is_visible=True)
             .prefetch_related(
                 Prefetch(
                     "items",
                     queryset=MenuItem.all_objects.filter(
-                        restaurant=restaurant, is_available=True
+                        business=business, is_available=True
                     ).prefetch_related(
                         Prefetch(
                             "modifiers",
                             queryset=Modifier.all_objects.filter(
-                                restaurant=restaurant
+                                business=business
                             ).prefetch_related(
                                 Prefetch(
                                     "options",
                                     queryset=ModifierOption.all_objects.filter(
-                                        restaurant=restaurant, is_available=True
+                                        business=business, is_available=True
                                     ),
                                 )
                             ),
@@ -263,12 +271,21 @@ class PublicMenuView(APIView):
 
         return Response(
             {
-                "restaurant": {
-                    "id": str(restaurant.id),
-                    "name": restaurant.name,
-                    "slug": restaurant.slug,
-                    "address": restaurant.address,
-                    "phone": restaurant.phone,
+                # Both keys for backwards compatibility
+                "business": {
+                    "id": str(business.id),
+                    "name": business.name,
+                    "slug": business.slug,
+                    "address": business.address,
+                    "phone": business.phone,
+                    "business_type": business.business_type,
+                },
+                "restaurant": {  # Backwards compatibility
+                    "id": str(business.id),
+                    "name": business.name,
+                    "slug": business.slug,
+                    "address": business.address,
+                    "phone": business.phone,
                 },
                 "categories": serializer.data,
             }
@@ -287,11 +304,11 @@ class PublicOrderCreateView(APIView):
     def post(self, request, slug):
         from apps.orders.serializers import GuestOrderCreateSerializer
 
-        restaurant = get_object_or_404(Restaurant, slug=slug, is_active=True)
+        business = get_object_or_404(Business, slug=slug, is_active=True)
 
-        # Create order with restaurant context (no user)
+        # Create order with business context (no user)
         serializer = GuestOrderCreateSerializer(
-            data=request.data, context={"request": request, "restaurant": restaurant}
+            data=request.data, context={"request": request, "business": business}
         )
         serializer.is_valid(raise_exception=True)
         order = serializer.save()
@@ -306,3 +323,121 @@ class PublicOrderCreateView(APIView):
             },
             status=status.HTTP_201_CREATED,
         )
+
+
+class MenuMetadataChoicesView(APIView):
+    """
+    API endpoint for available menu metadata choices.
+    Returns allergens, dietary tags, and spice levels.
+    Public endpoint for use in menu editing forms.
+    """
+
+    permission_classes = [AllowAny]
+    authentication_classes = []
+
+    def get(self, request):
+        """Return all available menu metadata choices."""
+        serializer = MenuMetadataChoicesSerializer({})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+# Phase 8: Menu Theme Views
+class MenuThemeViewSet(TenantModelViewSet):
+    """ViewSet for menu themes."""
+
+    def get_serializer_class(self):
+        if self.action in ("create", "update", "partial_update"):
+            return MenuThemeWriteSerializer
+        return MenuThemeSerializer
+
+    def get_permissions(self):
+        if self.action in ("create", "update", "partial_update", "destroy"):
+            return [IsAuthenticated(), IsOwnerOrManager()]
+        return [IsAuthenticated()]
+
+    def get_queryset(self):
+        """Get themes filtered by tenant."""
+        return MenuTheme.objects.all()
+
+
+class ActiveThemeView(APIView):
+    """API endpoint to get/update the active theme for the current business."""
+
+    permission_classes = [IsAuthenticated]
+
+    def initial(self, request, *args, **kwargs):
+        """Set tenant context after authentication."""
+        super().initial(request, *args, **kwargs)
+        if request.user.is_authenticated:
+            if hasattr(request.user, "business") and request.user.business:
+                set_current_business(request.user.business)
+
+    def finalize_response(self, request, response, *args, **kwargs):
+        """Clear tenant context after response."""
+        response = super().finalize_response(request, response, *args, **kwargs)
+        set_current_business(None)
+        return response
+
+    def get(self, request):
+        """Get the active theme for the current restaurant."""
+        theme = MenuTheme.objects.filter(is_active=True).first()
+        if theme:
+            serializer = MenuThemeSerializer(theme)
+            return Response(serializer.data)
+        return Response(None, status=status.HTTP_204_NO_CONTENT)
+
+    def post(self, request):
+        """Create or update the active theme."""
+        theme = MenuTheme.objects.filter(is_active=True).first()
+        if theme:
+            serializer = MenuThemeWriteSerializer(
+                theme, data=request.data, partial=True, context={"request": request}
+            )
+        else:
+            serializer = MenuThemeWriteSerializer(
+                data={**request.data, "is_active": True}, context={"request": request}
+            )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(MenuThemeSerializer(serializer.instance).data)
+
+
+class ThemeChoicesView(APIView):
+    """API endpoint for available theme options (templates, fonts)."""
+
+    permission_classes = [AllowAny]
+    authentication_classes = []
+
+    def get(self, request):
+        """Return all available theme choices."""
+        serializer = ThemeChoicesSerializer({})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class PublicMenuThemeView(APIView):
+    """Public endpoint to get the active theme for a business by slug."""
+
+    permission_classes = [AllowAny]
+    authentication_classes = []
+
+    def get(self, request, slug):
+        business = get_object_or_404(Business, slug=slug, is_active=True)
+        theme = MenuTheme.all_objects.filter(business=business, is_active=True).first()
+        if theme:
+            serializer = MenuThemeSerializer(theme)
+            return Response(serializer.data)
+        # Return default theme if none set
+        return Response({
+            "template": "minimalist",
+            "primary_color": "#059669",
+            "secondary_color": "#14b8a6",
+            "background_color": "#ffffff",
+            "text_color": "#111827",
+            "heading_font": "inter",
+            "body_font": "inter",
+            "logo_position": "center",
+            "show_prices": True,
+            "show_descriptions": True,
+            "show_images": True,
+            "compact_mode": False,
+        })

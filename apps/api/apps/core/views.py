@@ -1,10 +1,13 @@
 """
-Core view mixins and base classes for RESTO360 API.
+Core view mixins and base classes for BIZ360 API.
 """
 
 from rest_framework import viewsets
 
-from .context import set_current_restaurant
+from .context import set_current_business
+
+# Backwards compatibility alias
+set_current_restaurant = set_current_business
 
 
 class TenantContextMixin:
@@ -21,13 +24,13 @@ class TenantContextMixin:
         super().initial(request, *args, **kwargs)
         # Set tenant context from authenticated user
         if request.user.is_authenticated:
-            if hasattr(request.user, "restaurant") and request.user.restaurant:
-                set_current_restaurant(request.user.restaurant)
+            if hasattr(request.user, "business") and request.user.business:
+                set_current_business(request.user.business)
 
     def finalize_response(self, request, response, *args, **kwargs):
         """Called after request handling to clean up context."""
         response = super().finalize_response(request, response, *args, **kwargs)
-        set_current_restaurant(None)
+        set_current_business(None)
         return response
 
 
