@@ -13,7 +13,7 @@ RESTO360 is an enterprise restaurant operating system for West Africa, deliverin
 - [x] **Phase 1: Foundation** - Multi-tenant infrastructure, auth, roles, CI/CD ✓
 - [x] **Phase 2: POS Core** - Menu management, order creation, offline-first PWA ✓
 - [x] **Phase 3: Inventory** - Stock tracking, alerts, automatic deduction ✓
-- [ ] **Phase 4: Payments** - Wave, Orange, MTN mobile money integration
+- [x] **Phase 4: Payments** - Wave, Orange, MTN mobile money integration ✓
 - [ ] **Phase 5: Delivery** - Zones, drivers, GPS tracking, mobile apps
 - [ ] **Phase 6: WhatsApp** - Order via chat, NLP parsing, notifications
 - [ ] **Phase 7: Suppliers** - Catalog, purchase orders, reorder suggestions
@@ -91,11 +91,11 @@ Plans:
 
 Plans:
 - [x] 04-01-PLAN.md - Payment models, provider base class, and idempotency service (Wave 1) ✓
-- [ ] 04-02-PLAN.md - Wave Money provider with webhook handling (Wave 2)
-- [ ] 04-03-PLAN.md - Orange Money and MTN MoMo providers with polling (Wave 2)
-- [ ] 04-04-PLAN.md - Cash provider and drawer session management (Wave 2)
-- [ ] 04-05-PLAN.md - Payment API endpoints and status tracking (Wave 3)
-- [ ] 04-06-PLAN.md - Daily reconciliation report and refund functionality (Wave 3)
+- [x] 04-02-PLAN.md - Wave Money provider with webhook handling (Wave 2) ✓
+- [x] 04-03-PLAN.md - Orange Money and MTN MoMo providers with polling (Wave 2) ✓
+- [x] 04-04-PLAN.md - Cash provider and drawer session management (Wave 2) ✓
+- [x] 04-05-PLAN.md - Payment API endpoints and status tracking (Wave 3) ✓
+- [x] 04-06-PLAN.md - Daily reconciliation report and refund functionality (Wave 3) ✓
 
 ### Phase 5: Delivery
 **Goal**: Restaurant can manage delivery orders end-to-end with real-time tracking
@@ -194,15 +194,15 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 | 1. Foundation | 3/3 | ✓ Complete | 2026-02-03 |
 | 2. POS Core | 7/7 | ✓ Complete | 2026-02-03 |
 | 3. Inventory | 3/3 | ✓ Complete | 2026-02-04 |
-| 4. Payments | 1/6 | In progress | - |
+| 4. Payments | 6/6 | ✓ Complete | 2026-02-04 |
 | 5. Delivery | 0/4 | Not started | - |
 | 6. WhatsApp | 0/4 | Not started | - |
 | 7. Suppliers | 0/3 | Not started | - |
 | 8. Finance | 0/3 | Not started | - |
 | 9. Analytics | 0/3 | Not started | - |
 
-**Total:** 14/36 plans complete
+**Total:** 19/36 plans complete
 
 ---
 *Roadmap created: 2026-02-03*
-*Last updated: 2026-02-04 (Phase 4 planned)*
+*Last updated: 2026-02-04 (Phase 4 complete)*
