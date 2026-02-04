@@ -233,3 +233,15 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+
+# Wave Money Configuration
+WAVE_API_KEY = env("WAVE_API_KEY", default="")
+WAVE_WEBHOOK_SECRET = env("WAVE_WEBHOOK_SECRET", default="")
+WAVE_API_URL = env("WAVE_API_URL", default="https://api.wave.com/v1")
+
+# Orange Money Configuration
+ORANGE_CLIENT_ID = env("ORANGE_CLIENT_ID", default="")
+ORANGE_CLIENT_SECRET = env("ORANGE_CLIENT_SECRET", default="")
+ORANGE_MERCHANT_KEY = env("ORANGE_MERCHANT_KEY", default="")
+ORANGE_API_URL = env("ORANGE_API_URL", default="https://api.orange.com/orange-money-webpay/dev/v1")
