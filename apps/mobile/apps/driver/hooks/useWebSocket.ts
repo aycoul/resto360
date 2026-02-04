@@ -30,7 +30,7 @@ export function useWebSocket({
   const [isConnected, setIsConnected] = useState(false);
   const [lastMessage, setLastMessage] = useState<unknown>(null);
   const wsRef = useRef<WebSocket | null>(null);
-  const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reconnectAttempts = useRef(0);
 
   const { accessToken } = useAuthStore();
