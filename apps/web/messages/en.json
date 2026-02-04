@@ -76,5 +76,54 @@
     "orderPickedUp": "Your order has been picked up",
     "onTheWay": "Your order is on the way!",
     "orderDelivered": "Your order has been delivered"
+  },
+  "landing": {
+    "hero": {
+      "title": "Your menu, online in 5 minutes",
+      "subtitle": "Create your free digital menu. Your customers scan a QR code and browse instantly.",
+      "cta_primary": "Get Started Free",
+      "cta_secondary": "View Demo"
+    },
+    "features": {
+      "title": "Everything you need",
+      "qr_title": "QR Code Menu",
+      "qr_desc": "Customers scan and browse instantly",
+      "updates_title": "Easy Updates",
+      "updates_desc": "Change prices and items in seconds",
+      "analytics_title": "Analytics",
+      "analytics_desc": "See what's popular with your customers"
+    },
+    "pricing": {
+      "title": "Simple Pricing",
+      "free_tier": "Free",
+      "pro_tier": "Pro",
+      "per_month": "/month",
+      "free_features": [
+        "Unlimited menu items",
+        "QR code generator",
+        "Basic analytics",
+        "RESTO360 branding"
+      ],
+      "pro_features": [
+        "Everything in Free",
+        "Custom branding",
+        "Custom colors",
+        "Priority support"
+      ],
+      "start_free": "Start Free",
+      "go_pro": "Go Pro",
+      "full_platform_note": "Need POS, payments, or delivery? Contact us for Full Platform pricing."
+    },
+    "social_proof": {
+      "restaurants_count": "100+ restaurants trust RESTO360",
+      "views_count": "10,000+ menus viewed this month"
+    },
+    "footer": {
+      "tagline": "The restaurant platform for West Africa",
+      "about": "About",
+      "contact": "Contact",
+      "privacy": "Privacy",
+      "terms": "Terms"
+    }
   }
 }

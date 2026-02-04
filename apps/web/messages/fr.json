@@ -76,5 +76,54 @@
     "orderPickedUp": "Votre commande a été récupérée",
     "onTheWay": "Votre commande est en route !",
     "orderDelivered": "Votre commande a été livrée"
+  },
+  "landing": {
+    "hero": {
+      "title": "Votre menu, en ligne en 5 minutes",
+      "subtitle": "Creez votre menu digital gratuit. Vos clients scannent un QR code et consultent instantanement.",
+      "cta_primary": "Commencer gratuitement",
+      "cta_secondary": "Voir une demo"
+    },
+    "features": {
+      "title": "Tout ce dont vous avez besoin",
+      "qr_title": "Menu QR Code",
+      "qr_desc": "Vos clients scannent et consultent instantanement",
+      "updates_title": "Mises a jour faciles",
+      "updates_desc": "Modifiez vos prix et articles en quelques secondes",
+      "analytics_title": "Statistiques",
+      "analytics_desc": "Decouvrez ce qui plait a vos clients"
+    },
+    "pricing": {
+      "title": "Tarification simple",
+      "free_tier": "Gratuit",
+      "pro_tier": "Pro",
+      "per_month": "/mois",
+      "free_features": [
+        "Articles illimites",
+        "Generateur de QR code",
+        "Statistiques de base",
+        "Marque RESTO360"
+      ],
+      "pro_features": [
+        "Tout dans Gratuit",
+        "Votre propre marque",
+        "Couleurs personnalisees",
+        "Support prioritaire"
+      ],
+      "start_free": "Commencer gratuitement",
+      "go_pro": "Passer a Pro",
+      "full_platform_note": "Besoin de caisse, paiements ou livraison ? Contactez-nous pour le tarif Plateforme Complete."
+    },
+    "social_proof": {
+      "restaurants_count": "100+ restaurants font confiance a RESTO360",
+      "views_count": "10,000+ menus consultes ce mois"
+    },
+    "footer": {
+      "tagline": "La plateforme restaurant pour l'Afrique de l'Ouest",
+      "about": "A propos",
+      "contact": "Contact",
+      "privacy": "Confidentialite",
+      "terms": "Conditions"
+    }
   }
 }
