@@ -247,6 +247,83 @@
       "feature3": "Support prioritaire",
       "upgradeCta": "Passer a Pro",
       "inlineText": "Retirez la marque RESTO360"
+    },
+    "upgradePage": {
+      "title": "Choisissez votre forfait",
+      "subtitle": "Commencez gratuitement et passez a un forfait superieur quand vous avez besoin de plus. Pas de frais caches, annulez a tout moment.",
+      "popular": "Le plus populaire",
+      "free": "Gratuit",
+      "perMonth": "/mois",
+      "currentPlan": "Forfait actuel",
+      "comingSoon": "Bientot disponible",
+      "unlimited": "Illimite",
+      "tiers": {
+        "free": {
+          "name": "Gratuit",
+          "description": "Parfait pour commencer",
+          "features": {
+            "items": "Articles illimites",
+            "qr": "Generateur de QR code",
+            "analytics": "Statistiques de base",
+            "branding": "Marque RESTO360 sur le menu"
+          },
+          "cta": "Forfait actuel"
+        },
+        "pro": {
+          "name": "Pro",
+          "description": "Pour les restaurants en croissance",
+          "features": {
+            "everything": "Tout dans Gratuit",
+            "noBranding": "Sans marque RESTO360",
+            "colors": "Couleurs personnalisees",
+            "logo": "Telechargez votre logo",
+            "priority": "Support prioritaire"
+          },
+          "cta": "Passer a Pro"
+        },
+        "full": {
+          "name": "Plateforme Complete",
+          "description": "Solution restaurant complete",
+          "price": "Contactez-nous",
+          "features": {
+            "everything": "Tout dans Pro",
+            "pos": "Systeme de caisse complet",
+            "payments": "Paiements mobile money",
+            "delivery": "Gestion des livraisons",
+            "inventory": "Suivi des stocks",
+            "support": "Support dedie"
+          },
+          "cta": "Contacter les ventes"
+        }
+      },
+      "comparison": {
+        "title": "Comparaison des fonctionnalites",
+        "feature": "Fonctionnalite",
+        "features": {
+          "menuItems": "Articles du menu",
+          "qrCode": "QR code",
+          "basicAnalytics": "Statistiques de base",
+          "customBranding": "Marque personnalisee",
+          "customColors": "Couleurs personnalisees",
+          "logoUpload": "Telechargement du logo",
+          "pos": "Systeme de caisse",
+          "mobilePayments": "Paiements mobile money",
+          "deliveryManagement": "Gestion des livraisons",
+          "inventory": "Suivi des stocks",
+          "support": "Support"
+        },
+        "community": "Communaute",
+        "priority": "Prioritaire",
+        "dedicated": "Dedie"
+      },
+      "interest": {
+        "title": "Soyez le premier a savoir quand Pro sera disponible",
+        "subtitle": "Recevez une notification quand le forfait Pro sera disponible et beneficiez d'une remise exclusive early adopter.",
+        "emailPlaceholder": "Entrez votre email",
+        "notify": "Me notifier",
+        "thanks": "Merci pour votre interet !",
+        "weWillContact": "Nous vous contacterons quand Pro sera disponible."
+      }
     }
   },
   "onboarding": {

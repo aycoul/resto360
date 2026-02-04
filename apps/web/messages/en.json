@@ -247,6 +247,83 @@
       "feature3": "Priority support",
       "upgradeCta": "Upgrade to Pro",
       "inlineText": "Remove RESTO360 branding"
+    },
+    "upgradePage": {
+      "title": "Choose Your Plan",
+      "subtitle": "Start free and upgrade when you need more features. No hidden fees, cancel anytime.",
+      "popular": "Most Popular",
+      "free": "Free",
+      "perMonth": "/month",
+      "currentPlan": "Current Plan",
+      "comingSoon": "Coming Soon",
+      "unlimited": "Unlimited",
+      "tiers": {
+        "free": {
+          "name": "Free",
+          "description": "Perfect for getting started",
+          "features": {
+            "items": "Unlimited menu items",
+            "qr": "QR code generator",
+            "analytics": "Basic view analytics",
+            "branding": "RESTO360 branding on menu"
+          },
+          "cta": "Current Plan"
+        },
+        "pro": {
+          "name": "Pro",
+          "description": "For growing restaurants",
+          "features": {
+            "everything": "Everything in Free",
+            "noBranding": "No RESTO360 branding",
+            "colors": "Custom brand colors",
+            "logo": "Upload your logo",
+            "priority": "Priority support"
+          },
+          "cta": "Upgrade to Pro"
+        },
+        "full": {
+          "name": "Full Platform",
+          "description": "Complete restaurant solution",
+          "price": "Contact Us",
+          "features": {
+            "everything": "Everything in Pro",
+            "pos": "Full POS system",
+            "payments": "Mobile money payments",
+            "delivery": "Delivery management",
+            "inventory": "Inventory tracking",
+            "support": "Dedicated support"
+          },
+          "cta": "Contact Sales"
+        }
+      },
+      "comparison": {
+        "title": "Feature Comparison",
+        "feature": "Feature",
+        "features": {
+          "menuItems": "Menu items",
+          "qrCode": "QR code",
+          "basicAnalytics": "Basic analytics",
+          "customBranding": "Custom branding",
+          "customColors": "Custom colors",
+          "logoUpload": "Logo upload",
+          "pos": "POS system",
+          "mobilePayments": "Mobile money payments",
+          "deliveryManagement": "Delivery management",
+          "inventory": "Inventory tracking",
+          "support": "Support"
+        },
+        "community": "Community",
+        "priority": "Priority",
+        "dedicated": "Dedicated"
+      },
+      "interest": {
+        "title": "Be the first to know when Pro launches",
+        "subtitle": "Get notified when Pro tier is available and receive an exclusive early adopter discount.",
+        "emailPlaceholder": "Enter your email",
+        "notify": "Notify me",
+        "thanks": "Thanks for your interest!",
+        "weWillContact": "We will contact you when Pro is available."
+      }
     }
   },
   "onboarding": {

@@ -1,7 +1,6 @@
 """
 Analytics models for tracking menu views and engagement.
 """
-from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
 from apps.core.managers import TenantManager
@@ -65,8 +64,7 @@ class DailyMenuStats(TenantModel):
     total_views = models.PositiveIntegerField(default=0)
     unique_visitors = models.PositiveIntegerField(default=0)
     qr_scans = models.PositiveIntegerField(default=0)
-    top_items = ArrayField(
-        models.UUIDField(),
+    top_items = models.JSONField(
         default=list,
         blank=True,
         help_text="List of most viewed item IDs (if item-level tracking added)",
