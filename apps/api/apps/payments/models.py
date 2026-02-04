@@ -151,14 +151,22 @@ class Payment(TenantModel):
         """Transition from PROCESSING to EXPIRED."""
         self.completed_at = timezone.now()
 
-    @transition(field=status, source=PaymentStatus.SUCCESS, target=PaymentStatus.REFUNDED)
+    @transition(
+        field=status,
+        source=[PaymentStatus.SUCCESS, PaymentStatus.PARTIALLY_REFUNDED],
+        target=PaymentStatus.REFUNDED,
+    )
     def mark_refunded(self):
-        """Transition from SUCCESS to REFUNDED (full refund)."""
+        """Transition to REFUNDED (full refund)."""
         self.refunded_amount = self.amount
 
-    @transition(field=status, source=PaymentStatus.SUCCESS, target=PaymentStatus.PARTIALLY_REFUNDED)
+    @transition(
+        field=status,
+        source=[PaymentStatus.SUCCESS, PaymentStatus.PARTIALLY_REFUNDED],
+        target=PaymentStatus.PARTIALLY_REFUNDED,
+    )
     def mark_partially_refunded(self, refund_amount: int):
-        """Transition from SUCCESS to PARTIALLY_REFUNDED."""
+        """Transition to PARTIALLY_REFUNDED (partial refund)."""
         self.refunded_amount = refund_amount
 
 
