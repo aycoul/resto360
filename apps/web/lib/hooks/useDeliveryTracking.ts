@@ -32,7 +32,7 @@ export function useDeliveryTracking(deliveryId: string): UseDeliveryTrackingResu
   const [error, setError] = useState<string | null>(null);
 
   const wsRef = useRef<WebSocket | null>(null);
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const reconnectAttempts = useRef(0);
 
   const fetchDelivery = useCallback(async () => {
