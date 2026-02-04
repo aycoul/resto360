@@ -125,5 +125,111 @@
       "privacy": "Privacy",
       "terms": "Terms"
     }
+  },
+  "register": {
+    "title": "Create your free menu",
+    "subtitle": "Start receiving orders in minutes",
+    "restaurant_name": "Restaurant name",
+    "phone": "Phone number",
+    "email": "Email",
+    "password": "Password",
+    "password_confirm": "Confirm password",
+    "submit": "Create account",
+    "submitting": "Creating...",
+    "login_link": "Already have an account?",
+    "login_cta": "Log in",
+    "no_credit_card": "No credit card required",
+    "errors": {
+      "required": "This field is required",
+      "password_mismatch": "Passwords do not match",
+      "password_min": "Password must be at least 8 characters",
+      "invalid_email": "Invalid email address",
+      "email_exists": "This email is already in use",
+      "phone_exists": "This phone number is already in use",
+      "general": "An error occurred. Please try again.",
+      "network": "Connection error. Check your internet connection."
+    }
+  },
+  "lite": {
+    "sidebar": {
+      "dashboard": "Dashboard",
+      "menu": "Menu",
+      "qrCodes": "QR Codes",
+      "settings": "Settings",
+      "upgradeToPro": "Upgrade to Pro"
+    },
+    "header": {
+      "freePlan": "Free",
+      "proPlan": "Pro",
+      "fullPlan": "Full",
+      "profile": "Profile",
+      "logout": "Logout"
+    }
+  },
+  "onboarding": {
+    "title": "Set up your menu",
+    "steps": {
+      "details": "Details",
+      "category": "Category",
+      "menuItem": "Menu Item",
+      "qrCode": "QR Code"
+    },
+    "details": {
+      "title": "Restaurant Details",
+      "subtitle": "This information will appear on your online menu",
+      "restaurant_name": "Restaurant name",
+      "address": "Address",
+      "phone": "Phone",
+      "logo": "Logo (optional)",
+      "logo_hint": "PNG or JPG, max 2MB",
+      "upload_logo": "Upload logo",
+      "skip": "Skip",
+      "next": "Next"
+    },
+    "category": {
+      "title": "Create your first category",
+      "subtitle": "Categories organize your menu (e.g., Main Dishes, Drinks)",
+      "category_name": "Category name",
+      "placeholder": "E.g., Main Dishes",
+      "create": "Create category",
+      "creating": "Creating...",
+      "success": "Category created!",
+      "back": "Back",
+      "next": "Next"
+    },
+    "menuItem": {
+      "title": "Add your first item",
+      "subtitle": "Add a dish or drink to your menu",
+      "item_name": "Item name",
+      "item_name_placeholder": "E.g., Grilled Chicken",
+      "price": "Price (XOF)",
+      "price_placeholder": "E.g., 3500",
+      "description": "Description (optional)",
+      "description_placeholder": "Describe your dish",
+      "photo": "Photo (optional)",
+      "photo_hint": "PNG or JPG, max 2MB",
+      "upload_photo": "Upload photo",
+      "category": "Category",
+      "create": "Add item",
+      "creating": "Adding...",
+      "success": "Item added!",
+      "preview": "Preview",
+      "back": "Back",
+      "next": "Next"
+    },
+    "qrCode": {
+      "title": "Your QR Code is ready!",
+      "subtitle": "Your customers can now scan this code to see your menu",
+      "download": "Download",
+      "small": "Small (200px)",
+      "medium": "Medium (400px)",
+      "large": "Large (800px)",
+      "print": "Print QR Code",
+      "menuUrl": "Your menu link",
+      "copyLink": "Copy link",
+      "copied": "Copied!",
+      "goToDashboard": "Go to Dashboard",
+      "back": "Back"
+    }
   }
 }

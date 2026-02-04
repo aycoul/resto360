@@ -125,5 +125,111 @@
       "privacy": "Confidentialite",
       "terms": "Conditions"
     }
+  },
+  "register": {
+    "title": "Creez votre menu gratuit",
+    "subtitle": "Commencez a recevoir des commandes en quelques minutes",
+    "restaurant_name": "Nom du restaurant",
+    "phone": "Numero de telephone",
+    "email": "Email",
+    "password": "Mot de passe",
+    "password_confirm": "Confirmer le mot de passe",
+    "submit": "Creer mon compte",
+    "submitting": "Creation en cours...",
+    "login_link": "Vous avez deja un compte ?",
+    "login_cta": "Connectez-vous",
+    "no_credit_card": "Aucune carte de credit requise",
+    "errors": {
+      "required": "Ce champ est requis",
+      "password_mismatch": "Les mots de passe ne correspondent pas",
+      "password_min": "Le mot de passe doit contenir au moins 8 caracteres",
+      "invalid_email": "Adresse email invalide",
+      "email_exists": "Cette adresse email est deja utilisee",
+      "phone_exists": "Ce numero de telephone est deja utilise",
+      "general": "Une erreur s'est produite. Veuillez reessayer.",
+      "network": "Erreur de connexion. Verifiez votre connexion internet."
+    }
+  },
+  "lite": {
+    "sidebar": {
+      "dashboard": "Tableau de bord",
+      "menu": "Menu",
+      "qrCodes": "QR Codes",
+      "settings": "Parametres",
+      "upgradeToPro": "Passer a Pro"
+    },
+    "header": {
+      "freePlan": "Gratuit",
+      "proPlan": "Pro",
+      "fullPlan": "Complet",
+      "profile": "Profil",
+      "logout": "Deconnexion"
+    }
+  },
+  "onboarding": {
+    "title": "Configurez votre menu",
+    "steps": {
+      "details": "Details",
+      "category": "Categorie",
+      "menuItem": "Article",
+      "qrCode": "QR Code"
+    },
+    "details": {
+      "title": "Details du restaurant",
+      "subtitle": "Ces informations apparaitront sur votre menu en ligne",
+      "restaurant_name": "Nom du restaurant",
+      "address": "Adresse",
+      "phone": "Telephone",
+      "logo": "Logo (optionnel)",
+      "logo_hint": "PNG ou JPG, max 2MB",
+      "upload_logo": "Telecharger un logo",
+      "skip": "Passer",
+      "next": "Suivant"
+    },
+    "category": {
+      "title": "Creez votre premiere categorie",
+      "subtitle": "Les categories organisent votre menu (ex: Plats principaux, Boissons)",
+      "category_name": "Nom de la categorie",
+      "placeholder": "Ex: Plats principaux",
+      "create": "Creer la categorie",
+      "creating": "Creation...",
+      "success": "Categorie creee !",
+      "back": "Retour",
+      "next": "Suivant"
+    },
+    "menuItem": {
+      "title": "Ajoutez votre premier article",
+      "subtitle": "Ajoutez un plat ou une boisson a votre menu",
+      "item_name": "Nom de l'article",
+      "item_name_placeholder": "Ex: Poulet braise",
+      "price": "Prix (XOF)",
+      "price_placeholder": "Ex: 3500",
+      "description": "Description (optionnel)",
+      "description_placeholder": "Decrivez votre plat",
+      "photo": "Photo (optionnel)",
+      "photo_hint": "PNG ou JPG, max 2MB",
+      "upload_photo": "Telecharger une photo",
+      "category": "Categorie",
+      "create": "Ajouter l'article",
+      "creating": "Ajout...",
+      "success": "Article ajoute !",
+      "preview": "Apercu",
+      "back": "Retour",
+      "next": "Suivant"
+    },
+    "qrCode": {
+      "title": "Votre QR Code est pret !",
+      "subtitle": "Vos clients peuvent maintenant scanner ce code pour voir votre menu",
+      "download": "Telecharger",
+      "small": "Petit (200px)",
+      "medium": "Moyen (400px)",
+      "large": "Grand (800px)",
+      "print": "Imprimer le QR Code",
+      "menuUrl": "Lien de votre menu",
+      "copyLink": "Copier le lien",
+      "copied": "Copie !",
+      "goToDashboard": "Aller au tableau de bord",
+      "back": "Retour"
+    }
   }
 }
