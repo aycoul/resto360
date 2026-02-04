@@ -1,4 +1,4 @@
-"""Webhook event handlers."""
+"""Webhook event handlers for all payment providers."""
 
 import logging
 from typing import Optional
@@ -8,6 +8,16 @@ from django.db import transaction
 from apps.payments.models import Payment, PaymentStatus
 
 logger = logging.getLogger(__name__)
+
+
+# Terminal states - payments in these states should not be updated
+TERMINAL_STATES = {
+    PaymentStatus.SUCCESS,
+    PaymentStatus.FAILED,
+    PaymentStatus.EXPIRED,
+    PaymentStatus.REFUNDED,
+    PaymentStatus.PARTIALLY_REFUNDED,
+}
 
 
 def handle_wave_webhook(webhook_data: dict) -> Optional[Payment]:
@@ -56,14 +66,7 @@ def handle_wave_webhook(webhook_data: dict) -> Optional[Payment]:
         return None
 
     # Check if payment is in a terminal state (idempotency)
-    terminal_states = {
-        PaymentStatus.SUCCESS,
-        PaymentStatus.FAILED,
-        PaymentStatus.EXPIRED,
-        PaymentStatus.REFUNDED,
-        PaymentStatus.PARTIALLY_REFUNDED,
-    }
-    if payment.status in terminal_states:
+    if payment.status in TERMINAL_STATES:
         logger.info(
             "Payment %s already in terminal state: %s",
             payment.idempotency_key,
@@ -77,7 +80,7 @@ def handle_wave_webhook(webhook_data: dict) -> Optional[Payment]:
         payment = Payment.all_objects.select_for_update().get(pk=payment.pk)
 
         # Check again after lock (double-check locking)
-        if payment.status in terminal_states:
+        if payment.status in TERMINAL_STATES:
             return payment
 
         # Ensure payment is in PROCESSING state before transitioning
@@ -116,3 +119,35 @@ def handle_wave_webhook(webhook_data: dict) -> Optional[Payment]:
             return None
 
     return payment
+
+
+def handle_orange_webhook(webhook_data: dict) -> Optional[Payment]:
+    """
+    Handle an Orange Money webhook event.
+
+    TODO: Implement in 04-03-PLAN.md (Orange Money provider)
+
+    Args:
+        webhook_data: Normalized webhook data from OrangeProvider.parse_webhook()
+
+    Returns:
+        Updated Payment instance, or None if payment not found/already processed
+    """
+    logger.warning("Orange webhook handler not yet implemented")
+    return None
+
+
+def handle_mtn_webhook(webhook_data: dict) -> Optional[Payment]:
+    """
+    Handle an MTN MoMo webhook event.
+
+    TODO: Implement in 04-04-PLAN.md (MTN MoMo provider)
+
+    Args:
+        webhook_data: Normalized webhook data from MTNProvider.parse_webhook()
+
+    Returns:
+        Updated Payment instance, or None if payment not found/already processed
+    """
+    logger.warning("MTN webhook handler not yet implemented")
+    return None

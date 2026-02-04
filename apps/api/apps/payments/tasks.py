@@ -1,12 +1,16 @@
 """Celery tasks for payment processing."""
 
-import json
 import logging
 
 from celery import shared_task
 
 from apps.payments.providers import get_provider
-from apps.payments.webhooks.handlers import handle_wave_webhook
+from apps.payments.providers.base import ProviderStatus
+from apps.payments.webhooks.handlers import (
+    handle_mtn_webhook,
+    handle_orange_webhook,
+    handle_wave_webhook,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -68,6 +72,10 @@ def process_webhook_event(
     result = None
     if provider_code == "wave":
         result = handle_wave_webhook(webhook_data)
+    elif provider_code == "orange":
+        result = handle_orange_webhook(webhook_data)
+    elif provider_code == "mtn":
+        result = handle_mtn_webhook(webhook_data)
 
     if result:
         return {
@@ -166,3 +174,115 @@ def check_pending_payments(self, provider_code: str) -> dict:
         "checked": pending_payments.count(),
         "updated": updated,
     }
+
+
+@shared_task(
+    bind=True,
+    max_retries=30,  # 30 retries at 2 min intervals = 1 hour total
+    default_retry_delay=120,  # 2 minutes between retries
+)
+def poll_payment_status(self, payment_id: str) -> dict:
+    """
+    Poll payment provider for status update.
+
+    This is a fallback mechanism for providers with unreliable webhooks
+    (Orange Money) or no webhook support in sandbox (MTN MoMo).
+
+    The task will retry up to 30 times (1 hour total at 2 min intervals)
+    until the payment reaches a terminal state.
+
+    Args:
+        self: Celery task instance (for retries)
+        payment_id: UUID of the Payment to poll
+
+    Returns:
+        dict with polling result
+    """
+    from apps.payments.models import Payment, PaymentStatus
+
+    logger.info("Polling payment status for payment_id=%s", payment_id)
+
+    # Find the payment
+    try:
+        payment = Payment.all_objects.get(id=payment_id)
+    except Payment.DoesNotExist:
+        logger.warning("Payment not found for poll: %s", payment_id)
+        return {"success": False, "error": "Payment not found"}
+
+    # Only poll PROCESSING payments (not PENDING, SUCCESS, FAILED, etc.)
+    if payment.status != PaymentStatus.PROCESSING:
+        logger.info(
+            "Payment %s not in PROCESSING state (status=%s), skipping poll",
+            payment.idempotency_key,
+            payment.status,
+        )
+        return {
+            "success": True,
+            "message": f"Payment not in PROCESSING state, current status: {payment.status}",
+        }
+
+    # Get the provider and check status
+    try:
+        provider = get_provider(payment.provider_code)
+    except ValueError as e:
+        logger.error("Unknown provider for payment %s: %s", payment_id, payment.provider_code)
+        return {"success": False, "error": str(e)}
+
+    try:
+        result = provider.check_status(payment.provider_reference)
+    except Exception as e:
+        logger.error(
+            "Error polling payment %s: %s",
+            payment.idempotency_key,
+            str(e),
+        )
+        # Retry on error
+        raise self.retry(exc=e)
+
+    # Update payment based on provider status
+    if result.status == ProviderStatus.SUCCESS:
+        payment.mark_success()
+        payment.provider_response = result.raw_response or {}
+        payment.save()
+        logger.info("Payment %s marked SUCCESS via polling", payment.idempotency_key)
+        return {
+            "success": True,
+            "payment_id": str(payment.id),
+            "status": "success",
+        }
+
+    elif result.status == ProviderStatus.FAILED:
+        payment.mark_failed(
+            error_code=result.error_code or "unknown",
+            error_message=result.error_message or "Payment failed",
+        )
+        payment.provider_response = result.raw_response or {}
+        payment.save()
+        logger.info("Payment %s marked FAILED via polling", payment.idempotency_key)
+        return {
+            "success": True,
+            "payment_id": str(payment.id),
+            "status": "failed",
+        }
+
+    elif result.status == ProviderStatus.EXPIRED:
+        payment.mark_expired()
+        payment.provider_response = result.raw_response or {}
+        payment.save()
+        logger.info("Payment %s marked EXPIRED via polling", payment.idempotency_key)
+        return {
+            "success": True,
+            "payment_id": str(payment.id),
+            "status": "expired",
+        }
+
+    else:
+        # Still pending/processing, retry
+        logger.info(
+            "Payment %s still %s, will retry (attempt %d/%d)",
+            payment.idempotency_key,
+            result.status.value,
+            self.request.retries + 1,
+            self.max_retries,
+        )
+        raise self.retry()
