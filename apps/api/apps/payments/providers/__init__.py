@@ -21,15 +21,15 @@ def get_provider(provider_code: str) -> "PaymentProvider":
     """
     # Import here to avoid circular imports
     from .cash import CashProvider
+    from .mtn import MTNProvider
     from .orange import OrangeProvider
     from .wave import WaveProvider
 
     providers = {
         "cash": CashProvider,
+        "mtn": MTNProvider,
         "orange": OrangeProvider,
         "wave": WaveProvider,
-        # MTN MoMo provider will be added in this plan:
-        # "mtn": MTNProvider,
     }
 
     provider_class = providers.get(provider_code)

@@ -245,3 +245,10 @@ ORANGE_CLIENT_ID = env("ORANGE_CLIENT_ID", default="")
 ORANGE_CLIENT_SECRET = env("ORANGE_CLIENT_SECRET", default="")
 ORANGE_MERCHANT_KEY = env("ORANGE_MERCHANT_KEY", default="")
 ORANGE_API_URL = env("ORANGE_API_URL", default="https://api.orange.com/orange-money-webpay/dev/v1")
+
+# MTN MoMo Configuration
+MTN_SUBSCRIPTION_KEY = env("MTN_SUBSCRIPTION_KEY", default="")
+MTN_USER_ID = env("MTN_USER_ID", default="")
+MTN_API_SECRET = env("MTN_API_SECRET", default="")
+MTN_ENVIRONMENT = env("MTN_ENVIRONMENT", default="sandbox")  # sandbox or production
+MTN_CALLBACK_URL = env("MTN_CALLBACK_URL", default="")
