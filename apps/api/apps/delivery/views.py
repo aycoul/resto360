@@ -2,7 +2,9 @@
 
 from rest_framework import status
 from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from apps.core.views import TenantModelViewSet
 
@@ -376,3 +378,84 @@ class DeliveryViewSet(TenantModelViewSet):
             )
 
         return Response(DeliverySerializer(result).data)
+
+
+class DeliveryTrackingView(APIView):
+    """
+    Public endpoint for customer delivery tracking.
+
+    GET /api/v1/delivery/track/{delivery_id}/
+
+    No authentication required - delivery ID serves as access key.
+    """
+
+    permission_classes = [AllowAny]
+
+    def get(self, request, delivery_id):
+        try:
+            delivery = Delivery.all_objects.select_related(
+                "driver__user", "zone", "order__restaurant"
+            ).get(id=delivery_id)
+        except Delivery.DoesNotExist:
+            return Response(
+                {"error": "Delivery not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Build response with necessary tracking info
+        data = {
+            "id": str(delivery.id),
+            "status": delivery.status,
+            "delivery_address": delivery.delivery_address,
+            "delivery_lat": (
+                delivery.delivery_location.y if delivery.delivery_location else None
+            ),
+            "delivery_lng": (
+                delivery.delivery_location.x if delivery.delivery_location else None
+            ),
+            "estimated_delivery_time": (
+                delivery.estimated_delivery_time.isoformat()
+                if delivery.estimated_delivery_time
+                else None
+            ),
+            "customer_name": delivery.customer_name,
+            "customer_phone": delivery.customer_phone,
+            "delivery_fee": delivery.delivery_fee,
+            "order_number": delivery.order.order_number,
+            "created_at": delivery.created_at.isoformat(),
+            "assigned_at": (
+                delivery.assigned_at.isoformat() if delivery.assigned_at else None
+            ),
+            "picked_up_at": (
+                delivery.picked_up_at.isoformat() if delivery.picked_up_at else None
+            ),
+            "en_route_at": (
+                delivery.en_route_at.isoformat() if delivery.en_route_at else None
+            ),
+            "delivered_at": (
+                delivery.delivered_at.isoformat() if delivery.delivered_at else None
+            ),
+        }
+
+        # Add driver info if assigned
+        if delivery.driver:
+            data["driver"] = {
+                "name": delivery.driver.user.name,
+                "phone": delivery.driver.phone,
+                "vehicle_type": delivery.driver.vehicle_type,
+            }
+            if delivery.driver.current_location:
+                data["driver"]["lat"] = delivery.driver.current_location.y
+                data["driver"]["lng"] = delivery.driver.current_location.x
+
+        # Add restaurant info
+        restaurant = delivery.order.restaurant
+        data["restaurant"] = {
+            "name": restaurant.name,
+            "phone": restaurant.phone,
+            "address": restaurant.address,
+        }
+        if restaurant.latitude and restaurant.longitude:
+            data["restaurant"]["lat"] = float(restaurant.latitude)
+            data["restaurant"]["lng"] = float(restaurant.longitude)
+
+        return Response(data)
