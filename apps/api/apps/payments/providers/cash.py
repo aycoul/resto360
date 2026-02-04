@@ -33,13 +33,12 @@ class CashProvider(PaymentProvider):
         """
         Initiate a cash payment.
 
-        Cash payments don't require external processing - they are
-        initiated in PENDING state and marked SUCCESS when cashier
-        confirms cash received.
+        Cash payments succeed immediately - no external processing needed.
+        The idempotency_key is used as provider_reference for consistency.
         """
         return PaymentResult(
-            provider_reference=f"cash_{uuid.uuid4().hex[:12]}",
-            status=ProviderStatus.PENDING,
+            provider_reference=idempotency_key,
+            status=ProviderStatus.SUCCESS,
             redirect_url=None,
             error_code=None,
             error_message=None,
@@ -51,15 +50,34 @@ class CashProvider(PaymentProvider):
         Check the status of a cash payment.
 
         Cash payment status is tracked in our database, not with an
-        external provider. This returns the current known status.
+        external provider. Looks up the Payment by provider_reference.
         """
-        # For cash, we don't have external status - return pending
-        # The actual status comes from our Payment model
-        return PaymentResult(
-            provider_reference=provider_reference,
-            status=ProviderStatus.PENDING,
-            raw_response={"note": "Cash status tracked internally"},
-        )
+        from apps.payments.models import Payment, PaymentStatus
+
+        # Status mapping from Payment model to Provider status
+        status_map = {
+            PaymentStatus.PENDING: ProviderStatus.PENDING,
+            PaymentStatus.PROCESSING: ProviderStatus.PROCESSING,
+            PaymentStatus.SUCCESS: ProviderStatus.SUCCESS,
+            PaymentStatus.FAILED: ProviderStatus.FAILED,
+            PaymentStatus.EXPIRED: ProviderStatus.EXPIRED,
+            PaymentStatus.REFUNDED: ProviderStatus.SUCCESS,  # Still successful
+            PaymentStatus.PARTIALLY_REFUNDED: ProviderStatus.SUCCESS,
+        }
+
+        try:
+            payment = Payment.all_objects.get(provider_reference=provider_reference)
+            return PaymentResult(
+                provider_reference=provider_reference,
+                status=status_map.get(payment.status, ProviderStatus.PENDING),
+                raw_response={"payment_id": str(payment.id), "status": payment.status},
+            )
+        except Payment.DoesNotExist:
+            return PaymentResult(
+                provider_reference=provider_reference,
+                status=ProviderStatus.PENDING,
+                raw_response={"note": "Payment not found"},
+            )
 
     def process_refund(
         self, provider_reference: str, amount: Optional[int] = None
