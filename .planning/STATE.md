@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-03)
 
 **Core value:** Restaurants can take orders, accept payments, and manage deliveries - even when internet is unreliable.
-**Current focus:** Phase 4 - Payments (COMPLETE)
+**Current focus:** Phase 5 - Delivery (IN PROGRESS)
 
 ## Current Position
 
 Phase: 5 of 9 (Delivery)
-Plan: 1 of 4 in current phase
+Plan: 2 of 4 in current phase
 Status: In progress
-Last activity: 2026-02-04 - Completed 05-01-PLAN.md (Delivery Foundation)
+Last activity: 2026-02-04 - Completed 05-02-PLAN.md (Assignment and Tracking)
 
-Progress: [████████████████████░░░░░░░░░░░░░░░░] 56%
+Progress: [██████████████████████░░░░░░░░░░░░░░] 58%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 20
+- Total plans completed: 21
 - Average duration: 9 minutes
-- Total execution time: 3.2 hours
+- Total execution time: 3.3 hours
 
 **By Phase:**
 
@@ -31,10 +31,10 @@ Progress: [████████████████████░░░
 | 02-pos-core | 7/7 | 75 min | 11 min |
 | 03-inventory | 3/3 | 29 min | 10 min |
 | 04-payments | 6/6 | 35 min | 6 min |
-| 05-delivery | 1/4 | 7 min | 7 min |
+| 05-delivery | 2/4 | 15 min | 8 min |
 
 **Recent Trend:**
-- Last 5 plans: 04-04 (8 min), 04-05 (6 min), 04-06 (12 min), 05-01 (7 min)
+- Last 5 plans: 04-05 (6 min), 04-06 (12 min), 05-01 (7 min), 05-02 (8 min)
 - Trend: Efficient execution
 
 *Updated after each plan completion*
@@ -125,6 +125,11 @@ Recent decisions affecting current work:
 - [05-01]: Database engine conditionally switched to PostGIS only when PostgreSQL detected
 - [05-01]: GeoFeatureModelSerializer for GeoJSON Feature output from GeoDjango models
 - [05-01]: polygon__contains PostGIS spatial query for point-in-polygon checking
+- [05-02]: FSMField with protected=True for delivery status (consistent with payments)
+- [05-02]: select_for_update() on both delivery and driver rows for race-safe assignment
+- [05-02]: PostGIS ST_DWithin for index-optimized spatial filtering before Distance ordering
+- [05-02]: Driver location staleness check (5min default) excludes outdated positions
+- [05-02]: Customer tracking allows anonymous WebSocket access by delivery ID
 
 ### Pending Todos
 
@@ -145,8 +150,8 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Completed 05-01-PLAN.md (Delivery Foundation)
+Stopped at: Completed 05-02-PLAN.md (Assignment and Tracking)
 Resume file: None
 
 ---
-*Next step: Ready for 05-02-PLAN.md (Assignment and Tracking)*
+*Next step: Ready for 05-03-PLAN.md (Celery Tasks for Auto-Assignment)*
