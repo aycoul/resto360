@@ -7,13 +7,13 @@ from .factories import (
     CashierFactory,
     ManagerFactory,
     OwnerFactory,
-    RestaurantFactory,
+    BusinessFactory,
     UserFactory,
 )
 
 # Register factories as pytest fixtures
-# This creates both 'restaurant_factory' and 'restaurant' fixtures
-register(RestaurantFactory)
+# This creates both 'business_factory' and 'business' fixtures
+register(BusinessFactory)
 register(UserFactory)
 register(OwnerFactory, "owner")  # Creates 'owner' fixture
 register(ManagerFactory, "manager")  # Creates 'manager' fixture

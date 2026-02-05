@@ -27,10 +27,10 @@ class StockItemSerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "current_quantity", "created_at", "updated_at"]
 
     def create(self, validated_data):
-        """Set restaurant from request context."""
+        """Set business from request context."""
         request = self.context.get("request")
-        if request and hasattr(request.user, "restaurant"):
-            validated_data["restaurant"] = request.user.restaurant
+        if request and hasattr(request.user, "business"):
+            validated_data["business"] = request.user.business
         return super().create(validated_data)
 
 
@@ -154,14 +154,14 @@ class MenuItemIngredientSerializer(serializers.ModelSerializer):
         read_only_fields = ["id"]
 
     def validate(self, data):
-        """Ensure menu_item and stock_item belong to same restaurant."""
+        """Ensure menu_item and stock_item belong to same business."""
         menu_item = data.get("menu_item")
         stock_item = data.get("stock_item")
 
         if menu_item and stock_item:
-            if menu_item.restaurant_id != stock_item.restaurant_id:
+            if menu_item.business_id != stock_item.business_id:
                 raise serializers.ValidationError(
-                    "Menu item and stock item must belong to the same restaurant"
+                    "Menu item and stock item must belong to the same business"
                 )
         return data
 

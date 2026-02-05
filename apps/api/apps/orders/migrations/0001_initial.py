@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
                 ('cancelled_at', models.DateTimeField(blank=True, null=True)),
                 ('cancelled_reason', models.TextField(blank=True)),
                 ('cashier', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='orders_created', to=settings.AUTH_USER_MODEL)),
-                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.restaurant')),
+                ('business', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.business')),
             ],
             options={
                 'ordering': ['-created_at'],
@@ -60,9 +60,9 @@ class Migration(migrations.Migration):
                 ('modifiers_total', models.IntegerField(default=0, help_text='Sum of modifier price adjustments (can be negative)')),
                 ('line_total', models.PositiveIntegerField(default=0, help_text='(unit_price + modifiers_total) * quantity')),
                 ('notes', models.TextField(blank=True)),
-                ('menu_item', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='order_items', to='menu.menuitem')),
+                ('menu_item', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='order_items', to='menu.product')),
                 ('order', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='items', to='orders.order')),
-                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.restaurant')),
+                ('business', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.business')),
             ],
             options={
                 'ordering': ['created_at'],
@@ -81,7 +81,7 @@ class Migration(migrations.Migration):
                 ('price_adjustment', models.IntegerField(default=0, help_text='Price adjustment in XOF (can be negative)')),
                 ('modifier_option', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='order_item_modifiers', to='menu.modifieroption')),
                 ('order_item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='modifiers', to='orders.orderitem')),
-                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.restaurant')),
+                ('business', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.business')),
             ],
             options={
                 'ordering': ['created_at'],
@@ -99,11 +99,11 @@ class Migration(migrations.Migration):
                 ('number', models.CharField(max_length=20)),
                 ('capacity', models.PositiveIntegerField(default=4)),
                 ('is_active', models.BooleanField(default=True)),
-                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.restaurant')),
+                ('business', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.business')),
             ],
             options={
                 'ordering': ['number'],
-                'unique_together': {('restaurant', 'number')},
+                'unique_together': {('business', 'number')},
             },
             managers=[
                 ('all_objects', django.db.models.manager.Manager()),
@@ -122,19 +122,19 @@ class Migration(migrations.Migration):
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('date', models.DateField()),
                 ('last_number', models.PositiveIntegerField(default=0)),
-                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='daily_sequences', to='authentication.restaurant')),
+                ('business', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='daily_sequences', to='authentication.business')),
             ],
             options={
-                'unique_together': {('restaurant', 'date')},
+                'unique_together': {('business', 'date')},
             },
         ),
         migrations.AddIndex(
             model_name='order',
-            index=models.Index(fields=['restaurant', 'status'], name='orders_orde_restaur_17016b_idx'),
+            index=models.Index(fields=['business', 'status'], name='orders_orde_busines_17016b_idx'),
         ),
         migrations.AddIndex(
             model_name='order',
-            index=models.Index(fields=['restaurant', 'created_at'], name='orders_orde_restaur_763bf4_idx'),
+            index=models.Index(fields=['business', 'created_at'], name='orders_orde_busines_763bf4_idx'),
         ),
         migrations.AddIndex(
             model_name='order',
@@ -142,6 +142,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name='order',
-            unique_together={('restaurant', 'order_number', 'order_date')},
+            unique_together={('business', 'order_number', 'order_date')},
         ),
     ]

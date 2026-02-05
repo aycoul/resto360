@@ -3,7 +3,7 @@ from decimal import Decimal
 import factory
 from factory.django import DjangoModelFactory
 
-from apps.authentication.tests.factories import OwnerFactory, RestaurantFactory
+from apps.authentication.tests.factories import BusinessFactory, OwnerFactory
 from apps.inventory.models import (
     MenuItemIngredient,
     MovementReason,
@@ -12,7 +12,7 @@ from apps.inventory.models import (
     StockMovement,
     UnitType,
 )
-from apps.menu.tests.factories import MenuItemFactory
+from apps.menu.tests.factories import ProductFactory
 
 
 class StockItemFactory(DjangoModelFactory):
@@ -21,7 +21,7 @@ class StockItemFactory(DjangoModelFactory):
     class Meta:
         model = StockItem
 
-    restaurant = factory.SubFactory(RestaurantFactory)
+    business = factory.SubFactory(BusinessFactory)
     name = factory.Sequence(lambda n: f"Stock Item {n}")
     sku = factory.Sequence(lambda n: f"SKU-{n:05d}")
     unit = UnitType.PIECE
@@ -36,7 +36,7 @@ class StockMovementFactory(DjangoModelFactory):
     class Meta:
         model = StockMovement
 
-    restaurant = factory.LazyAttribute(lambda o: o.stock_item.restaurant)
+    business = factory.LazyAttribute(lambda o: o.stock_item.business)
     stock_item = factory.SubFactory(StockItemFactory)
     quantity_change = Decimal("10.0000")
     movement_type = MovementType.IN
@@ -44,7 +44,7 @@ class StockMovementFactory(DjangoModelFactory):
     notes = factory.Faker("sentence")
     balance_after = Decimal("110.0000")
     created_by = factory.LazyAttribute(
-        lambda o: OwnerFactory(restaurant=o.stock_item.restaurant)
+        lambda o: OwnerFactory(business=o.stock_item.business)
     )
 
 
@@ -54,10 +54,10 @@ class MenuItemIngredientFactory(DjangoModelFactory):
     class Meta:
         model = MenuItemIngredient
 
-    restaurant = factory.LazyAttribute(lambda o: o.stock_item.restaurant)
+    business = factory.LazyAttribute(lambda o: o.stock_item.business)
     menu_item = factory.SubFactory(
-        MenuItemFactory,
-        restaurant=factory.LazyAttribute(lambda o: o.factory_parent.restaurant),
+        ProductFactory,
+        business=factory.LazyAttribute(lambda o: o.factory_parent.business),
     )
     stock_item = factory.SubFactory(StockItemFactory)
     quantity_required = Decimal("0.2500")  # 0.25 units per menu item

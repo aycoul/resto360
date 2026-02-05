@@ -2,7 +2,7 @@
 Models for the Supplier Marketplace.
 
 This module provides models for managing suppliers, their products,
-orders between restaurants and suppliers, and supplier reviews.
+orders between businesss and suppliers, and supplier reviews.
 """
 
 import uuid
@@ -19,7 +19,7 @@ class Supplier(BaseModel):
     """
     Represents a supplier in the marketplace.
 
-    Suppliers can register to sell products to restaurants.
+    Suppliers can register to sell products to businesss.
     They must be verified before their products become visible.
     """
 
@@ -297,7 +297,7 @@ class SupplierProduct(BaseModel):
 
 class SupplierOrder(BaseModel):
     """
-    An order placed by a restaurant to a supplier.
+    An order placed by a business to a supplier.
     """
 
     class Status(models.TextChoices):
@@ -324,8 +324,8 @@ class SupplierOrder(BaseModel):
         on_delete=models.PROTECT,
         related_name="orders",
     )
-    restaurant = models.ForeignKey(
-        "authentication.Restaurant",
+    business = models.ForeignKey(
+        "authentication.Business",
         on_delete=models.PROTECT,
         related_name="supplier_orders",
     )
@@ -371,7 +371,7 @@ class SupplierOrder(BaseModel):
     payment_reference = models.CharField(max_length=100, blank=True)
 
     # Notes
-    restaurant_notes = models.TextField(blank=True, help_text="Notes from restaurant to supplier")
+    business_notes = models.TextField(blank=True, help_text="Notes from business to supplier")
     supplier_notes = models.TextField(blank=True, help_text="Notes from supplier")
     internal_notes = models.TextField(blank=True, help_text="Internal notes (not visible to other party)")
 
@@ -382,14 +382,14 @@ class SupplierOrder(BaseModel):
     class Meta:
         ordering = ["-created_at"]
         indexes = [
-            models.Index(fields=["restaurant", "status"]),
+            models.Index(fields=["business", "status"]),
             models.Index(fields=["supplier", "status"]),
             models.Index(fields=["order_number"]),
             models.Index(fields=["expected_delivery"]),
         ]
 
     def __str__(self):
-        return f"Order {self.order_number} - {self.restaurant.name} to {self.supplier.name}"
+        return f"Order {self.order_number} - {self.business.name} to {self.supplier.name}"
 
     def calculate_totals(self):
         """Recalculate order totals from items."""
@@ -454,7 +454,7 @@ class SupplierOrderItem(BaseModel):
 
 class SupplierReview(BaseModel):
     """
-    Reviews of suppliers by restaurants.
+    Reviews of suppliers by businesss.
     """
 
     supplier = models.ForeignKey(
@@ -462,8 +462,8 @@ class SupplierReview(BaseModel):
         on_delete=models.CASCADE,
         related_name="reviews",
     )
-    restaurant = models.ForeignKey(
-        "authentication.Restaurant",
+    business = models.ForeignKey(
+        "authentication.Business",
         on_delete=models.CASCADE,
         related_name="supplier_reviews",
     )
@@ -502,14 +502,14 @@ class SupplierReview(BaseModel):
 
     class Meta:
         ordering = ["-created_at"]
-        unique_together = [["supplier", "restaurant", "order"]]
+        unique_together = [["supplier", "business", "order"]]
         indexes = [
             models.Index(fields=["supplier", "is_published"]),
             models.Index(fields=["overall_rating"]),
         ]
 
     def __str__(self):
-        return f"Review of {self.supplier.name} by {self.restaurant.name}"
+        return f"Review of {self.supplier.name} by {self.business.name}"
 
 
 class SupplierFavorite(BaseModel):
@@ -517,8 +517,8 @@ class SupplierFavorite(BaseModel):
     Restaurants can save suppliers as favorites for quick access.
     """
 
-    restaurant = models.ForeignKey(
-        "authentication.Restaurant",
+    business = models.ForeignKey(
+        "authentication.Business",
         on_delete=models.CASCADE,
         related_name="favorite_suppliers",
     )
@@ -530,22 +530,22 @@ class SupplierFavorite(BaseModel):
     notes = models.TextField(blank=True, help_text="Private notes about this supplier")
 
     class Meta:
-        unique_together = [["restaurant", "supplier"]]
+        unique_together = [["business", "supplier"]]
         ordering = ["-created_at"]
 
     def __str__(self):
-        return f"{self.restaurant.name} -> {self.supplier.name}"
+        return f"{self.business.name} -> {self.supplier.name}"
 
 
 class Cart(BaseModel):
     """
-    Shopping cart for a restaurant ordering from suppliers.
+    Shopping cart for a business ordering from suppliers.
 
-    Each restaurant can have one active cart per supplier.
+    Each business can have one active cart per supplier.
     """
 
-    restaurant = models.ForeignKey(
-        "authentication.Restaurant",
+    business = models.ForeignKey(
+        "authentication.Business",
         on_delete=models.CASCADE,
         related_name="supplier_carts",
     )
@@ -556,10 +556,10 @@ class Cart(BaseModel):
     )
 
     class Meta:
-        unique_together = [["restaurant", "supplier"]]
+        unique_together = [["business", "supplier"]]
 
     def __str__(self):
-        return f"Cart: {self.restaurant.name} <- {self.supplier.name}"
+        return f"Cart: {self.business.name} <- {self.supplier.name}"
 
     @property
     def total(self) -> Decimal:

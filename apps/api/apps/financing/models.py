@@ -100,7 +100,7 @@ class FinancePartner(BaseModel):
 
 class CreditScore(BaseModel):
     """
-    Credit score for a restaurant, calculated from platform data.
+    Credit score for a business, calculated from platform data.
 
     Score is on a 0-1000 scale:
     - 0-300: Poor
@@ -110,8 +110,8 @@ class CreditScore(BaseModel):
     - 851-1000: Excellent
     """
 
-    restaurant = models.OneToOneField(
-        "authentication.Restaurant",
+    business = models.OneToOneField(
+        "authentication.Business",
         on_delete=models.CASCADE,
         related_name="credit_score",
     )
@@ -183,7 +183,7 @@ class CreditScore(BaseModel):
         verbose_name_plural = "Credit scores"
 
     def __str__(self):
-        return f"{self.restaurant.name}: {self.score} ({self.score_band})"
+        return f"{self.business.name}: {self.score} ({self.score_band})"
 
     def calculate_score(self):
         """Recalculate the credit score from component scores."""
@@ -306,7 +306,7 @@ class LoanProduct(BaseModel):
 
 class LoanApplication(BaseModel):
     """
-    Loan application submitted by a restaurant.
+    Loan application submitted by a business.
     """
 
     class Status(models.TextChoices):
@@ -321,8 +321,8 @@ class LoanApplication(BaseModel):
     # Application reference
     application_number = models.CharField(max_length=50, unique=True)
 
-    restaurant = models.ForeignKey(
-        "authentication.Restaurant",
+    business = models.ForeignKey(
+        "authentication.Business",
         on_delete=models.PROTECT,
         related_name="loan_applications",
     )
@@ -414,13 +414,13 @@ class LoanApplication(BaseModel):
     class Meta:
         ordering = ["-created_at"]
         indexes = [
-            models.Index(fields=["restaurant", "status"]),
+            models.Index(fields=["business", "status"]),
             models.Index(fields=["partner", "status"]),
             models.Index(fields=["application_number"]),
         ]
 
     def __str__(self):
-        return f"{self.application_number} - {self.restaurant.name}"
+        return f"{self.application_number} - {self.business.name}"
 
     def save(self, *args, **kwargs):
         if not self.application_number:
@@ -451,8 +451,8 @@ class Loan(BaseModel):
         on_delete=models.PROTECT,
         related_name="loan",
     )
-    restaurant = models.ForeignKey(
-        "authentication.Restaurant",
+    business = models.ForeignKey(
+        "authentication.Business",
         on_delete=models.PROTECT,
         related_name="loans",
     )
@@ -504,14 +504,14 @@ class Loan(BaseModel):
     class Meta:
         ordering = ["-disbursement_date"]
         indexes = [
-            models.Index(fields=["restaurant", "status"]),
+            models.Index(fields=["business", "status"]),
             models.Index(fields=["partner", "status"]),
             models.Index(fields=["loan_number"]),
             models.Index(fields=["next_payment_date"]),
         ]
 
     def __str__(self):
-        return f"{self.loan_number} - {self.restaurant.name}"
+        return f"{self.loan_number} - {self.business.name}"
 
     def save(self, *args, **kwargs):
         if not self.loan_number:
@@ -625,8 +625,8 @@ class FinancingSettings(BaseModel):
     Global financing settings for the platform.
     """
 
-    restaurant = models.OneToOneField(
-        "authentication.Restaurant",
+    business = models.OneToOneField(
+        "authentication.Business",
         on_delete=models.CASCADE,
         related_name="financing_settings",
     )
@@ -662,4 +662,4 @@ class FinancingSettings(BaseModel):
         verbose_name_plural = "Financing settings"
 
     def __str__(self):
-        return f"Financing settings for {self.restaurant.name}"
+        return f"Financing settings for {self.business.name}"

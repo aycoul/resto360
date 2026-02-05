@@ -52,7 +52,7 @@ class GenerateDescriptionView(APIView):
 
             # Track usage
             AIUsage.objects.create(
-                restaurant=request.user.restaurant,
+                business=request.user.business,
                 job_type=AIJobType.DESCRIPTION,
                 model_used="gpt-4o-mini",
                 prompt_tokens=100,  # Estimate
@@ -95,7 +95,7 @@ class PhotoAnalysisView(APIView):
 
             # Track usage
             AIUsage.objects.create(
-                restaurant=request.user.restaurant,
+                business=request.user.business,
                 job_type=AIJobType.PHOTO_ANALYSIS,
                 model_used="gpt-4o",
                 prompt_tokens=1000,  # Vision uses more tokens
@@ -139,7 +139,7 @@ class MenuOCRView(APIView):
 
             # Create import batch for review
             batch = MenuImportBatch.objects.create(
-                restaurant=request.user.restaurant,
+                business=request.user.business,
                 source_type="ocr",
                 original_filename=image.name,
                 items=items,
@@ -149,7 +149,7 @@ class MenuOCRView(APIView):
 
             # Track usage
             AIUsage.objects.create(
-                restaurant=request.user.restaurant,
+                business=request.user.business,
                 job_type=AIJobType.MENU_OCR,
                 model_used="gpt-4o",
                 prompt_tokens=2000,
@@ -206,7 +206,7 @@ class BulkImportView(APIView):
 
             # Create import batch
             batch = MenuImportBatch.objects.create(
-                restaurant=request.user.restaurant,
+                business=request.user.business,
                 source_type=source_type,
                 original_filename=uploaded_file.name,
                 items=items,
@@ -234,7 +234,7 @@ class ImportConfirmView(APIView):
         try:
             batch = MenuImportBatch.objects.get(
                 id=batch_id,
-                restaurant=request.user.restaurant,
+                business=request.user.business,
                 status="pending",
             )
         except MenuImportBatch.DoesNotExist:
@@ -266,10 +266,10 @@ class ImportConfirmView(APIView):
                         category = category_cache[cat_name]
                     else:
                         category, _ = Category.objects.get_or_create(
-                            restaurant=request.user.restaurant,
+                            business=request.user.business,
                             name=cat_name,
                             defaults={"display_order": Category.objects.filter(
-                                restaurant=request.user.restaurant
+                                business=request.user.business
                             ).count()},
                         )
                         category_cache[cat_name] = category
@@ -277,7 +277,7 @@ class ImportConfirmView(APIView):
                     if default_category_id not in category_cache:
                         category_cache[default_category_id] = Category.objects.get(
                             id=default_category_id,
-                            restaurant=request.user.restaurant,
+                            business=request.user.business,
                         )
                     category = category_cache[default_category_id]
 
@@ -286,7 +286,7 @@ class ImportConfirmView(APIView):
 
                 # Create menu item
                 MenuItem.objects.create(
-                    restaurant=request.user.restaurant,
+                    business=request.user.business,
                     category=category,
                     name=item_data["name"],
                     price=item_data["price"],
@@ -340,7 +340,7 @@ class TranslateItemView(APIView):
 
             # Track usage
             AIUsage.objects.create(
-                restaurant=request.user.restaurant,
+                business=request.user.business,
                 job_type=AIJobType.TRANSLATION,
                 model_used="gpt-4o-mini",
                 prompt_tokens=100,
@@ -379,7 +379,7 @@ class TranslateMenuView(APIView):
         if not items:
             # Fetch all menu items
             menu_items = MenuItem.objects.filter(
-                restaurant=request.user.restaurant
+                business=request.user.business
             ).values("id", "name", "description")
             items = list(menu_items)
 
@@ -399,7 +399,7 @@ class TranslateMenuView(APIView):
 
             # Track usage
             AIUsage.objects.create(
-                restaurant=request.user.restaurant,
+                business=request.user.business,
                 job_type=AIJobType.TRANSLATION,
                 model_used="gpt-4o-mini",
                 prompt_tokens=len(items) * 50,
@@ -445,7 +445,7 @@ class PriceSuggestionView(APIView):
 
             # Track usage
             AIUsage.objects.create(
-                restaurant=request.user.restaurant,
+                business=request.user.business,
                 job_type=AIJobType.PRICE_SUGGESTION,
                 model_used="gpt-4o-mini",
                 prompt_tokens=100,
@@ -476,7 +476,7 @@ class AIJobViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return AIJob.objects.filter(restaurant=self.request.user.restaurant)
+        return AIJob.objects.filter(business=self.request.user.business)
 
 
 class AIUsageView(APIView):
@@ -488,7 +488,7 @@ class AIUsageView(APIView):
         from django.db.models import Sum
 
         usage = AIUsage.objects.filter(
-            restaurant=request.user.restaurant
+            business=request.user.business
         )
 
         # Get totals
@@ -527,7 +527,7 @@ class MenuImportBatchViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return MenuImportBatch.objects.filter(restaurant=self.request.user.restaurant)
+        return MenuImportBatch.objects.filter(business=self.request.user.business)
 
     @action(detail=True, methods=["post"])
     def cancel(self, request, pk=None):

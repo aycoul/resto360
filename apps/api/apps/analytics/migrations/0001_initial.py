@@ -27,13 +27,13 @@ class Migration(migrations.Migration):
                 ('unique_visitors', models.PositiveIntegerField(default=0)),
                 ('qr_scans', models.PositiveIntegerField(default=0)),
                 ('top_items', models.JSONField(blank=True, default=list, help_text='List of most viewed item IDs (if item-level tracking added)')),
-                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.restaurant')),
+                ('business', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.business')),
             ],
             options={
                 'verbose_name_plural': 'Daily menu stats',
                 'ordering': ['-date'],
-                'indexes': [models.Index(fields=['restaurant', 'date'], name='analytics_d_restaur_bce2f9_idx')],
-                'unique_together': {('restaurant', 'date')},
+                'indexes': [models.Index(fields=['business', 'date'], name='analytics_d_busines_bce2f9_idx')],
+                'unique_together': {('business', 'date')},
             },
             managers=[
                 ('all_objects', django.db.models.manager.Manager()),
@@ -49,11 +49,11 @@ class Migration(migrations.Migration):
                 ('session_id', models.CharField(help_text='Client-generated session ID for unique visitor tracking', max_length=100)),
                 ('source', models.CharField(choices=[('qr', 'QR Code'), ('link', 'Direct Link'), ('whatsapp', 'WhatsApp'), ('other', 'Other')], default='link', help_text='How the customer accessed the menu', max_length=20)),
                 ('user_agent', models.CharField(blank=True, help_text='Browser/device user agent string', max_length=500)),
-                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.restaurant')),
+                ('business', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.business')),
             ],
             options={
                 'ordering': ['-viewed_at'],
-                'indexes': [models.Index(fields=['restaurant', 'viewed_at'], name='analytics_m_restaur_781889_idx'), models.Index(fields=['restaurant', 'session_id'], name='analytics_m_restaur_9c1a9d_idx')],
+                'indexes': [models.Index(fields=['business', 'viewed_at'], name='analytics_m_busines_781889_idx'), models.Index(fields=['business', 'session_id'], name='analytics_m_busines_9c1a9d_idx')],
             },
             managers=[
                 ('all_objects', django.db.models.manager.Manager()),

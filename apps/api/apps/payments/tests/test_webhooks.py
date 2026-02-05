@@ -120,12 +120,12 @@ class TestWaveWebhookHandler:
     def wave_payment(self, owner):
         """Create a Wave payment in PROCESSING state."""
         payment_method = PaymentMethodFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             provider_code="wave",
             name="Wave",
         )
         payment = PaymentFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             payment_method=payment_method,
             provider_code="wave",
             provider_reference="checkout_123abc",
@@ -233,11 +233,11 @@ class TestWaveWebhookHandler:
     def test_handle_webhook_from_pending_state(self, owner):
         """Test webhook handling transitions payment from PENDING through PROCESSING to SUCCESS."""
         payment_method = PaymentMethodFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             provider_code="wave",
         )
         payment = PaymentFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             payment_method=payment_method,
             provider_code="wave",
             provider_reference="checkout_pending123",
@@ -266,12 +266,12 @@ class TestWebhookTask:
     def wave_payment_for_task(self, owner):
         """Create a Wave payment for task testing."""
         payment_method = PaymentMethodFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             provider_code="wave",
             name="Wave",
         )
         payment = PaymentFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             payment_method=payment_method,
             provider_code="wave",
             provider_reference="checkout_task123",

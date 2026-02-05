@@ -3,7 +3,7 @@ import pytest
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from apps.authentication.models import Restaurant, User
+from apps.authentication.models import Business, User
 
 
 @pytest.fixture
@@ -19,7 +19,7 @@ def registration_data():
         "email": "test@example.com",
         "password": "TestPass123!",
         "password_confirm": "TestPass123!",
-        "restaurant_name": "Test Restaurant",
+        "business_name": "Test Restaurant",
         "phone": "+2250700000001",
     }
 
@@ -46,24 +46,24 @@ class TestPublicRegistration:
         assert "refresh" in data
 
         # Verify restaurant data
-        assert data["restaurant"]["name"] == registration_data["restaurant_name"]
+        assert data["restaurant"]["name"] == registration_data["business_name"]
         assert "slug" in data["restaurant"]
         assert data["restaurant"]["id"]
 
         # Verify user data
         assert data["user"]["role"] == "owner"
-        assert data["user"]["name"] == f"{registration_data['restaurant_name']} Owner"
+        assert data["user"]["name"] == f"{registration_data['business_name']} Owner"
         assert data["user"]["id"]
 
         # Verify database records
-        restaurant = Restaurant.objects.get(id=data["restaurant"]["id"])
-        assert restaurant.plan_type == "free"
-        assert restaurant.email == registration_data["email"]
-        assert restaurant.phone == registration_data["phone"]
+        business = Business.objects.get(id=data["restaurant"]["id"])
+        assert business.plan_type == "free"
+        assert business.email == registration_data["email"]
+        assert business.phone == registration_data["phone"]
 
         user = User.objects.get(id=data["user"]["id"])
         assert user.role == "owner"
-        assert user.restaurant == restaurant
+        assert user.business == business
         assert user.email == registration_data["email"]
         assert user.phone == registration_data["phone"]
 
@@ -89,16 +89,16 @@ class TestPublicRegistration:
     ):
         """Test registration fails when phone number already exists."""
         # Create existing user with same phone
-        restaurant = Restaurant.objects.create(
-            name="Existing Restaurant",
-            slug="existing-restaurant",
+        business = Business.objects.create(
+            name="Existing Business",
+            slug="existing-business",
             phone=registration_data["phone"],
         )
         User.objects.create_user(
             phone=registration_data["phone"],
             password="password123",
             name="Existing User",
-            restaurant=restaurant,
+            business=business,
         )
 
         response = api_client.post(
@@ -117,9 +117,9 @@ class TestPublicRegistration:
     ):
         """Test registration fails when email already exists."""
         # Create existing user with same email
-        restaurant = Restaurant.objects.create(
-            name="Existing Restaurant",
-            slug="existing-restaurant",
+        business = Business.objects.create(
+            name="Existing Business",
+            slug="existing-business",
             phone="+2250700000099",
         )
         User.objects.create_user(
@@ -127,7 +127,7 @@ class TestPublicRegistration:
             email=registration_data["email"],
             password="password123",
             name="Existing User",
-            restaurant=restaurant,
+            business=business,
         )
 
         response = api_client.post(
@@ -147,14 +147,14 @@ class TestPublicRegistration:
             "email": "test1@example.com",
             "password": "TestPass123!",
             "password_confirm": "TestPass123!",
-            "restaurant_name": "Test Restaurant",
+            "business_name": "Test Restaurant",
             "phone": "+2250700000001",
         }
         data2 = {
             "email": "test2@example.com",
             "password": "TestPass123!",
             "password_confirm": "TestPass123!",
-            "restaurant_name": "Test Restaurant",
+            "business_name": "Test Restaurant",
             "phone": "+2250700000002",
         }
 
@@ -180,7 +180,7 @@ class TestPublicRegistration:
             {
                 "password": "TestPass123!",
                 "password_confirm": "TestPass123!",
-                "restaurant_name": "Test Restaurant",
+                "business_name": "Test Restaurant",
                 "phone": "+2250700000001",
             },
             format="json",
@@ -194,7 +194,7 @@ class TestPublicRegistration:
             {
                 "email": "test@example.com",
                 "password_confirm": "TestPass123!",
-                "restaurant_name": "Test Restaurant",
+                "business_name": "Test Restaurant",
                 "phone": "+2250700000001",
             },
             format="json",

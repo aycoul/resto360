@@ -27,7 +27,7 @@ class TestNotifyKitchenOrderCreated:
             mock_layer.group_send.assert_called_once()
             call_args = mock_layer.group_send.call_args
             # Check group name
-            assert f"kitchen_{order.restaurant_id}" == call_args[0][0]
+            assert f"kitchen_{order.business_id}" == call_args[0][0]
             # Check message type
             assert call_args[0][1]["type"] == "order_created"
             # Check order data is included
@@ -68,7 +68,7 @@ class TestNotifyKitchenOrderUpdated:
 
             mock_layer.group_send.assert_called_once()
             call_args = mock_layer.group_send.call_args
-            assert f"kitchen_{order.restaurant_id}" == call_args[0][0]
+            assert f"kitchen_{order.business_id}" == call_args[0][0]
             assert call_args[0][1]["type"] == "order_updated"
             assert "order" in call_args[0][1]
 
@@ -92,7 +92,7 @@ class TestNotifyKitchenStatusChanged:
 
             mock_layer.group_send.assert_called_once()
             call_args = mock_layer.group_send.call_args
-            assert f"kitchen_{order.restaurant_id}" == call_args[0][0]
+            assert f"kitchen_{order.business_id}" == call_args[0][0]
             assert call_args[0][1]["type"] == "order_status_changed"
             assert call_args[0][1]["order_id"] == str(order.id)
             assert call_args[0][1]["status"] == order.status

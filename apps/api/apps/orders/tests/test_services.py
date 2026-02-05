@@ -12,62 +12,62 @@ from apps.orders.services import calculate_order_totals, get_next_order_number
 class TestGetNextOrderNumber:
     """Tests for the get_next_order_number service."""
 
-    def test_first_order_of_day(self, restaurant):
+    def test_first_order_of_day(self, business):
         """Test first order of the day gets number 1."""
-        number = get_next_order_number(restaurant)
+        number = get_next_order_number(business)
         assert number == 1
 
-    def test_increments_order_number(self, restaurant):
+    def test_increments_order_number(self, business):
         """Test order numbers increment correctly."""
-        num1 = get_next_order_number(restaurant)
-        num2 = get_next_order_number(restaurant)
-        num3 = get_next_order_number(restaurant)
+        num1 = get_next_order_number(business)
+        num2 = get_next_order_number(business)
+        num3 = get_next_order_number(business)
 
         assert num1 == 1
         assert num2 == 2
         assert num3 == 3
 
-    def test_creates_daily_sequence(self, restaurant):
+    def test_creates_daily_sequence(self, business):
         """Test creates DailySequence record."""
         today = timezone.localdate()
         assert not DailySequence.objects.filter(
-            restaurant=restaurant, date=today
+            business=business, date=today
         ).exists()
 
-        get_next_order_number(restaurant)
+        get_next_order_number(business)
 
-        sequence = DailySequence.objects.get(restaurant=restaurant, date=today)
+        sequence = DailySequence.objects.get(business=business, date=today)
         assert sequence.last_number == 1
 
-    def test_different_restaurants_have_independent_sequences(
-        self, restaurant_factory
+    def test_different_businesses_have_independent_sequences(
+        self, business_factory
     ):
-        """Test each restaurant has its own sequence."""
-        restaurant_a = restaurant_factory()
-        restaurant_b = restaurant_factory()
+        """Test each business has its own sequence."""
+        business_a = business_factory()
+        business_b = business_factory()
 
-        num_a1 = get_next_order_number(restaurant_a)
-        num_a2 = get_next_order_number(restaurant_a)
-        num_b1 = get_next_order_number(restaurant_b)
+        num_a1 = get_next_order_number(business_a)
+        num_a2 = get_next_order_number(business_a)
+        num_b1 = get_next_order_number(business_b)
 
         assert num_a1 == 1
         assert num_a2 == 2
-        assert num_b1 == 1  # Independent sequence for restaurant B
+        assert num_b1 == 1  # Independent sequence for business B
 
-    def test_continues_existing_sequence(self, restaurant):
+    def test_continues_existing_sequence(self, business):
         """Test continues from existing sequence number."""
         today = timezone.localdate()
         DailySequence.objects.create(
-            restaurant=restaurant,
+            business=business,
             date=today,
             last_number=10,
         )
 
-        number = get_next_order_number(restaurant)
+        number = get_next_order_number(business)
         assert number == 11
 
     @pytest.mark.django_db(transaction=True)
-    def test_concurrent_order_numbers(self, restaurant):
+    def test_concurrent_order_numbers(self, business):
         """Test concurrent calls get unique order numbers."""
         # Skip if not using PostgreSQL (SQLite doesn't support SELECT FOR UPDATE)
         from django.db import connection
@@ -77,7 +77,7 @@ class TestGetNextOrderNumber:
         results = []
 
         def get_number():
-            return get_next_order_number(restaurant)
+            return get_next_order_number(business)
 
         # Execute 10 concurrent order number requests
         with ThreadPoolExecutor(max_workers=5) as executor:
@@ -99,7 +99,7 @@ class TestCalculateOrderTotals:
         order = order_factory(subtotal=0, total=0, discount=0)
         order_item_factory(
             order=order,
-            restaurant=order.restaurant,
+            business=order.business,
             unit_price=5000,
             quantity=2,
             modifiers_total=0,
@@ -107,7 +107,7 @@ class TestCalculateOrderTotals:
         )
         order_item_factory(
             order=order,
-            restaurant=order.restaurant,
+            business=order.business,
             unit_price=2000,
             quantity=1,
             modifiers_total=0,
@@ -125,7 +125,7 @@ class TestCalculateOrderTotals:
         order = order_factory(subtotal=0, total=0, discount=1000)
         order_item_factory(
             order=order,
-            restaurant=order.restaurant,
+            business=order.business,
             unit_price=5000,
             quantity=1,
             modifiers_total=0,
@@ -143,7 +143,7 @@ class TestCalculateOrderTotals:
         order = order_factory(subtotal=0, total=0, discount=10000)
         order_item_factory(
             order=order,
-            restaurant=order.restaurant,
+            business=order.business,
             unit_price=5000,
             quantity=1,
             modifiers_total=0,

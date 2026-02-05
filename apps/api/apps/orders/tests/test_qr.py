@@ -14,7 +14,7 @@ class TestMenuQRCodeAPI:
         assert response.status_code == 200
         assert response["Content-Type"] == "image/png"
         assert "attachment" in response["Content-Disposition"]
-        assert owner.restaurant.slug in response["Content-Disposition"]
+        assert owner.business.slug in response["Content-Disposition"]
 
     def test_generate_menu_qr_svg(self, owner_client, owner):
         """Test generating menu QR code as SVG."""
@@ -54,11 +54,11 @@ class TestMenuQRCodeAPI:
 class TestQRCodeService:
     """Tests for QR code generation service."""
 
-    def test_generate_menu_qr_content(self, restaurant):
+    def test_generate_menu_qr_content(self, business):
         """Test QR code contains correct URL."""
         from apps.qr.services import generate_menu_qr
 
-        qr_content = generate_menu_qr(restaurant)
+        qr_content = generate_menu_qr(business)
 
         # Should return bytes (PNG image)
         assert isinstance(qr_content, bytes)
@@ -73,12 +73,12 @@ class TestQRCodeService:
         assert get_qr_content_type("eps") == "application/postscript"
         assert get_qr_content_type("unknown") == "image/png"
 
-    def test_get_qr_filename(self, restaurant):
+    def test_get_qr_filename(self, business):
         """Test QR code filename format."""
         from apps.qr.services import get_qr_filename
 
-        filename = get_qr_filename(restaurant)
-        assert filename == f"menu-qr-{restaurant.slug}.png"
+        filename = get_qr_filename(business)
+        assert filename == f"menu-qr-{business.slug}.png"
 
-        filename_svg = get_qr_filename(restaurant, "svg")
-        assert filename_svg == f"menu-qr-{restaurant.slug}.svg"
+        filename_svg = get_qr_filename(business, "svg")
+        assert filename_svg == f"menu-qr-{business.slug}.svg"

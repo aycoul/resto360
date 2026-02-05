@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.AlterModelManagers(
-            name='menuitem',
+            name='product',
             managers=[
                 ('all_objects', django.db.models.manager.Manager()),
             ],

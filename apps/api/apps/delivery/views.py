@@ -37,7 +37,7 @@ class DeliveryZoneViewSet(TenantModelViewSet):
     serializer_class = DeliveryZoneSerializer
 
     def get_queryset(self):
-        return DeliveryZone.objects.filter(restaurant=self.request.restaurant)
+        return DeliveryZone.objects.filter(business=self.request.business)
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -45,8 +45,8 @@ class DeliveryZoneViewSet(TenantModelViewSet):
         return DeliveryZoneSerializer
 
     def perform_create(self, serializer):
-        """Associate zone with current restaurant."""
-        serializer.save(restaurant=self.request.restaurant)
+        """Associate zone with current business."""
+        serializer.save(business=self.request.business)
 
     @action(detail=False, methods=["post"])
     def check_address(self, request):
@@ -68,7 +68,7 @@ class DeliveryZoneViewSet(TenantModelViewSet):
         lng = serializer.validated_data["lng"]
 
         zone = DeliveryZone.find_zone_for_location(
-            restaurant=request.restaurant, lat=lat, lng=lng
+            business=request.business, lat=lat, lng=lng
         )
 
         if zone:
@@ -90,7 +90,7 @@ class DriverViewSet(TenantModelViewSet):
     """
     ViewSet for driver management.
 
-    list: Return all drivers for restaurant
+    list: Return all drivers for business
     retrieve: Return single driver
     create: Create driver profile (links to existing user with driver role)
     toggle_availability: Go online/offline
@@ -100,7 +100,7 @@ class DriverViewSet(TenantModelViewSet):
     serializer_class = DriverSerializer
 
     def get_queryset(self):
-        return Driver.objects.filter(restaurant=self.request.restaurant)
+        return Driver.objects.filter(business=self.request.business)
 
     def get_serializer_class(self):
         if self.action == "create":
@@ -108,8 +108,8 @@ class DriverViewSet(TenantModelViewSet):
         return DriverSerializer
 
     def perform_create(self, serializer):
-        """Associate driver with current restaurant."""
-        serializer.save(restaurant=self.request.restaurant)
+        """Associate driver with current business."""
+        serializer.save(business=self.request.business)
 
     @action(detail=True, methods=["post"])
     def toggle_availability(self, request, pk=None):
@@ -155,7 +155,7 @@ class DriverViewSet(TenantModelViewSet):
         """
         try:
             driver = Driver.objects.get(
-                restaurant=request.restaurant, user=request.user
+                business=request.business, user=request.user
             )
             return Response(DriverSerializer(driver).data)
         except Driver.DoesNotExist:
@@ -181,7 +181,7 @@ class DeliveryViewSet(TenantModelViewSet):
 
     def get_queryset(self):
         return Delivery.objects.filter(
-            restaurant=self.request.restaurant
+            business=self.request.business
         ).select_related("order", "driver__user", "zone")
 
     def get_serializer_class(self):
@@ -203,7 +203,7 @@ class DeliveryViewSet(TenantModelViewSet):
         try:
             order = Order.objects.get(
                 id=serializer.validated_data["order_id"],
-                restaurant=request.restaurant,
+                business=request.business,
             )
         except Order.DoesNotExist:
             return Response(
@@ -234,7 +234,7 @@ class DeliveryViewSet(TenantModelViewSet):
         """
         try:
             driver = Driver.objects.get(
-                restaurant=request.restaurant, user=request.user
+                business=request.business, user=request.user
             )
         except Driver.DoesNotExist:
             return Response(
@@ -242,7 +242,7 @@ class DeliveryViewSet(TenantModelViewSet):
             )
 
         deliveries = Delivery.objects.filter(
-            restaurant=request.restaurant,
+            business=request.business,
             driver=driver,
             status__in=[
                 DeliveryStatus.ASSIGNED,
@@ -394,7 +394,7 @@ class DeliveryTrackingView(APIView):
     def get(self, request, delivery_id):
         try:
             delivery = Delivery.all_objects.select_related(
-                "driver__user", "zone", "order__restaurant"
+                "driver__user", "zone", "order__business"
             ).get(id=delivery_id)
         except Delivery.DoesNotExist:
             return Response(
@@ -447,15 +447,15 @@ class DeliveryTrackingView(APIView):
                 data["driver"]["lat"] = delivery.driver.current_location.y
                 data["driver"]["lng"] = delivery.driver.current_location.x
 
-        # Add restaurant info
-        restaurant = delivery.order.restaurant
-        data["restaurant"] = {
-            "name": restaurant.name,
-            "phone": restaurant.phone,
-            "address": restaurant.address,
+        # Add business info
+        business = delivery.order.business
+        data["business"] = {
+            "name": business.name,
+            "phone": business.phone,
+            "address": business.address,
         }
-        if restaurant.latitude and restaurant.longitude:
-            data["restaurant"]["lat"] = float(restaurant.latitude)
-            data["restaurant"]["lng"] = float(restaurant.longitude)
+        if business.latitude and business.longitude:
+            data["business"]["lat"] = float(business.latitude)
+            data["business"]["lng"] = float(business.longitude)
 
         return Response(data)

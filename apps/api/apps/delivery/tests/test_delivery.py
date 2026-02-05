@@ -13,10 +13,10 @@ from .factories import DeliveryFactory, DeliveryZoneFactory, DriverFactory
 class TestDeliveryModel:
     """Tests for Delivery model."""
 
-    def test_create_delivery(self, restaurant, order):
+    def test_create_delivery(self, business, order):
         """Test creating a delivery."""
         zone = DeliveryZone.objects.create(
-            restaurant=restaurant,
+            business=business,
             name="Test Zone",
             polygon=Polygon(
                 [
@@ -32,7 +32,7 @@ class TestDeliveryModel:
         )
 
         delivery = Delivery.objects.create(
-            restaurant=restaurant,
+            business=business,
             order=order,
             zone=zone,
             pickup_address="Restaurant",
@@ -44,10 +44,10 @@ class TestDeliveryModel:
         assert delivery.status == DeliveryStatus.PENDING_ASSIGNMENT
         assert delivery.driver is None
 
-    def test_fsm_assign(self, restaurant):
+    def test_fsm_assign(self, business):
         """Test assigning driver via FSM transition."""
-        delivery = DeliveryFactory(restaurant=restaurant)
-        driver = DriverFactory(restaurant=restaurant, is_available=True)
+        delivery = DeliveryFactory(business=business)
+        driver = DriverFactory(business=business, is_available=True)
 
         delivery.assign(driver)
         delivery.save()
@@ -56,10 +56,10 @@ class TestDeliveryModel:
         assert delivery.driver == driver
         assert delivery.assigned_at is not None
 
-    def test_fsm_full_flow(self, restaurant):
+    def test_fsm_full_flow(self, business):
         """Test full delivery status flow."""
-        delivery = DeliveryFactory(restaurant=restaurant)
-        driver = DriverFactory(restaurant=restaurant)
+        delivery = DeliveryFactory(business=business)
+        driver = DriverFactory(business=business)
 
         # Assign
         delivery.assign(driver)
@@ -84,9 +84,9 @@ class TestDeliveryModel:
         assert delivery.status == DeliveryStatus.DELIVERED
         assert delivery.proof_type == "signature"
 
-    def test_fsm_cancel(self, restaurant):
+    def test_fsm_cancel(self, business):
         """Test cancelling delivery."""
-        delivery = DeliveryFactory(restaurant=restaurant)
+        delivery = DeliveryFactory(business=business)
 
         delivery.cancel(reason="Customer not available")
         delivery.save()
@@ -99,29 +99,29 @@ class TestDeliveryModel:
 class TestDeliveryAPI:
     """Tests for delivery API endpoints."""
 
-    def test_list_deliveries(self, auth_client, restaurant):
+    def test_list_deliveries(self, auth_client, business):
         """Test listing deliveries."""
-        DeliveryFactory(restaurant=restaurant)
-        DeliveryFactory(restaurant=restaurant)
+        DeliveryFactory(business=business)
+        DeliveryFactory(business=business)
 
         response = auth_client.get("/api/v1/delivery/deliveries/")
 
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data) == 2
 
-    def test_retrieve_delivery(self, auth_client, restaurant):
+    def test_retrieve_delivery(self, auth_client, business):
         """Test retrieving a single delivery."""
-        delivery = DeliveryFactory(restaurant=restaurant)
+        delivery = DeliveryFactory(business=business)
 
         response = auth_client.get(f"/api/v1/delivery/deliveries/{delivery.id}/")
 
         assert response.status_code == status.HTTP_200_OK
         assert response.data["id"] == str(delivery.id)
 
-    def test_update_status_picked_up(self, auth_client, restaurant):
+    def test_update_status_picked_up(self, auth_client, business):
         """Test updating delivery status to picked_up."""
-        delivery = DeliveryFactory(restaurant=restaurant)
-        driver = DriverFactory(restaurant=restaurant)
+        delivery = DeliveryFactory(business=business)
+        driver = DriverFactory(business=business)
         delivery.assign(driver)
         delivery.save()
 
@@ -134,10 +134,10 @@ class TestDeliveryAPI:
         assert response.status_code == status.HTTP_200_OK
         assert response.data["status"] == DeliveryStatus.PICKED_UP
 
-    def test_confirm_delivery(self, auth_client, restaurant):
+    def test_confirm_delivery(self, auth_client, business):
         """Test confirming delivery with signature."""
-        delivery = DeliveryFactory(restaurant=restaurant)
-        driver = DriverFactory(restaurant=restaurant)
+        delivery = DeliveryFactory(business=business)
+        driver = DriverFactory(business=business)
         delivery.assign(driver)
         delivery.save()
         delivery.mark_picked_up()
@@ -159,10 +159,10 @@ class TestDeliveryAPI:
         assert response.data["status"] == DeliveryStatus.DELIVERED
         assert response.data["proof_type"] == "signature"
 
-    def test_assign_delivery(self, auth_client, restaurant):
+    def test_assign_delivery(self, auth_client, business):
         """Test manual assignment endpoint."""
-        delivery = DeliveryFactory(restaurant=restaurant)
-        driver = DriverFactory(restaurant=restaurant, is_available=True)
+        delivery = DeliveryFactory(business=business)
+        driver = DriverFactory(business=business, is_available=True)
         driver.update_location(lat=5.33, lng=-4.01)
 
         response = auth_client.post(
@@ -174,9 +174,9 @@ class TestDeliveryAPI:
         assert response.data["status"] == DeliveryStatus.ASSIGNED
         assert response.data["driver"] == str(driver.id)
 
-    def test_assign_delivery_no_drivers(self, auth_client, restaurant):
+    def test_assign_delivery_no_drivers(self, auth_client, business):
         """Test assignment fails when no drivers available."""
-        delivery = DeliveryFactory(restaurant=restaurant)
+        delivery = DeliveryFactory(business=business)
 
         response = auth_client.post(
             f"/api/v1/delivery/deliveries/{delivery.id}/assign/",
@@ -186,10 +186,10 @@ class TestDeliveryAPI:
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert "No available drivers" in response.data["error"]
 
-    def test_active_deliveries(self, auth_client, restaurant, user):
+    def test_active_deliveries(self, auth_client, business, user):
         """Test getting active deliveries for driver."""
-        driver = DriverFactory(restaurant=restaurant, user=user)
-        delivery = DeliveryFactory(restaurant=restaurant)
+        driver = DriverFactory(business=business, user=user)
+        delivery = DeliveryFactory(business=business)
         delivery.assign(driver)
         delivery.save()
 

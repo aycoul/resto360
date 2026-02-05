@@ -11,7 +11,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.authentication.models import Restaurant
+from apps.authentication.models import Business
 from apps.core.context import get_current_restaurant, set_current_restaurant
 
 from .models import (
@@ -66,21 +66,21 @@ class TrackMenuViewAPI(APIView):
         serializer = TrackMenuViewSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        # Find the restaurant by slug
+        # Find the business by slug
         try:
-            restaurant = Restaurant.objects.get(
+            business = Business.objects.get(
                 slug=serializer.validated_data["restaurant_slug"],
                 is_active=True,
             )
-        except Restaurant.DoesNotExist:
+        except Business.DoesNotExist:
             return Response(
-                {"detail": "Restaurant not found"},
+                {"detail": "Business not found"},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
         # Record the view
         track_menu_view(
-            restaurant=restaurant,
+            business=business,
             session_id=serializer.validated_data["session_id"],
             source=serializer.validated_data.get("source", "link"),
             user_agent=serializer.validated_data.get("user_agent", ""),
@@ -103,8 +103,8 @@ class AnalyticsSummaryAPI(APIView):
         """Set tenant context after authentication."""
         super().initial(request, *args, **kwargs)
         if request.user.is_authenticated:
-            if hasattr(request.user, "restaurant") and request.user.restaurant:
-                set_current_restaurant(request.user.restaurant)
+            if hasattr(request.user, "restaurant") and request.user.business:
+                set_current_restaurant(request.user.business)
 
     def finalize_response(self, request, response, *args, **kwargs):
         """Clear tenant context after response."""
@@ -125,15 +125,15 @@ class AnalyticsSummaryAPI(APIView):
             "menu_items": 18
         }
         """
-        restaurant = get_current_restaurant()
+        business = get_current_restaurant()
 
-        if not restaurant:
+        if not business:
             return Response(
-                {"detail": "No restaurant associated with this account"},
+                {"detail": "No business associated with this account"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        summary = get_analytics_summary(restaurant)
+        summary = get_analytics_summary(business)
         serializer = AnalyticsSummarySerializer(summary)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -148,8 +148,8 @@ class TenantAnalyticsView(APIView):
         """Set tenant context after authentication."""
         super().initial(request, *args, **kwargs)
         if request.user.is_authenticated:
-            if hasattr(request.user, "restaurant") and request.user.restaurant:
-                set_current_restaurant(request.user.restaurant)
+            if hasattr(request.user, "restaurant") and request.user.business:
+                set_current_restaurant(request.user.business)
 
     def finalize_response(self, request, response, *args, **kwargs):
         """Clear tenant context after response."""
@@ -174,10 +174,10 @@ class AdvancedDashboardAPI(TenantAnalyticsView):
     """
 
     def get(self, request):
-        restaurant = get_current_restaurant()
-        if not restaurant:
+        business = get_current_restaurant()
+        if not business:
             return Response(
-                {"detail": "No restaurant associated with this account"},
+                {"detail": "No business associated with this account"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -185,7 +185,7 @@ class AdvancedDashboardAPI(TenantAnalyticsView):
 
         # Get daily stats for the period
         daily_stats = DailySalesStats.objects.filter(
-            restaurant=restaurant,
+            business=business,
             date__gte=start_date,
             date__lte=end_date,
         )
@@ -204,7 +204,7 @@ class AdvancedDashboardAPI(TenantAnalyticsView):
         # Get previous period for comparison
         prev_start = start_date - timedelta(days=(end_date - start_date).days)
         prev_stats = DailySalesStats.objects.filter(
-            restaurant=restaurant,
+            business=business,
             date__gte=prev_start,
             date__lt=start_date,
         ).aggregate(
@@ -241,7 +241,7 @@ class AdvancedDashboardAPI(TenantAnalyticsView):
         # Top items
         top_items = list(
             ItemPerformance.objects.filter(
-                restaurant=restaurant,
+                business=business,
                 date__gte=start_date,
                 date__lte=end_date,
             )
@@ -256,7 +256,7 @@ class AdvancedDashboardAPI(TenantAnalyticsView):
         # Top categories
         top_categories = list(
             CategoryPerformance.objects.filter(
-                restaurant=restaurant,
+                business=business,
                 date__gte=start_date,
                 date__lte=end_date,
             )
@@ -271,7 +271,7 @@ class AdvancedDashboardAPI(TenantAnalyticsView):
         # Peak hours (aggregate across period)
         peak_hours = list(
             HourlyStats.objects.filter(
-                restaurant=restaurant,
+                business=business,
                 date__gte=start_date,
                 date__lte=end_date,
             )
@@ -285,7 +285,7 @@ class AdvancedDashboardAPI(TenantAnalyticsView):
 
         # Customer metrics
         customer_stats = CustomerStats.objects.filter(
-            restaurant=restaurant,
+            business=business,
             date__gte=start_date,
             date__lte=end_date,
         ).aggregate(
@@ -335,17 +335,17 @@ class SalesStatsAPI(TenantAnalyticsView):
     """
 
     def get(self, request):
-        restaurant = get_current_restaurant()
-        if not restaurant:
+        business = get_current_restaurant()
+        if not business:
             return Response(
-                {"detail": "No restaurant associated with this account"},
+                {"detail": "No business associated with this account"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         start_date, end_date = self.get_date_range(request)
 
         stats = DailySalesStats.objects.filter(
-            restaurant=restaurant,
+            business=business,
             date__gte=start_date,
             date__lte=end_date,
         ).order_by("-date")
@@ -363,10 +363,10 @@ class ItemPerformanceAPI(TenantAnalyticsView):
     """
 
     def get(self, request):
-        restaurant = get_current_restaurant()
-        if not restaurant:
+        business = get_current_restaurant()
+        if not business:
             return Response(
-                {"detail": "No restaurant associated with this account"},
+                {"detail": "No business associated with this account"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -376,7 +376,7 @@ class ItemPerformanceAPI(TenantAnalyticsView):
         # Aggregate item performance over the period
         items = (
             ItemPerformance.objects.filter(
-                restaurant=restaurant,
+                business=business,
                 date__gte=start_date,
                 date__lte=end_date,
             )
@@ -417,10 +417,10 @@ class CategoryPerformanceAPI(TenantAnalyticsView):
     """
 
     def get(self, request):
-        restaurant = get_current_restaurant()
-        if not restaurant:
+        business = get_current_restaurant()
+        if not business:
             return Response(
-                {"detail": "No restaurant associated with this account"},
+                {"detail": "No business associated with this account"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -429,7 +429,7 @@ class CategoryPerformanceAPI(TenantAnalyticsView):
         # Aggregate category performance
         categories = (
             CategoryPerformance.objects.filter(
-                restaurant=restaurant,
+                business=business,
                 date__gte=start_date,
                 date__lte=end_date,
             )
@@ -475,10 +475,10 @@ class PeakHoursAPI(TenantAnalyticsView):
     """
 
     def get(self, request):
-        restaurant = get_current_restaurant()
-        if not restaurant:
+        business = get_current_restaurant()
+        if not business:
             return Response(
-                {"detail": "No restaurant associated with this account"},
+                {"detail": "No business associated with this account"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -487,7 +487,7 @@ class PeakHoursAPI(TenantAnalyticsView):
         # Aggregate hourly stats
         hourly = (
             HourlyStats.objects.filter(
-                restaurant=restaurant,
+                business=business,
                 date__gte=start_date,
                 date__lte=end_date,
             )
@@ -523,17 +523,17 @@ class CustomerAnalyticsAPI(TenantAnalyticsView):
     """
 
     def get(self, request):
-        restaurant = get_current_restaurant()
-        if not restaurant:
+        business = get_current_restaurant()
+        if not business:
             return Response(
-                {"detail": "No restaurant associated with this account"},
+                {"detail": "No business associated with this account"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         start_date, end_date = self.get_date_range(request)
 
         stats = CustomerStats.objects.filter(
-            restaurant=restaurant,
+            business=business,
             date__gte=start_date,
             date__lte=end_date,
         ).order_by("-date")
@@ -550,15 +550,15 @@ class WeeklyReportsAPI(TenantAnalyticsView):
     """
 
     def get(self, request):
-        restaurant = get_current_restaurant()
-        if not restaurant:
+        business = get_current_restaurant()
+        if not business:
             return Response(
-                {"detail": "No restaurant associated with this account"},
+                {"detail": "No business associated with this account"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         reports = WeeklyReport.objects.filter(
-            restaurant=restaurant,
+            business=business,
         ).order_by("-week_start")[:12]
 
         serializer = WeeklyReportSerializer(reports, many=True)
@@ -573,10 +573,10 @@ class ExportReportAPI(TenantAnalyticsView):
     """
 
     def post(self, request):
-        restaurant = get_current_restaurant()
-        if not restaurant:
+        business = get_current_restaurant()
+        if not business:
             return Response(
-                {"detail": "No restaurant associated with this account"},
+                {"detail": "No business associated with this account"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -585,7 +585,7 @@ class ExportReportAPI(TenantAnalyticsView):
 
         # Create export record
         export = ReportExport.objects.create(
-            restaurant=restaurant,
+            business=business,
             export_type=serializer.validated_data["export_type"],
             format=serializer.validated_data["format"],
             date_from=serializer.validated_data["date_from"],
@@ -619,10 +619,10 @@ class BenchmarkAPI(TenantAnalyticsView):
     """
 
     def get(self, request):
-        restaurant = get_current_restaurant()
-        if not restaurant:
+        business = get_current_restaurant()
+        if not business:
             return Response(
-                {"detail": "No restaurant associated with this account"},
+                {"detail": "No business associated with this account"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -630,7 +630,7 @@ class BenchmarkAPI(TenantAnalyticsView):
 
         # Get restaurant metrics
         stats = DailySalesStats.objects.filter(
-            restaurant=restaurant,
+            business=business,
             date__gte=start_date,
             date__lte=end_date,
         ).aggregate(

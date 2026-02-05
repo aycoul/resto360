@@ -23,7 +23,7 @@ class TestStockItemAPI:
         response = owner_client.get(url)
 
         assert response.status_code == 200
-        # Should see all items from their restaurant (including inactive)
+        # Should see all items from their business (including inactive)
         assert response.data["count"] == 5
 
     def test_list_stock_items_filter_active(self, owner_client, sample_inventory):
@@ -62,7 +62,7 @@ class TestStockItemAPI:
 
         # Verify in database
         item = StockItem.all_objects.get(id=response.data["id"])
-        assert item.restaurant == owner.restaurant
+        assert item.business == owner.business
 
     def test_create_stock_item_cashier_forbidden(self, cashier_client):
         """Test that cashiers cannot create stock items."""
@@ -99,18 +99,18 @@ class TestStockItemAPI:
         assert not StockItem.all_objects.filter(id=sample_stock_item.id).exists()
 
     def test_tenant_isolation(self, owner_client, owner):
-        """Test that users can only see their own restaurant's items."""
-        from apps.authentication.tests.factories import RestaurantFactory
+        """Test that users can only see their own business's items."""
+        from apps.authentication.tests.factories import BusinessFactory
         from apps.inventory.tests.factories import StockItemFactory
 
-        # Create a completely separate restaurant
-        other_restaurant = RestaurantFactory()
+        # Create a completely separate business
+        other_business = BusinessFactory()
 
-        # Create item in owner's restaurant
-        owner_item = StockItemFactory(restaurant=owner.restaurant, name="Owner Item")
+        # Create item in owner's business
+        owner_item = StockItemFactory(business=owner.business, name="Owner Item")
 
-        # Create item in other restaurant
-        other_item = StockItemFactory(restaurant=other_restaurant, name="Other Item")
+        # Create item in other business
+        other_item = StockItemFactory(business=other_business, name="Other Item")
 
         # Owner should only see their own items
         url = reverse("stock-item-list")
@@ -288,7 +288,7 @@ class TestStockMovementAPI:
         """Test listing movements for authenticated user."""
         # Create a movement
         StockMovement.all_objects.create(
-            restaurant=sample_stock_item.restaurant,
+            business=sample_stock_item.business,
             stock_item=sample_stock_item,
             quantity_change=Decimal("10.0000"),
             movement_type=MovementType.IN,
@@ -310,7 +310,7 @@ class TestStockMovementAPI:
 
         # Create movements for different items
         StockMovement.all_objects.create(
-            restaurant=tomatoes.restaurant,
+            business=tomatoes.business,
             stock_item=tomatoes,
             quantity_change=Decimal("10.0000"),
             movement_type=MovementType.IN,
@@ -319,7 +319,7 @@ class TestStockMovementAPI:
             created_by=owner,
         )
         StockMovement.all_objects.create(
-            restaurant=onions.restaurant,
+            business=onions.business,
             stock_item=onions,
             quantity_change=Decimal("5.0000"),
             movement_type=MovementType.IN,
@@ -341,7 +341,7 @@ class TestStockMovementAPI:
         """Test filtering movements by movement type."""
         # Create different types of movements
         StockMovement.all_objects.create(
-            restaurant=sample_stock_item.restaurant,
+            business=sample_stock_item.business,
             stock_item=sample_stock_item,
             quantity_change=Decimal("10.0000"),
             movement_type=MovementType.IN,
@@ -350,7 +350,7 @@ class TestStockMovementAPI:
             created_by=owner,
         )
         StockMovement.all_objects.create(
-            restaurant=sample_stock_item.restaurant,
+            business=sample_stock_item.business,
             stock_item=sample_stock_item,
             quantity_change=Decimal("-5.0000"),
             movement_type=MovementType.OUT,
@@ -383,20 +383,20 @@ class TestStockMovementAPI:
         assert response.status_code == 405
 
     def test_movement_tenant_isolation(self, owner_client, owner):
-        """Test that users can only see their own restaurant's movements."""
-        from apps.authentication.tests.factories import RestaurantFactory
+        """Test that users can only see their own business's movements."""
+        from apps.authentication.tests.factories import BusinessFactory
         from apps.inventory.tests.factories import StockItemFactory
 
-        # Create a completely separate restaurant
-        other_restaurant = RestaurantFactory()
+        # Create a completely separate business
+        other_business = BusinessFactory()
 
-        # Create items in each restaurant
-        owner_item = StockItemFactory(restaurant=owner.restaurant, name="Owner Item")
-        other_item = StockItemFactory(restaurant=other_restaurant, name="Other Item")
+        # Create items in each business
+        owner_item = StockItemFactory(business=owner.business, name="Owner Item")
+        other_item = StockItemFactory(business=other_business, name="Other Item")
 
-        # Create movement in owner's restaurant
+        # Create movement in owner's business
         owner_movement = StockMovement.all_objects.create(
-            restaurant=owner.restaurant,
+            business=owner.business,
             stock_item=owner_item,
             quantity_change=Decimal("10.0000"),
             movement_type=MovementType.IN,
@@ -405,15 +405,15 @@ class TestStockMovementAPI:
             created_by=owner,
         )
 
-        # Create movement in other restaurant
+        # Create movement in other business
         StockMovement.all_objects.create(
-            restaurant=other_restaurant,
+            business=other_business,
             stock_item=other_item,
             quantity_change=Decimal("5.0000"),
             movement_type=MovementType.IN,
             reason=MovementReason.PURCHASE,
             balance_after=Decimal("105.0000"),
-            created_by=None,  # No user for other restaurant
+            created_by=None,  # No user for other business
         )
 
         # Owner should only see their own movements
@@ -421,7 +421,7 @@ class TestStockMovementAPI:
         response = owner_client.get(url)
 
         assert response.status_code == 200
-        # Should only see movements from owner's restaurant
+        # Should only see movements from owner's business
         movement_stock_items = [str(m["stock_item"]) for m in response.data["results"]]
         assert str(owner_item.id) in movement_stock_items
         assert str(other_item.id) not in movement_stock_items

@@ -9,8 +9,8 @@ class TestCategoryAPI:
 
     def test_list_categories_authenticated(self, owner_client, owner, category_factory):
         """Test listing categories as authenticated user."""
-        category_factory(restaurant=owner.restaurant, name="Category 1")
-        category_factory(restaurant=owner.restaurant, name="Category 2")
+        category_factory(business=owner.business, name="Category 1")
+        category_factory(business=owner.business, name="Category 2")
 
         response = owner_client.get("/api/v1/menu/categories/")
         assert response.status_code == 200
@@ -32,9 +32,9 @@ class TestCategoryAPI:
         assert response.status_code == 201
         assert response.data["name"] == "New Category"
 
-        # Verify category was created with correct restaurant
+        # Verify category was created with correct business
         category = Category.all_objects.get(id=response.data["id"])
-        assert category.restaurant == owner.restaurant
+        assert category.business == owner.business
 
     def test_create_category_as_manager(self, manager_client, manager):
         """Test manager can create category."""
@@ -50,7 +50,7 @@ class TestCategoryAPI:
 
     def test_update_category(self, owner_client, owner, category_factory):
         """Test owner can update category."""
-        category = category_factory(restaurant=owner.restaurant, name="Old Name")
+        category = category_factory(business=owner.business, name="Old Name")
 
         data = {"name": "New Name", "display_order": 2}
         response = owner_client.patch(
@@ -61,7 +61,7 @@ class TestCategoryAPI:
 
     def test_delete_category(self, owner_client, owner, category_factory):
         """Test owner can delete category."""
-        category = category_factory(restaurant=owner.restaurant)
+        category = category_factory(business=owner.business)
 
         response = owner_client.delete(f"/api/v1/menu/categories/{category.id}/")
         assert response.status_code == 204
@@ -71,9 +71,9 @@ class TestCategoryAPI:
         self, cashier_client, cashier, category_factory
     ):
         """Test invisible categories are hidden from non-managers."""
-        category_factory(restaurant=cashier.restaurant, name="Visible", is_visible=True)
+        category_factory(business=cashier.business, name="Visible", is_visible=True)
         category_factory(
-            restaurant=cashier.restaurant, name="Hidden", is_visible=False
+            business=cashier.business, name="Hidden", is_visible=False
         )
 
         response = cashier_client.get("/api/v1/menu/categories/")
@@ -85,8 +85,8 @@ class TestCategoryAPI:
         self, owner_client, owner, category_factory
     ):
         """Test owners can see invisible categories."""
-        category_factory(restaurant=owner.restaurant, name="Visible", is_visible=True)
-        category_factory(restaurant=owner.restaurant, name="Hidden", is_visible=False)
+        category_factory(business=owner.business, name="Visible", is_visible=True)
+        category_factory(business=owner.business, name="Hidden", is_visible=False)
 
         response = owner_client.get("/api/v1/menu/categories/")
         assert response.status_code == 200
@@ -101,9 +101,9 @@ class TestMenuItemAPI:
         self, owner_client, owner, menu_item_factory, category_factory
     ):
         """Test listing menu items."""
-        category = category_factory(restaurant=owner.restaurant)
-        menu_item_factory(category=category, restaurant=owner.restaurant)
-        menu_item_factory(category=category, restaurant=owner.restaurant)
+        category = category_factory(business=owner.business)
+        menu_item_factory(category=category, business=owner.business)
+        menu_item_factory(category=category, business=owner.business)
 
         response = owner_client.get("/api/v1/menu/items/")
         assert response.status_code == 200
@@ -111,7 +111,7 @@ class TestMenuItemAPI:
 
     def test_create_menu_item(self, owner_client, owner, category_factory):
         """Test creating a menu item."""
-        category = category_factory(restaurant=owner.restaurant)
+        category = category_factory(business=owner.business)
 
         data = {
             "category": str(category.id),
@@ -129,7 +129,7 @@ class TestMenuItemAPI:
         self, owner_client, owner, category_factory
     ):
         """Test creating menu item with negative price fails."""
-        category = category_factory(restaurant=owner.restaurant)
+        category = category_factory(business=owner.business)
 
         data = {
             "category": str(category.id),
@@ -143,14 +143,14 @@ class TestMenuItemAPI:
         self, owner_client, owner, menu_item_factory, category_factory
     ):
         """Test filtering menu items by category."""
-        category1 = category_factory(restaurant=owner.restaurant, name="Cat 1")
-        category2 = category_factory(restaurant=owner.restaurant, name="Cat 2")
+        category1 = category_factory(business=owner.business, name="Cat 1")
+        category2 = category_factory(business=owner.business, name="Cat 2")
 
         menu_item_factory(
-            category=category1, restaurant=owner.restaurant, name="Item 1"
+            category=category1, business=owner.business, name="Item 1"
         )
         menu_item_factory(
-            category=category2, restaurant=owner.restaurant, name="Item 2"
+            category=category2, business=owner.business, name="Item 2"
         )
 
         response = owner_client.get(f"/api/v1/menu/items/?category_id={category1.id}")
@@ -162,9 +162,9 @@ class TestMenuItemAPI:
         self, owner_client, owner, menu_item_factory, modifier_factory, category_factory
     ):
         """Test menu item serialization includes modifiers."""
-        category = category_factory(restaurant=owner.restaurant)
-        item = menu_item_factory(category=category, restaurant=owner.restaurant)
-        modifier_factory(menu_item=item, restaurant=owner.restaurant, name="Size")
+        category = category_factory(business=owner.business)
+        item = menu_item_factory(category=category, business=owner.business)
+        modifier_factory(menu_item=item, business=owner.business, name="Size")
 
         response = owner_client.get(f"/api/v1/menu/items/{item.id}/")
         assert response.status_code == 200
@@ -180,9 +180,9 @@ class TestModifierAPI:
         self, owner_client, owner, modifier_factory, menu_item_factory, category_factory
     ):
         """Test listing modifiers."""
-        category = category_factory(restaurant=owner.restaurant)
-        item = menu_item_factory(category=category, restaurant=owner.restaurant)
-        modifier_factory(menu_item=item, restaurant=owner.restaurant)
+        category = category_factory(business=owner.business)
+        item = menu_item_factory(category=category, business=owner.business)
+        modifier_factory(menu_item=item, business=owner.business)
 
         response = owner_client.get("/api/v1/menu/modifiers/")
         assert response.status_code == 200
@@ -192,8 +192,8 @@ class TestModifierAPI:
         self, owner_client, owner, menu_item_factory, category_factory
     ):
         """Test creating a modifier."""
-        category = category_factory(restaurant=owner.restaurant)
-        item = menu_item_factory(category=category, restaurant=owner.restaurant)
+        category = category_factory(business=owner.business)
+        item = menu_item_factory(category=category, business=owner.business)
 
         data = {
             "menu_item": str(item.id),
@@ -209,12 +209,12 @@ class TestModifierAPI:
         self, owner_client, owner, modifier_factory, menu_item_factory, category_factory
     ):
         """Test filtering modifiers by menu item."""
-        category = category_factory(restaurant=owner.restaurant)
-        item1 = menu_item_factory(category=category, restaurant=owner.restaurant)
-        item2 = menu_item_factory(category=category, restaurant=owner.restaurant)
+        category = category_factory(business=owner.business)
+        item1 = menu_item_factory(category=category, business=owner.business)
+        item2 = menu_item_factory(category=category, business=owner.business)
 
-        modifier_factory(menu_item=item1, restaurant=owner.restaurant, name="Mod 1")
-        modifier_factory(menu_item=item2, restaurant=owner.restaurant, name="Mod 2")
+        modifier_factory(menu_item=item1, business=owner.business, name="Mod 1")
+        modifier_factory(menu_item=item2, business=owner.business, name="Mod 2")
 
         response = owner_client.get(f"/api/v1/menu/modifiers/?menu_item_id={item1.id}")
         assert response.status_code == 200
@@ -236,10 +236,10 @@ class TestModifierOptionAPI:
         category_factory,
     ):
         """Test listing modifier options."""
-        category = category_factory(restaurant=owner.restaurant)
-        item = menu_item_factory(category=category, restaurant=owner.restaurant)
-        modifier = modifier_factory(menu_item=item, restaurant=owner.restaurant)
-        modifier_option_factory(modifier=modifier, restaurant=owner.restaurant)
+        category = category_factory(business=owner.business)
+        item = menu_item_factory(category=category, business=owner.business)
+        modifier = modifier_factory(menu_item=item, business=owner.business)
+        modifier_option_factory(modifier=modifier, business=owner.business)
 
         response = owner_client.get("/api/v1/menu/modifier-options/")
         assert response.status_code == 200
@@ -254,9 +254,9 @@ class TestModifierOptionAPI:
         category_factory,
     ):
         """Test creating a modifier option."""
-        category = category_factory(restaurant=owner.restaurant)
-        item = menu_item_factory(category=category, restaurant=owner.restaurant)
-        modifier = modifier_factory(menu_item=item, restaurant=owner.restaurant)
+        category = category_factory(business=owner.business)
+        item = menu_item_factory(category=category, business=owner.business)
+        modifier = modifier_factory(menu_item=item, business=owner.business)
 
         data = {
             "modifier": str(modifier.id),
@@ -297,8 +297,8 @@ class TestFullMenuAPI:
         self, cashier_client, cashier, sample_menu
     ):
         """Test cashier only sees visible categories and available items."""
-        # Set the cashier's restaurant to the sample menu restaurant
-        cashier.restaurant = sample_menu["restaurant"]
+        # Set the cashier's business to the sample menu business
+        cashier.business = sample_menu["business"]
         cashier.save()
 
         response = cashier_client.get("/api/v1/menu/full/")
@@ -321,16 +321,16 @@ class TestFullMenuAPI:
 class TestMultiTenantIsolation:
     """Tests for multi-tenant data isolation."""
 
-    def test_user_cannot_see_other_restaurant_categories(
-        self, owner_client, owner, category_factory, restaurant_factory
+    def test_user_cannot_see_other_business_categories(
+        self, owner_client, owner, category_factory, business_factory
     ):
-        """Test user cannot access another restaurant's categories."""
-        # Create category for another restaurant
-        other_restaurant = restaurant_factory()
-        category_factory(restaurant=other_restaurant, name="Other Category")
+        """Test user cannot access another business's categories."""
+        # Create category for another business
+        other_business = business_factory()
+        category_factory(business=other_business, name="Other Category")
 
-        # Create category for owner's restaurant
-        category_factory(restaurant=owner.restaurant, name="Own Category")
+        # Create category for owner's business
+        category_factory(business=owner.business, name="Own Category")
 
         # Owner should only see their own categories
         response = owner_client.get("/api/v1/menu/categories/")
@@ -338,26 +338,26 @@ class TestMultiTenantIsolation:
         assert response.data["count"] == 1
         assert response.data["results"][0]["name"] == "Own Category"
 
-    def test_user_cannot_see_other_restaurant_items(
+    def test_user_cannot_see_other_business_items(
         self,
         owner_client,
         owner,
         menu_item_factory,
         category_factory,
-        restaurant_factory,
+        business_factory,
     ):
-        """Test user cannot access another restaurant's menu items."""
-        # Create items for another restaurant
-        other_restaurant = restaurant_factory()
-        other_category = category_factory(restaurant=other_restaurant)
+        """Test user cannot access another business's menu items."""
+        # Create items for another business
+        other_business = business_factory()
+        other_category = category_factory(business=other_business)
         menu_item_factory(
-            restaurant=other_restaurant, category=other_category, name="Other Item"
+            business=other_business, category=other_category, name="Other Item"
         )
 
-        # Create items for owner's restaurant
-        own_category = category_factory(restaurant=owner.restaurant)
+        # Create items for owner's business
+        own_category = category_factory(business=owner.business)
         menu_item_factory(
-            restaurant=owner.restaurant, category=own_category, name="Own Item"
+            business=owner.business, category=own_category, name="Own Item"
         )
 
         # Owner should only see their own items
@@ -366,17 +366,17 @@ class TestMultiTenantIsolation:
         assert response.data["count"] == 1
         assert response.data["results"][0]["name"] == "Own Item"
 
-    def test_full_menu_only_shows_own_restaurant(
-        self, owner_client, owner, sample_menu, category_factory, restaurant_factory
+    def test_full_menu_only_shows_own_business(
+        self, owner_client, owner, sample_menu, category_factory, business_factory
     ):
-        """Test full menu only shows own restaurant's data."""
-        # Create data for another restaurant
-        other_restaurant = restaurant_factory()
-        category_factory(restaurant=other_restaurant, name="Other Restaurant Category")
+        """Test full menu only shows own business's data."""
+        # Create data for another business
+        other_business = business_factory()
+        category_factory(business=other_business, name="Other Business Category")
 
         response = owner_client.get("/api/v1/menu/full/")
         assert response.status_code == 200
 
-        # All categories should belong to owner's restaurant
+        # All categories should belong to owner's business
         category_names = [c["name"] for c in response.data["categories"]]
         assert "Other Restaurant Category" not in category_names

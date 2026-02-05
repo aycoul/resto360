@@ -14,12 +14,12 @@ from .factories import DriverFactory
 class TestDriverModel:
     """Tests for Driver model."""
 
-    def test_create_driver(self, restaurant):
+    def test_create_driver(self, business):
         """Test creating a driver."""
-        user = UserFactory(restaurant=restaurant, role="driver")
+        user = UserFactory(business=business, role="driver")
 
         driver = Driver.objects.create(
-            restaurant=restaurant,
+            business=business,
             user=user,
             phone=user.phone,
             vehicle_type="motorcycle",
@@ -29,18 +29,18 @@ class TestDriverModel:
         assert driver.is_available is False
         assert driver.current_location is None
 
-    def test_go_online(self, restaurant):
+    def test_go_online(self, business):
         """Test driver going online."""
-        driver = DriverFactory(restaurant=restaurant)
+        driver = DriverFactory(business=business)
 
         driver.go_online()
 
         assert driver.is_available is True
         assert driver.went_online_at is not None
 
-    def test_go_offline(self, restaurant):
+    def test_go_offline(self, business):
         """Test driver going offline."""
-        driver = DriverFactory(restaurant=restaurant, is_available=True)
+        driver = DriverFactory(business=business, is_available=True)
         driver.went_online_at = timezone.now()
         driver.save()
 
@@ -49,9 +49,9 @@ class TestDriverModel:
         assert driver.is_available is False
         assert driver.went_online_at is None
 
-    def test_update_location(self, restaurant):
+    def test_update_location(self, business):
         """Test updating driver location."""
-        driver = DriverFactory(restaurant=restaurant)
+        driver = DriverFactory(business=business)
 
         driver.update_location(lat=5.33, lng=-4.01)
 
@@ -65,29 +65,29 @@ class TestDriverModel:
 class TestDriverAPI:
     """Tests for driver API endpoints."""
 
-    def test_list_drivers(self, auth_client, restaurant):
+    def test_list_drivers(self, auth_client, business):
         """Test listing drivers."""
-        DriverFactory(restaurant=restaurant)
-        DriverFactory(restaurant=restaurant)
+        DriverFactory(business=business)
+        DriverFactory(business=business)
 
         response = auth_client.get("/api/v1/delivery/drivers/")
 
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data) == 2
 
-    def test_list_drivers_tenant_isolation(self, auth_client, restaurant):
-        """Test drivers are filtered by restaurant."""
-        DriverFactory(restaurant=restaurant)
-        DriverFactory()  # Different restaurant
+    def test_list_drivers_tenant_isolation(self, auth_client, business):
+        """Test drivers are filtered by business."""
+        DriverFactory(business=business)
+        DriverFactory()  # Different business
 
         response = auth_client.get("/api/v1/delivery/drivers/")
 
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data) == 1
 
-    def test_create_driver(self, auth_client, restaurant):
+    def test_create_driver(self, auth_client, business):
         """Test creating a driver profile."""
-        user = UserFactory(restaurant=restaurant, role="driver")
+        user = UserFactory(business=business, role="driver")
 
         data = {
             "user": str(user.id),
@@ -104,9 +104,9 @@ class TestDriverAPI:
         assert response.data["user"] == str(user.id)
         assert response.data["vehicle_type"] == "motorcycle"
 
-    def test_create_driver_wrong_role(self, auth_client, restaurant):
+    def test_create_driver_wrong_role(self, auth_client, business):
         """Test creating driver for non-driver user fails."""
-        user = UserFactory(restaurant=restaurant, role="cashier")
+        user = UserFactory(business=business, role="cashier")
 
         data = {
             "user": str(user.id),
@@ -121,9 +121,9 @@ class TestDriverAPI:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "driver" in str(response.data).lower()
 
-    def test_toggle_availability_online(self, auth_client, restaurant):
+    def test_toggle_availability_online(self, auth_client, business):
         """Test toggling driver to online."""
-        driver = DriverFactory(restaurant=restaurant, is_available=False)
+        driver = DriverFactory(business=business, is_available=False)
 
         response = auth_client.post(
             f"/api/v1/delivery/drivers/{driver.id}/toggle_availability/"
@@ -133,9 +133,9 @@ class TestDriverAPI:
         assert response.data["is_available"] is True
         assert response.data["went_online_at"] is not None
 
-    def test_toggle_availability_offline(self, auth_client, restaurant):
+    def test_toggle_availability_offline(self, auth_client, business):
         """Test toggling driver to offline."""
-        driver = DriverFactory(restaurant=restaurant, is_available=True)
+        driver = DriverFactory(business=business, is_available=True)
 
         response = auth_client.post(
             f"/api/v1/delivery/drivers/{driver.id}/toggle_availability/"
@@ -144,9 +144,9 @@ class TestDriverAPI:
         assert response.status_code == status.HTTP_200_OK
         assert response.data["is_available"] is False
 
-    def test_update_location(self, auth_client, restaurant):
+    def test_update_location(self, auth_client, business):
         """Test updating driver location."""
-        driver = DriverFactory(restaurant=restaurant)
+        driver = DriverFactory(business=business)
 
         response = auth_client.post(
             f"/api/v1/delivery/drivers/{driver.id}/update_location/",
@@ -159,9 +159,9 @@ class TestDriverAPI:
         assert response.data["longitude"] == -4.01
         assert response.data["location_updated_at"] is not None
 
-    def test_update_location_validation(self, auth_client, restaurant):
+    def test_update_location_validation(self, auth_client, business):
         """Test location update validates coordinates."""
-        driver = DriverFactory(restaurant=restaurant)
+        driver = DriverFactory(business=business)
 
         response = auth_client.post(
             f"/api/v1/delivery/drivers/{driver.id}/update_location/",
@@ -171,13 +171,13 @@ class TestDriverAPI:
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-    def test_get_current_driver_profile(self, auth_client, restaurant, user):
+    def test_get_current_driver_profile(self, auth_client, business, user):
         """Test getting current user's driver profile."""
         # Create driver profile for authenticated user
         user.role = "driver"
         user.save()
         driver = Driver.objects.create(
-            restaurant=restaurant,
+            business=business,
             user=user,
             phone=user.phone,
         )
@@ -187,7 +187,7 @@ class TestDriverAPI:
         assert response.status_code == status.HTTP_200_OK
         assert response.data["id"] == str(driver.id)
 
-    def test_get_current_driver_profile_not_found(self, auth_client, restaurant):
+    def test_get_current_driver_profile_not_found(self, auth_client, business):
         """Test getting driver profile when none exists."""
         response = auth_client.get("/api/v1/delivery/drivers/me/")
 

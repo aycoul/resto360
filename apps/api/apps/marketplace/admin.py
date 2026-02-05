@@ -60,14 +60,14 @@ class SupplierOrderAdmin(admin.ModelAdmin):
     list_display = [
         "order_number",
         "supplier",
-        "restaurant",
+        "business",
         "status",
         "payment_status",
         "total",
         "created_at",
     ]
     list_filter = ["status", "payment_status", "supplier"]
-    search_fields = ["order_number", "restaurant__name", "supplier__name"]
+    search_fields = ["order_number", "business__name", "supplier__name"]
     inlines = [SupplierOrderItemInline]
     readonly_fields = ["order_number", "subtotal", "total"]
 
@@ -76,20 +76,20 @@ class SupplierOrderAdmin(admin.ModelAdmin):
 class SupplierReviewAdmin(admin.ModelAdmin):
     list_display = [
         "supplier",
-        "restaurant",
+        "business",
         "overall_rating",
         "is_verified",
         "is_published",
         "created_at",
     ]
     list_filter = ["overall_rating", "is_verified", "is_published"]
-    search_fields = ["supplier__name", "restaurant__name", "comment"]
+    search_fields = ["supplier__name", "business__name", "comment"]
 
 
 @admin.register(SupplierFavorite)
 class SupplierFavoriteAdmin(admin.ModelAdmin):
-    list_display = ["restaurant", "supplier", "created_at"]
-    search_fields = ["restaurant__name", "supplier__name"]
+    list_display = ["business", "supplier", "created_at"]
+    search_fields = ["business__name", "supplier__name"]
 
 
 class CartItemInline(admin.TabularInline):
@@ -99,7 +99,7 @@ class CartItemInline(admin.TabularInline):
 
 @admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
-    list_display = ["restaurant", "supplier", "item_count", "total", "updated_at"]
+    list_display = ["business", "supplier", "item_count", "total", "updated_at"]
     inlines = [CartItemInline]
 
     def item_count(self, obj):

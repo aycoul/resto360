@@ -23,8 +23,8 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(default=django.utils.timezone.now)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('quantity_required', models.DecimalField(decimal_places=4, help_text='Quantity of this ingredient required per 1 unit of menu item', max_digits=10)),
-                ('menu_item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='ingredients', to='menu.menuitem')),
-                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.restaurant')),
+                ('menu_item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='ingredients', to='menu.product')),
+                ('business', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.business')),
                 ('stock_item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='menu_usages', to='inventory.stockitem')),
             ],
             options={

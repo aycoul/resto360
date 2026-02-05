@@ -12,7 +12,7 @@ class MenuView(TenantModel):
     """
     Individual menu view event.
 
-    Tracks when a customer views a restaurant's public menu.
+    Tracks when a customer views a business's public menu.
     """
 
     SOURCE_CHOICES = [
@@ -46,12 +46,12 @@ class MenuView(TenantModel):
     class Meta:
         ordering = ["-viewed_at"]
         indexes = [
-            models.Index(fields=["restaurant", "viewed_at"]),
-            models.Index(fields=["restaurant", "session_id"]),
+            models.Index(fields=["business", "viewed_at"]),
+            models.Index(fields=["business", "session_id"]),
         ]
 
     def __str__(self):
-        return f"Menu view for {self.restaurant} at {self.viewed_at}"
+        return f"Menu view for {self.business} at {self.viewed_at}"
 
 
 class DailyMenuStats(TenantModel):
@@ -77,14 +77,14 @@ class DailyMenuStats(TenantModel):
 
     class Meta:
         ordering = ["-date"]
-        unique_together = [("restaurant", "date")]
+        unique_together = [("business", "date")]
         verbose_name_plural = "Daily menu stats"
         indexes = [
-            models.Index(fields=["restaurant", "date"]),
+            models.Index(fields=["business", "date"]),
         ]
 
     def __str__(self):
-        return f"Stats for {self.restaurant} on {self.date}"
+        return f"Stats for {self.business} on {self.date}"
 
 
 class DailySalesStats(TenantModel):
@@ -120,14 +120,14 @@ class DailySalesStats(TenantModel):
 
     class Meta:
         ordering = ["-date"]
-        unique_together = [("restaurant", "date")]
+        unique_together = [("business", "date")]
         verbose_name_plural = "Daily sales stats"
         indexes = [
-            models.Index(fields=["restaurant", "date"]),
+            models.Index(fields=["business", "date"]),
         ]
 
     def __str__(self):
-        return f"Sales for {self.restaurant} on {self.date}"
+        return f"Sales for {self.business} on {self.date}"
 
 
 class ItemPerformance(TenantModel):
@@ -136,7 +136,7 @@ class ItemPerformance(TenantModel):
     """
 
     menu_item = models.ForeignKey(
-        "menu.MenuItem",
+        "menu.Product",
         on_delete=models.CASCADE,
         related_name="performance_stats",
     )
@@ -156,9 +156,9 @@ class ItemPerformance(TenantModel):
 
     class Meta:
         ordering = ["-date", "-quantity_sold"]
-        unique_together = [("restaurant", "menu_item", "date")]
+        unique_together = [("business", "menu_item", "date")]
         indexes = [
-            models.Index(fields=["restaurant", "date"]),
+            models.Index(fields=["business", "date"]),
             models.Index(fields=["menu_item", "date"]),
         ]
 
@@ -194,9 +194,9 @@ class CategoryPerformance(TenantModel):
 
     class Meta:
         ordering = ["-date", "-revenue"]
-        unique_together = [("restaurant", "category", "date")]
+        unique_together = [("business", "category", "date")]
         indexes = [
-            models.Index(fields=["restaurant", "date"]),
+            models.Index(fields=["business", "date"]),
         ]
 
     def __str__(self):
@@ -221,13 +221,13 @@ class HourlyStats(TenantModel):
 
     class Meta:
         ordering = ["-date", "hour"]
-        unique_together = [("restaurant", "date", "hour")]
+        unique_together = [("business", "date", "hour")]
         indexes = [
-            models.Index(fields=["restaurant", "date"]),
+            models.Index(fields=["business", "date"]),
         ]
 
     def __str__(self):
-        return f"{self.restaurant} on {self.date} at {self.hour}:00"
+        return f"{self.business} on {self.date} at {self.hour}:00"
 
 
 class CustomerStats(TenantModel):
@@ -256,13 +256,13 @@ class CustomerStats(TenantModel):
 
     class Meta:
         ordering = ["-date"]
-        unique_together = [("restaurant", "date")]
+        unique_together = [("business", "date")]
         indexes = [
-            models.Index(fields=["restaurant", "date"]),
+            models.Index(fields=["business", "date"]),
         ]
 
     def __str__(self):
-        return f"Customer stats for {self.restaurant} on {self.date}"
+        return f"Customer stats for {self.business} on {self.date}"
 
 
 class WeeklyReport(TenantModel):
@@ -306,13 +306,13 @@ class WeeklyReport(TenantModel):
 
     class Meta:
         ordering = ["-week_start"]
-        unique_together = [("restaurant", "week_start")]
+        unique_together = [("business", "week_start")]
         indexes = [
-            models.Index(fields=["restaurant", "week_start"]),
+            models.Index(fields=["business", "week_start"]),
         ]
 
     def __str__(self):
-        return f"Weekly report for {self.restaurant}: {self.week_start} to {self.week_end}"
+        return f"Weekly report for {self.business}: {self.week_start} to {self.week_end}"
 
 
 class ReportExport(TenantModel):

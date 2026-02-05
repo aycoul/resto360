@@ -15,10 +15,10 @@ class TestOwnerRegistration:
             "name": "Jean Owner",
             "email": "jean@example.com",
             "password": "securepass123",
-            "restaurant_name": "Chez Jean",
-            "restaurant_slug": "chez-jean",
-            "restaurant_phone": "+2250712345678",
-            "restaurant_address": "123 Rue d'Abidjan",
+            "business_name": "Chez Jean",
+            "business_slug": "chez-jean",
+            "business_phone": "+2250712345678",
+            "business_address": "123 Rue d'Abidjan",
         }
         response = api_client.post(url, data, format="json")
 
@@ -34,8 +34,8 @@ class TestOwnerRegistration:
             "phone": "+2250712345679",
             "name": "Token Test Owner",
             "password": "securepass123",
-            "restaurant_name": "Token Restaurant",
-            "restaurant_slug": "token-restaurant",
+            "business_name": "Token Restaurant",
+            "business_slug": "token-restaurant",
         }
         response = api_client.post(url, data, format="json")
 
@@ -53,28 +53,28 @@ class TestOwnerRegistration:
             "phone": "+2250712345678",  # Duplicate
             "name": "Another Owner",
             "password": "securepass123",
-            "restaurant_name": "Another Restaurant",
-            "restaurant_slug": "another-restaurant",
+            "business_name": "Another Restaurant",
+            "business_slug": "another-restaurant",
         }
         response = api_client.post(url, data, format="json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "phone" in response.data
 
-    def test_register_duplicate_slug_fails(self, api_client, restaurant_factory):
-        restaurant_factory(slug="existing-slug")
+    def test_register_duplicate_slug_fails(self, api_client, business_factory):
+        business_factory(slug="existing-slug")
         url = reverse("authentication:register_owner")
         data = {
             "phone": "+2250712345680",
             "name": "New Owner",
             "password": "securepass123",
-            "restaurant_name": "New Restaurant",
-            "restaurant_slug": "existing-slug",  # Duplicate
+            "business_name": "New Restaurant",
+            "business_slug": "existing-slug",  # Duplicate
         }
         response = api_client.post(url, data, format="json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "restaurant_slug" in response.data
+        assert "business_slug" in response.data
 
 
 class TestLogin:
@@ -125,7 +125,7 @@ class TestLogin:
         assert decoded["name"] == owner.name
         assert "restaurant_id" in decoded
         assert "permissions" in decoded
-        assert "manage_restaurant" in decoded["permissions"]
+        assert "manage_business" in decoded["permissions"]
 
 
 class TestTokenRefresh:
@@ -213,7 +213,7 @@ class TestCurrentUser:
 
         assert response.status_code == status.HTTP_200_OK
         assert "restaurant" in response.data
-        assert response.data["restaurant"]["id"] == str(owner.restaurant.id)
+        assert response.data["restaurant"]["id"] == str(owner.business.id)
 
 
 class TestStaffInvite:
@@ -231,7 +231,7 @@ class TestStaffInvite:
 
         assert response.status_code == status.HTTP_201_CREATED
         assert response.data["role"] == "cashier"
-        assert response.data["restaurant"]["id"] == str(owner.restaurant.id)
+        assert response.data["restaurant"]["id"] == str(owner.business.id)
 
     def test_manager_can_invite_staff(self, manager_client, manager):
         url = reverse("authentication:invite_staff")
@@ -278,17 +278,17 @@ class TestStaffInvite:
         assert "phone" in response.data
 
 
-class TestRestaurantSettings:
-    """Tests for restaurant settings endpoint."""
+class TestBusinessSettings:
+    """Tests for business settings endpoint."""
 
-    def test_owner_can_get_restaurant(self, owner_client, owner):
+    def test_owner_can_get_business(self, owner_client, owner):
         url = reverse("authentication:restaurant_settings")
         response = owner_client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
-        assert response.data["id"] == str(owner.restaurant.id)
+        assert response.data["id"] == str(owner.business.id)
 
-    def test_owner_can_update_restaurant(self, owner_client, owner):
+    def test_owner_can_update_business(self, owner_client, owner):
         url = reverse("authentication:restaurant_settings")
         data = {"name": "Updated Restaurant Name", "address": "New Address"}
 
@@ -297,7 +297,7 @@ class TestRestaurantSettings:
         assert response.status_code == status.HTTP_200_OK
         assert response.data["name"] == "Updated Restaurant Name"
 
-    def test_manager_cannot_update_restaurant(self, manager_client):
+    def test_manager_cannot_update_business(self, manager_client):
         url = reverse("authentication:restaurant_settings")
         data = {"name": "Should Fail"}
 
@@ -305,7 +305,7 @@ class TestRestaurantSettings:
 
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
-    def test_cashier_cannot_access_restaurant_settings(
+    def test_cashier_cannot_access_business_settings(
         self, api_client, cashier_factory
     ):
         from rest_framework_simplejwt.tokens import RefreshToken
@@ -323,16 +323,16 @@ class TestRestaurantSettings:
 class TestMultiTenantIsolation:
     """Tests for multi-tenant isolation."""
 
-    def test_staff_list_only_shows_same_restaurant(
-        self, owner_client, owner, user_factory, restaurant_factory
+    def test_staff_list_only_shows_same_business(
+        self, owner_client, owner, user_factory, business_factory
     ):
-        # Create staff for owner's restaurant
-        staff1 = user_factory(restaurant=owner.restaurant, name="Staff 1")
-        staff2 = user_factory(restaurant=owner.restaurant, name="Staff 2")
+        # Create staff for owner's business
+        staff1 = user_factory(business=owner.business, name="Staff 1")
+        staff2 = user_factory(business=owner.business, name="Staff 2")
 
-        # Create staff for different restaurant
-        other_restaurant = restaurant_factory()
-        other_staff = user_factory(restaurant=other_restaurant, name="Other Staff")
+        # Create staff for different business
+        other_business = business_factory()
+        other_staff = user_factory(business=other_business, name="Other Staff")
 
         url = reverse("authentication:staff_list")
         response = owner_client.get(url)
@@ -347,11 +347,11 @@ class TestMultiTenantIsolation:
         assert owner.phone in phones  # Owner is also staff
         assert other_staff.phone not in phones
 
-    def test_invited_staff_belongs_to_correct_restaurant(
-        self, owner_client, owner, restaurant_factory
+    def test_invited_staff_belongs_to_correct_business(
+        self, owner_client, owner, business_factory
     ):
-        # Create another restaurant
-        other_restaurant = restaurant_factory()
+        # Create another business
+        other_business = business_factory()
 
         url = reverse("authentication:invite_staff")
         data = {
@@ -363,9 +363,9 @@ class TestMultiTenantIsolation:
         response = owner_client.post(url, data, format="json")
 
         assert response.status_code == status.HTTP_201_CREATED
-        # Staff should belong to owner's restaurant, not the other one
-        assert response.data["restaurant"]["id"] == str(owner.restaurant.id)
-        assert response.data["restaurant"]["id"] != str(other_restaurant.id)
+        # Staff should belong to owner's business, not the other one
+        assert response.data["restaurant"]["id"] == str(owner.business.id)
+        assert response.data["restaurant"]["id"] != str(other_business.id)
 
 
 class TestStaffList:
@@ -373,8 +373,8 @@ class TestStaffList:
 
     def test_owner_can_list_staff(self, owner_client, owner, user_factory):
         # Create additional staff
-        user_factory(restaurant=owner.restaurant, role="cashier")
-        user_factory(restaurant=owner.restaurant, role="kitchen")
+        user_factory(business=owner.business, role="cashier")
+        user_factory(business=owner.business, role="kitchen")
 
         url = reverse("authentication:staff_list")
         response = owner_client.get(url)
@@ -385,7 +385,7 @@ class TestStaffList:
         assert len(results) == 3  # owner + 2 staff
 
     def test_manager_can_list_staff(self, manager_client, manager, user_factory):
-        user_factory(restaurant=manager.restaurant, role="cashier")
+        user_factory(business=manager.business, role="cashier")
 
         url = reverse("authentication:staff_list")
         response = manager_client.get(url)

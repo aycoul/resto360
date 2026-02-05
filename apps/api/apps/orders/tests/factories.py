@@ -3,8 +3,8 @@
 import factory
 from factory.django import DjangoModelFactory
 
-from apps.authentication.tests.factories import RestaurantFactory, CashierFactory
-from apps.menu.tests.factories import MenuItemFactory, ModifierOptionFactory
+from apps.authentication.tests.factories import BusinessFactory, CashierFactory
+from apps.menu.tests.factories import ProductFactory, ModifierOptionFactory
 
 from apps.orders.models import (
     DailySequence,
@@ -23,7 +23,7 @@ class TableFactory(DjangoModelFactory):
     class Meta:
         model = Table
 
-    restaurant = factory.SubFactory(RestaurantFactory)
+    business = factory.SubFactory(BusinessFactory)
     number = factory.Sequence(lambda n: str(n + 1))
     capacity = 4
     is_active = True
@@ -35,7 +35,7 @@ class DailySequenceFactory(DjangoModelFactory):
     class Meta:
         model = DailySequence
 
-    restaurant = factory.SubFactory(RestaurantFactory)
+    business = factory.SubFactory(BusinessFactory)
     date = factory.Faker("date_object")
     last_number = 0
 
@@ -46,13 +46,13 @@ class OrderFactory(DjangoModelFactory):
     class Meta:
         model = Order
 
-    restaurant = factory.LazyAttribute(lambda o: o.cashier.restaurant if o.cashier else RestaurantFactory())
+    business = factory.LazyAttribute(lambda o: o.cashier.business if o.cashier else BusinessFactory())
     order_number = factory.Sequence(lambda n: n + 1)
     order_type = OrderType.DINE_IN
     status = OrderStatus.PENDING
     cashier = factory.SubFactory(CashierFactory)
     table = factory.LazyAttribute(
-        lambda o: TableFactory(restaurant=o.restaurant) if o.order_type == OrderType.DINE_IN else None
+        lambda o: TableFactory(business=o.business) if o.order_type == OrderType.DINE_IN else None
     )
     customer_name = factory.Faker("name")
     customer_phone = factory.Sequence(lambda n: f"+22507{n:08d}")
@@ -68,9 +68,9 @@ class OrderItemFactory(DjangoModelFactory):
     class Meta:
         model = OrderItem
 
-    restaurant = factory.LazyAttribute(lambda o: o.order.restaurant)
+    business = factory.LazyAttribute(lambda o: o.order.business)
     order = factory.SubFactory(OrderFactory)
-    menu_item = factory.SubFactory(MenuItemFactory)
+    menu_item = factory.SubFactory(ProductFactory)
     name = factory.LazyAttribute(lambda o: o.menu_item.name if o.menu_item else "Item")
     unit_price = factory.LazyAttribute(lambda o: o.menu_item.price if o.menu_item else 1000)
     quantity = 1
@@ -85,7 +85,7 @@ class OrderItemModifierFactory(DjangoModelFactory):
     class Meta:
         model = OrderItemModifier
 
-    restaurant = factory.LazyAttribute(lambda o: o.order_item.restaurant)
+    business = factory.LazyAttribute(lambda o: o.order_item.business)
     order_item = factory.SubFactory(OrderItemFactory)
     modifier_option = factory.SubFactory(ModifierOptionFactory)
     name = factory.LazyAttribute(

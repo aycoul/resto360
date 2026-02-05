@@ -28,7 +28,7 @@ class ReviewSource(models.TextChoices):
 
 class Review(TenantModel):
     """
-    Customer review for a restaurant.
+    Customer review for a business.
 
     Stores star ratings, written reviews, and photos.
     """
@@ -111,8 +111,8 @@ class Review(TenantModel):
         verbose_name_plural = "Reviews"
         ordering = ["-created_at"]
         indexes = [
-            models.Index(fields=["restaurant", "status", "-created_at"]),
-            models.Index(fields=["restaurant", "rating"]),
+            models.Index(fields=["business", "status", "-created_at"]),
+            models.Index(fields=["business", "rating"]),
         ]
 
     def __str__(self):
@@ -292,7 +292,7 @@ class ReviewSettings(TenantModel):
         verbose_name_plural = "Review Settings"
 
     def __str__(self):
-        return f"Review Settings for {self.restaurant.name}"
+        return f"Review Settings for {self.business.name}"
 
 
 class ReviewSummary(TenantModel):
@@ -338,14 +338,14 @@ class ReviewSummary(TenantModel):
         verbose_name_plural = "Review Summaries"
 
     def __str__(self):
-        return f"Review Summary for {self.restaurant.name}"
+        return f"Review Summary for {self.business.name}"
 
     def refresh(self):
         """Recalculate summary statistics."""
         from django.db.models import Avg, Count
 
         reviews = Review.objects.filter(
-            restaurant=self.restaurant,
+            business=self.business,
             status=ReviewStatus.APPROVED,
         )
 

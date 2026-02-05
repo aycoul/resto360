@@ -52,8 +52,21 @@ INSTALLED_APPS = [
     "apps.qr",
     "apps.inventory",
     "apps.payments",
-    # Skip: "apps.delivery",
+    # Skip: "apps.delivery",  # Requires GIS/GDAL
     "apps.analytics",
+    "apps.ai",
+    "apps.reservations",
+    "apps.reviews",
+    "apps.crm",
+    "apps.website",
+    "apps.social",
+    "apps.locations",
+    "apps.marketplace",
+    "apps.financing",
+    # BIZ360 new apps
+    "apps.invoicing",
+    "apps.forecasting",
+    "apps.reorder",
 ]
 
 AUTH_USER_MODEL = "authentication.User"

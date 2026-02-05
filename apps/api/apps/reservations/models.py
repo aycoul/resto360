@@ -23,7 +23,7 @@ class TableConfiguration(TenantModel):
     location = models.CharField(
         max_length=50,
         blank=True,
-        help_text="Location in restaurant (e.g., 'Indoor', 'Terrace', 'Private Room')",
+        help_text="Location in business (e.g., 'Indoor', 'Terrace', 'Private Room')",
     )
     is_active = models.BooleanField(default=True)
     display_order = models.PositiveIntegerField(default=0)
@@ -81,7 +81,7 @@ class ReservationSettings(TenantModel):
     # Policies
     confirmation_required = models.BooleanField(
         default=False,
-        help_text="Require restaurant confirmation before booking is active",
+        help_text="Require business confirmation before booking is active",
     )
     cancellation_hours = models.PositiveIntegerField(
         default=2,
@@ -107,7 +107,7 @@ class ReservationSettings(TenantModel):
         verbose_name_plural = "Reservation Settings"
 
     def __str__(self):
-        return f"Reservation Settings for {self.restaurant.name}"
+        return f"Reservation Settings for {self.business.name}"
 
 
 class BusinessHours(TenantModel):
@@ -143,7 +143,7 @@ class BusinessHours(TenantModel):
         verbose_name = "Business Hours"
         verbose_name_plural = "Business Hours"
         ordering = ["day_of_week", "open_time"]
-        unique_together = [["restaurant", "day_of_week", "open_time"]]
+        unique_together = [["business", "day_of_week", "open_time"]]
 
     def __str__(self):
         day_name = dict(self.DAY_CHOICES).get(self.day_of_week, "Unknown")
@@ -169,7 +169,7 @@ class SpecialHours(TenantModel):
         verbose_name = "Special Hours"
         verbose_name_plural = "Special Hours"
         ordering = ["date"]
-        unique_together = [["restaurant", "date"]]
+        unique_together = [["business", "date"]]
 
     def __str__(self):
         if self.is_closed:
@@ -263,7 +263,7 @@ class Reservation(TenantModel):
         verbose_name_plural = "Reservations"
         ordering = ["date", "time"]
         indexes = [
-            models.Index(fields=["restaurant", "date", "status"]),
+            models.Index(fields=["business", "date", "status"]),
             models.Index(fields=["confirmation_code"]),
         ]
 

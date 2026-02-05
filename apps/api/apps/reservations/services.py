@@ -18,8 +18,8 @@ from .models import (
 class AvailabilityService:
     """Service for checking and managing table availability."""
 
-    def __init__(self, restaurant):
-        self.restaurant = restaurant
+    def __init__(self, business):
+        self.business = business
         self._settings = None
         self._tables = None
 
@@ -28,7 +28,7 @@ class AvailabilityService:
         """Get or create reservation settings."""
         if self._settings is None:
             self._settings, _ = ReservationSettings.objects.get_or_create(
-                restaurant=self.restaurant
+                business=self.business
             )
         return self._settings
 
@@ -38,7 +38,7 @@ class AvailabilityService:
         if self._tables is None:
             self._tables = list(
                 TableConfiguration.objects.filter(
-                    restaurant=self.restaurant,
+                    business=self.business,
                     is_active=True,
                 )
             )
@@ -52,7 +52,7 @@ class AvailabilityService:
         """
         # Check for special hours
         special = SpecialHours.objects.filter(
-            restaurant=self.restaurant,
+            business=self.business,
             date=target_date,
         ).first()
 
@@ -68,7 +68,7 @@ class AvailabilityService:
         # Get regular hours for this day of week
         day_of_week = target_date.weekday()
         hours = BusinessHours.objects.filter(
-            restaurant=self.restaurant,
+            business=self.business,
             day_of_week=day_of_week,
             is_open=True,
         )
@@ -113,7 +113,7 @@ class AvailabilityService:
     ) -> list[Reservation]:
         """Get active reservations for a date/time range."""
         qs = Reservation.objects.filter(
-            restaurant=self.restaurant,
+            business=self.business,
             date=target_date,
             status__in=[
                 ReservationStatus.PENDING,
@@ -245,9 +245,9 @@ class AvailabilityService:
 class ReservationService:
     """Service for reservation operations."""
 
-    def __init__(self, restaurant):
-        self.restaurant = restaurant
-        self.availability = AvailabilityService(restaurant)
+    def __init__(self, business):
+        self.business = business
+        self.availability = AvailabilityService(business)
 
     def create_reservation(
         self,
@@ -281,7 +281,7 @@ class ReservationService:
         )
 
         reservation = Reservation.objects.create(
-            restaurant=self.restaurant,
+            business=self.business,
             date=date,
             time=time,
             party_size=party_size,
@@ -301,7 +301,7 @@ class ReservationService:
     def get_daily_summary(self, target_date: date) -> dict:
         """Get summary of reservations for a day."""
         reservations = Reservation.objects.filter(
-            restaurant=self.restaurant,
+            business=self.business,
             date=target_date,
         )
 
@@ -330,7 +330,7 @@ class ReservationService:
 
         return list(
             Reservation.objects.filter(
-                restaurant=self.restaurant,
+                business=self.business,
                 date__gte=today,
                 date__lte=end_date,
                 status__in=[

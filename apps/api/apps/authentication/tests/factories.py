@@ -1,20 +1,25 @@
 import factory
 from factory.django import DjangoModelFactory
 
-from apps.authentication.models import Restaurant, User
+from apps.authentication.models import Business, User
 
 
-class RestaurantFactory(DjangoModelFactory):
-    """Factory for creating Restaurant instances."""
+class BusinessFactory(DjangoModelFactory):
+    """Factory for creating Business instances."""
 
     class Meta:
-        model = Restaurant
+        model = Business
 
-    name = factory.Sequence(lambda n: f"Restaurant {n}")
+    name = factory.Sequence(lambda n: f"Business {n}")
     slug = factory.LazyAttribute(lambda o: o.name.lower().replace(" ", "-"))
     phone = factory.Sequence(lambda n: f"+22507{n:08d}")
     timezone = "Africa/Abidjan"
     currency = "XOF"
+    business_type = "restaurant"  # Default to restaurant for backwards compatibility
+
+
+# Backwards compatibility alias
+RestaurantFactory = BusinessFactory
 
 
 class UserFactory(DjangoModelFactory):
@@ -27,7 +32,7 @@ class UserFactory(DjangoModelFactory):
     phone = factory.Sequence(lambda n: f"+22501{n:08d}")
     name = factory.Faker("name")
     role = "cashier"
-    restaurant = factory.SubFactory(RestaurantFactory)
+    business = factory.SubFactory(BusinessFactory)
 
     @factory.post_generation
     def password(self, create, extracted, **kwargs):

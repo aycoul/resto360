@@ -1,4 +1,4 @@
-"""Payment models for RESTO360."""
+"""Payment models for BIZ360 (formerly RESTO360)."""
 
 from django.db import models
 from django.db.models import Sum
@@ -49,7 +49,7 @@ class PaymentMethod(TenantModel):
 
     class Meta:
         ordering = ["display_order", "name"]
-        unique_together = [["restaurant", "provider_code"]]
+        unique_together = [["business", "provider_code"]]
 
     def __str__(self):
         return f"{self.name} ({self.provider_code})"
@@ -120,7 +120,7 @@ class Payment(TenantModel):
     class Meta:
         ordering = ["-initiated_at"]
         indexes = [
-            models.Index(fields=["restaurant", "status"]),
+            models.Index(fields=["business", "status"]),
             models.Index(fields=["provider_reference"]),
         ]
 
@@ -229,7 +229,7 @@ class CashDrawerSession(TenantModel):
         """
         # Calculate expected balance: opening + successful cash payments
         cash_payments_total = Payment.all_objects.filter(
-            restaurant=self.restaurant,
+            business=self.business,
             provider_code="cash",
             status=PaymentStatus.SUCCESS,
             completed_at__gte=self.opened_at,

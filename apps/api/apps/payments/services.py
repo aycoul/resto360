@@ -7,7 +7,7 @@ from django.core.cache import cache
 from django.db import transaction
 
 if TYPE_CHECKING:
-    from apps.authentication.models import Restaurant
+    from apps.authentication.models import Business
     from apps.orders.models import Order
 
     from .models import Payment, PaymentMethod
@@ -161,7 +161,7 @@ def initiate_payment(
     with transaction.atomic():
         # Create the payment record first
         payment = Payment.objects.create(
-            restaurant=order.restaurant,
+            business=order.business,
             order=order,
             payment_method=payment_method,
             amount=order.total,
@@ -270,14 +270,14 @@ def initiate_payment(
 
 def get_payment_status(
     payment_id: str,
-    restaurant: "Restaurant",
+    business: "Business",
 ) -> Optional[dict]:
     """
     Get the current status of a payment.
 
     Args:
         payment_id: UUID of the payment
-        restaurant: Restaurant for tenant isolation
+        business: Business for tenant isolation
 
     Returns:
         dict with payment status info, or None if not found
@@ -286,7 +286,7 @@ def get_payment_status(
 
     try:
         payment = Payment.objects.filter(
-            restaurant=restaurant,
+            business=business,
             id=payment_id,
         ).first()
 
@@ -310,12 +310,12 @@ def get_payment_status(
         return None
 
 
-def get_daily_reconciliation(restaurant: "Restaurant", date=None) -> dict:
+def get_daily_reconciliation(business: "Business", date=None) -> dict:
     """
     Generate daily payment reconciliation report.
 
     Args:
-        restaurant: Restaurant instance
+        business: Business instance
         date: Date to report on (defaults to today)
 
     Returns:
@@ -339,7 +339,7 @@ def get_daily_reconciliation(restaurant: "Restaurant", date=None) -> dict:
 
     # Get successful payments for the day
     payments = Payment.all_objects.filter(
-        restaurant=restaurant,
+        business=business,
         status=PaymentStatus.SUCCESS,
         completed_at__gte=start,
         completed_at__lt=end,
@@ -377,7 +377,7 @@ def get_daily_reconciliation(restaurant: "Restaurant", date=None) -> dict:
 
     # Get refunds (same day)
     refunds = Payment.all_objects.filter(
-        restaurant=restaurant,
+        business=business,
         status__in=[PaymentStatus.REFUNDED, PaymentStatus.PARTIALLY_REFUNDED],
         completed_at__gte=start,
         completed_at__lt=end,
@@ -388,7 +388,7 @@ def get_daily_reconciliation(restaurant: "Restaurant", date=None) -> dict:
 
     # Get pending payments (initiated but not completed)
     pending = Payment.all_objects.filter(
-        restaurant=restaurant,
+        business=business,
         status=PaymentStatus.PROCESSING,
         initiated_at__gte=start,
         initiated_at__lt=end,
@@ -399,7 +399,7 @@ def get_daily_reconciliation(restaurant: "Restaurant", date=None) -> dict:
 
     # Get failed payments
     failed = Payment.all_objects.filter(
-        restaurant=restaurant,
+        business=business,
         status__in=[PaymentStatus.FAILED, PaymentStatus.EXPIRED],
         initiated_at__gte=start,
         initiated_at__lt=end,
@@ -413,7 +413,7 @@ def get_daily_reconciliation(restaurant: "Restaurant", date=None) -> dict:
 
     return {
         "date": date.isoformat(),
-        "restaurant_id": str(restaurant.id),
+        "business_id": str(business.id),
         "by_provider": by_provider_formatted,
         "totals": {
             "count": totals["total_count"] or 0,
@@ -435,12 +435,12 @@ def get_daily_reconciliation(restaurant: "Restaurant", date=None) -> dict:
     }
 
 
-def get_reconciliation_range(restaurant: "Restaurant", start_date, end_date) -> list:
+def get_reconciliation_range(business: "Business", start_date, end_date) -> list:
     """
     Get reconciliation for a date range (max 90 days).
 
     Args:
-        restaurant: Restaurant instance
+        business: Business instance
         start_date: Start date for the range
         end_date: End date for the range
 
@@ -459,7 +459,7 @@ def get_reconciliation_range(restaurant: "Restaurant", start_date, end_date) -> 
     results = []
     current = start_date
     while current <= end_date:
-        results.append(get_daily_reconciliation(restaurant, current))
+        results.append(get_daily_reconciliation(business, current))
         current += timedelta(days=1)
 
     return results

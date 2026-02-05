@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
                 ('history_change_reason', models.CharField(max_length=100, null=True)),
                 ('history_type', models.CharField(choices=[('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
                 ('history_user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
-                ('restaurant', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='authentication.restaurant')),
+                ('business', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='authentication.business')),
             ],
             options={
                 'verbose_name': 'historical stock item',
@@ -61,7 +61,7 @@ class Migration(migrations.Migration):
                 ('low_stock_threshold', models.DecimalField(blank=True, decimal_places=4, help_text='Alert when stock falls below this level', max_digits=10, null=True)),
                 ('low_stock_alert_sent', models.BooleanField(default=False, help_text='Prevents duplicate alerts')),
                 ('is_active', models.BooleanField(default=True)),
-                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.restaurant')),
+                ('business', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.business')),
             ],
             options={
                 'ordering': ['name'],
@@ -84,7 +84,7 @@ class Migration(migrations.Migration):
                 ('reference_id', models.UUIDField(blank=True, help_text='Reference object ID', null=True)),
                 ('balance_after', models.DecimalField(decimal_places=4, help_text='Stock balance after this movement', max_digits=10)),
                 ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='stock_movements', to=settings.AUTH_USER_MODEL)),
-                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.restaurant')),
+                ('business', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.business')),
                 ('stock_item', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='movements', to='inventory.stockitem')),
             ],
             options={
@@ -100,7 +100,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name='stockitem',
-            constraint=models.UniqueConstraint(condition=models.Q(('sku', ''), _negated=True), fields=('restaurant', 'sku'), name='unique_restaurant_sku'),
+            constraint=models.UniqueConstraint(condition=models.Q(('sku', ''), _negated=True), fields=('business', 'sku'), name='unique_business_sku'),
         ),
         migrations.AddIndex(
             model_name='stockmovement',
@@ -108,6 +108,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name='stockmovement',
-            index=models.Index(fields=['restaurant', '-created_at'], name='inventory_s_restaur_6b5a95_idx'),
+            index=models.Index(fields=['business', '-created_at'], name='inventory_s_busines_6b5a95_idx'),
         ),
     ]

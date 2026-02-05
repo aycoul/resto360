@@ -11,8 +11,8 @@ class TestTableAPI:
 
     def test_list_tables(self, owner_client, owner, table_factory):
         """Test listing tables."""
-        table_factory(restaurant=owner.restaurant, number="1")
-        table_factory(restaurant=owner.restaurant, number="2")
+        table_factory(business=owner.business, number="1")
+        table_factory(business=owner.business, number="2")
 
         response = owner_client.get("/api/v1/tables/")
         assert response.status_code == 200
@@ -31,9 +31,9 @@ class TestTableAPI:
         assert response.data["number"] == "T1"
         assert response.data["capacity"] == 6
 
-        # Verify restaurant assignment
+        # Verify business assignment
         table = Table.all_objects.get(id=response.data["id"])
-        assert table.restaurant == owner.restaurant
+        assert table.business == owner.business
 
     def test_create_table_as_cashier_forbidden(self, cashier_client, cashier):
         """Test cashier cannot create table."""
@@ -43,8 +43,8 @@ class TestTableAPI:
 
     def test_filter_tables_by_active(self, owner_client, owner, table_factory):
         """Test filtering tables by active status."""
-        table_factory(restaurant=owner.restaurant, number="1", is_active=True)
-        table_factory(restaurant=owner.restaurant, number="2", is_active=False)
+        table_factory(business=owner.business, number="1", is_active=True)
+        table_factory(business=owner.business, number="2", is_active=False)
 
         response = owner_client.get("/api/v1/tables/?is_active=true")
         assert response.status_code == 200
@@ -58,9 +58,9 @@ class TestOrderAPI:
 
     def test_list_orders(self, owner_client, owner, order_factory, cashier_factory):
         """Test listing orders."""
-        cashier = cashier_factory(restaurant=owner.restaurant)
-        order_factory(restaurant=owner.restaurant, cashier=cashier, order_type="takeaway")
-        order_factory(restaurant=owner.restaurant, cashier=cashier, order_type="takeaway")
+        cashier = cashier_factory(business=owner.business)
+        order_factory(business=owner.business, cashier=cashier, order_type="takeaway")
+        order_factory(business=owner.business, cashier=cashier, order_type="takeaway")
 
         response = owner_client.get("/api/v1/orders/")
         assert response.status_code == 200
@@ -73,8 +73,8 @@ class TestOrderAPI:
 
     def test_create_order_dine_in(self, cashier_client, sample_order_data, cashier):
         """Test cashier can create dine-in order."""
-        # Update cashier to sample restaurant
-        cashier.restaurant = sample_order_data["restaurant"]
+        # Update cashier to sample business
+        cashier.business = sample_order_data["business"]
         cashier.save()
 
         data = {
@@ -109,7 +109,7 @@ class TestOrderAPI:
 
     def test_create_order_takeaway(self, cashier_client, sample_order_data, cashier):
         """Test creating takeaway order (no table required)."""
-        cashier.restaurant = sample_order_data["restaurant"]
+        cashier.business = sample_order_data["business"]
         cashier.save()
 
         data = {
@@ -131,7 +131,7 @@ class TestOrderAPI:
         self, cashier_client, sample_order_data, cashier
     ):
         """Test dine-in order requires table."""
-        cashier.restaurant = sample_order_data["restaurant"]
+        cashier.business = sample_order_data["business"]
         cashier.save()
 
         data = {
@@ -151,7 +151,7 @@ class TestOrderAPI:
 
     def test_create_order_requires_items(self, cashier_client, sample_order_data, cashier):
         """Test order requires at least one item."""
-        cashier.restaurant = sample_order_data["restaurant"]
+        cashier.business = sample_order_data["business"]
         cashier.save()
 
         data = {
@@ -166,7 +166,7 @@ class TestOrderAPI:
         self, cashier_client, sample_order_data, cashier
     ):
         """Test order fails with invalid menu item."""
-        cashier.restaurant = sample_order_data["restaurant"]
+        cashier.business = sample_order_data["business"]
         cashier.save()
 
         data = {
@@ -186,7 +186,7 @@ class TestOrderAPI:
         self, cashier_client, sample_order_data, cashier
     ):
         """Test creating order with discount."""
-        cashier.restaurant = sample_order_data["restaurant"]
+        cashier.business = sample_order_data["business"]
         cashier.save()
 
         data = {
@@ -208,8 +208,8 @@ class TestOrderAPI:
 
     def test_retrieve_order(self, owner_client, owner, order_factory, cashier_factory):
         """Test retrieving order details."""
-        cashier = cashier_factory(restaurant=owner.restaurant)
-        order = order_factory(restaurant=owner.restaurant, cashier=cashier, order_type="takeaway")
+        cashier = cashier_factory(business=owner.business)
+        order = order_factory(business=owner.business, cashier=cashier, order_type="takeaway")
 
         response = owner_client.get(f"/api/v1/orders/{order.id}/")
         assert response.status_code == 200
@@ -219,15 +219,15 @@ class TestOrderAPI:
         self, owner_client, owner, order_factory, cashier_factory
     ):
         """Test filtering orders by status."""
-        cashier = cashier_factory(restaurant=owner.restaurant)
+        cashier = cashier_factory(business=owner.business)
         order_factory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             cashier=cashier,
             status=OrderStatus.PENDING,
             order_type="takeaway",
         )
         order_factory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             cashier=cashier,
             status=OrderStatus.COMPLETED,
             order_type="takeaway",
@@ -247,9 +247,9 @@ class TestOrderStatusUpdateAPI:
         self, owner_client, owner, order_factory, cashier_factory
     ):
         """Test updating order from pending to preparing."""
-        cashier = cashier_factory(restaurant=owner.restaurant)
+        cashier = cashier_factory(business=owner.business)
         order = order_factory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             cashier=cashier,
             status=OrderStatus.PENDING,
             order_type="takeaway",
@@ -267,9 +267,9 @@ class TestOrderStatusUpdateAPI:
         self, owner_client, owner, order_factory, cashier_factory
     ):
         """Test updating order from preparing to ready."""
-        cashier = cashier_factory(restaurant=owner.restaurant)
+        cashier = cashier_factory(business=owner.business)
         order = order_factory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             cashier=cashier,
             status=OrderStatus.PREPARING,
             order_type="takeaway",
@@ -287,9 +287,9 @@ class TestOrderStatusUpdateAPI:
         self, owner_client, owner, order_factory, cashier_factory
     ):
         """Test updating order from ready to completed."""
-        cashier = cashier_factory(restaurant=owner.restaurant)
+        cashier = cashier_factory(business=owner.business)
         order = order_factory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             cashier=cashier,
             status=OrderStatus.READY,
             order_type="takeaway",
@@ -308,9 +308,9 @@ class TestOrderStatusUpdateAPI:
         self, owner_client, owner, order_factory, cashier_factory
     ):
         """Test cancelling order requires reason."""
-        cashier = cashier_factory(restaurant=owner.restaurant)
+        cashier = cashier_factory(business=owner.business)
         order = order_factory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             cashier=cashier,
             status=OrderStatus.PENDING,
             order_type="takeaway",
@@ -328,9 +328,9 @@ class TestOrderStatusUpdateAPI:
         self, owner_client, owner, order_factory, cashier_factory
     ):
         """Test cancelling order with reason."""
-        cashier = cashier_factory(restaurant=owner.restaurant)
+        cashier = cashier_factory(business=owner.business)
         order = order_factory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             cashier=cashier,
             status=OrderStatus.PENDING,
             order_type="takeaway",
@@ -350,9 +350,9 @@ class TestOrderStatusUpdateAPI:
         self, owner_client, owner, order_factory, cashier_factory
     ):
         """Test invalid status transitions are rejected."""
-        cashier = cashier_factory(restaurant=owner.restaurant)
+        cashier = cashier_factory(business=owner.business)
         order = order_factory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             cashier=cashier,
             status=OrderStatus.PENDING,
             order_type="takeaway",
@@ -376,21 +376,21 @@ class TestKitchenQueueAPI:
         self, kitchen_client, kitchen_user, order_factory, cashier_factory
     ):
         """Test kitchen queue returns pending and preparing orders."""
-        cashier = cashier_factory(restaurant=kitchen_user.restaurant)
+        cashier = cashier_factory(business=kitchen_user.business)
         order_factory(
-            restaurant=kitchen_user.restaurant,
+            business=kitchen_user.business,
             cashier=cashier,
             status=OrderStatus.PENDING,
             order_type="takeaway",
         )
         order_factory(
-            restaurant=kitchen_user.restaurant,
+            business=kitchen_user.business,
             cashier=cashier,
             status=OrderStatus.PREPARING,
             order_type="takeaway",
         )
         order_factory(
-            restaurant=kitchen_user.restaurant,
+            business=kitchen_user.business,
             cashier=cashier,
             status=OrderStatus.COMPLETED,
             order_type="takeaway",
@@ -410,29 +410,29 @@ class TestKitchenQueueAPI:
 class TestMultiTenantOrderIsolation:
     """Tests for multi-tenant order isolation."""
 
-    def test_user_cannot_see_other_restaurant_orders(
+    def test_user_cannot_see_other_business_orders(
         self,
         owner_client,
         owner,
         order_factory,
-        restaurant_factory,
+        business_factory,
         cashier_factory,
     ):
-        """Test user cannot access another restaurant's orders."""
-        other_restaurant = restaurant_factory()
-        other_cashier = cashier_factory(restaurant=other_restaurant)
+        """Test user cannot access another business's orders."""
+        other_business = business_factory()
+        other_cashier = cashier_factory(business=other_business)
 
-        # Create order for another restaurant
+        # Create order for another business
         order_factory(
-            restaurant=other_restaurant,
+            business=other_business,
             cashier=other_cashier,
             order_type="takeaway",
         )
 
-        # Create order for owner's restaurant
-        owner_cashier = cashier_factory(restaurant=owner.restaurant)
+        # Create order for owner's business
+        owner_cashier = cashier_factory(business=owner.business)
         order_factory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             cashier=owner_cashier,
             order_type="takeaway",
         )

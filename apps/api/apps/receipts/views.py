@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.core.context import set_current_restaurant
+from apps.core.context import set_current_business
 from apps.orders.models import Order
 
 from .services import generate_receipt_pdf, get_receipt_filename
@@ -21,13 +21,13 @@ class ReceiptDownloadView(APIView):
         """Set tenant context after authentication."""
         super().initial(request, *args, **kwargs)
         if request.user.is_authenticated:
-            if hasattr(request.user, "restaurant") and request.user.restaurant:
-                set_current_restaurant(request.user.restaurant)
+            if hasattr(request.user, "business") and request.user.business:
+                set_current_business(request.user.restaurant)
 
     def finalize_response(self, request, response, *args, **kwargs):
         """Clear tenant context after response."""
         response = super().finalize_response(request, response, *args, **kwargs)
-        set_current_restaurant(None)
+        set_current_business(None)
         return response
 
     def get(self, request, order_id):
@@ -38,12 +38,12 @@ class ReceiptDownloadView(APIView):
         """
         try:
             order = Order.objects.select_related(
-                "restaurant", "table", "cashier"
+                "business", "table", "cashier"
             ).prefetch_related(
                 "items__modifiers"
             ).get(
                 id=order_id,
-                restaurant=request.user.restaurant,
+                business=request.user.business,
             )
         except Order.DoesNotExist:
             return Response(

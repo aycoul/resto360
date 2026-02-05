@@ -6,11 +6,11 @@ from rest_framework.test import APIClient
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.authentication.tests.factories import (
+    BusinessFactory,
     CashierFactory,
     KitchenFactory,
     ManagerFactory,
     OwnerFactory,
-    RestaurantFactory,
     UserFactory,
 )
 from apps.menu.tests.factories import (
@@ -29,7 +29,7 @@ from .factories import (
 )
 
 # Register authentication factories
-register(RestaurantFactory)
+register(BusinessFactory)
 register(UserFactory)  # Base user factory for subfactory resolution
 register(OwnerFactory, "owner")
 register(ManagerFactory, "manager")
@@ -38,7 +38,7 @@ register(KitchenFactory, "kitchen_user")
 
 # Register menu factories
 register(CategoryFactory)
-register(MenuItemFactory)
+register(MenuItemFactory, "menu_item")  # Explicit name since MenuItemFactory = ProductFactory
 register(ModifierFactory)
 register(ModifierOptionFactory)
 
@@ -91,21 +91,21 @@ def kitchen_client(api_client, kitchen_user):
 @pytest.fixture
 def sample_order_data(owner):
     """Create sample menu items and return data for order creation."""
-    restaurant = owner.restaurant
+    business = owner.business
 
     # Create a table
-    table = TableFactory(restaurant=restaurant, number="1")
+    table = TableFactory(business=business, number="1")
 
     # Create category and menu items
-    category = CategoryFactory(restaurant=restaurant, name="Food")
+    category = CategoryFactory(business=business, name="Food")
     burger = MenuItemFactory(
-        restaurant=restaurant,
+        business=business,
         category=category,
         name="Burger",
         price=5000,
     )
     fries = MenuItemFactory(
-        restaurant=restaurant,
+        business=business,
         category=category,
         name="Fries",
         price=2000,
@@ -113,20 +113,20 @@ def sample_order_data(owner):
 
     # Create modifier for burger
     size_modifier = ModifierFactory(
-        restaurant=restaurant,
+        business=business,
         menu_item=burger,
         name="Size",
         required=True,
     )
     large_option = ModifierOptionFactory(
-        restaurant=restaurant,
+        business=business,
         modifier=size_modifier,
         name="Large",
         price_adjustment=500,
     )
 
     return {
-        "restaurant": restaurant,
+        "business": business,
         "table": table,
         "burger": burger,
         "fries": fries,

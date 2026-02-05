@@ -133,11 +133,11 @@ class SupplierDetailSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
         if not request or not request.user.is_authenticated:
             return False
-        restaurant = getattr(request.user, "restaurant", None)
-        if not restaurant:
+        business = getattr(request.user, "business", None)
+        if not business:
             return False
         return SupplierFavorite.objects.filter(
-            restaurant=restaurant,
+            business=business,
             supplier=obj,
         ).exists()
 
@@ -346,7 +346,7 @@ class SupplierOrderListSerializer(serializers.ModelSerializer):
     """Serializer for listing orders."""
 
     supplier_name = serializers.CharField(source="supplier.name", read_only=True)
-    restaurant_name = serializers.CharField(source="restaurant.name", read_only=True)
+    business_name = serializers.CharField(source="business.name", read_only=True)
     item_count = serializers.SerializerMethodField()
 
     class Meta:
@@ -357,7 +357,7 @@ class SupplierOrderListSerializer(serializers.ModelSerializer):
             "supplier",
             "supplier_name",
             "restaurant",
-            "restaurant_name",
+            "business_name",
             "status",
             "payment_status",
             "total",
@@ -430,7 +430,7 @@ class UpdateOrderStatusSerializer(serializers.Serializer):
 class SupplierReviewSerializer(serializers.ModelSerializer):
     """Serializer for supplier reviews."""
 
-    restaurant_name = serializers.CharField(source="restaurant.name", read_only=True)
+    business_name = serializers.CharField(source="business.name", read_only=True)
     reviewed_by_name = serializers.SerializerMethodField()
 
     class Meta:
@@ -438,7 +438,7 @@ class SupplierReviewSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "supplier",
-            "restaurant_name",
+            "business_name",
             "order",
             "reviewed_by_name",
             "overall_rating",

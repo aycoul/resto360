@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name="restaurant",
+            model_name="business",
             name="plan_type",
             field=models.CharField(
                 choices=[("free", "Free"), ("pro", "Pro"), ("full", "Full Platform")],
@@ -20,21 +20,21 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AddField(
-            model_name="restaurant",
+            model_name="business",
             name="logo",
             field=models.ImageField(
                 blank=True, null=True, upload_to="restaurant_logos/"
             ),
         ),
         migrations.AddField(
-            model_name="restaurant",
+            model_name="business",
             name="primary_color",
             field=models.CharField(
                 blank=True, help_text="Hex color code", max_length=7
             ),
         ),
         migrations.AddField(
-            model_name="restaurant",
+            model_name="business",
             name="show_branding",
             field=models.BooleanField(
                 default=True, help_text="Show RESTO360 branding on free tier"

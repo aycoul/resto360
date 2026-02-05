@@ -19,14 +19,14 @@ class TestRefundService:
         from apps.orders.tests.factories import OrderFactory
 
         payment_method = PaymentMethodFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             provider_code="cash",
             name="Cash",
         )
 
-        order = OrderFactory(restaurant=owner.restaurant, cashier=owner)
+        order = OrderFactory(business=owner.business, cashier=owner)
         payment = PaymentFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             order=order,
             payment_method=payment_method,
             amount=10000,
@@ -58,14 +58,14 @@ class TestRefundService:
         from apps.orders.tests.factories import OrderFactory
 
         payment_method = PaymentMethodFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             provider_code="cash",
             name="Cash",
         )
 
-        order = OrderFactory(restaurant=owner.restaurant, cashier=owner)
+        order = OrderFactory(business=owner.business, cashier=owner)
         payment = PaymentFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             order=order,
             payment_method=payment_method,
             amount=10000,
@@ -95,14 +95,14 @@ class TestRefundService:
         from apps.orders.tests.factories import OrderFactory
 
         payment_method = PaymentMethodFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             provider_code="wave",
             name="Wave",
         )
 
-        order = OrderFactory(restaurant=owner.restaurant, cashier=owner)
+        order = OrderFactory(business=owner.business, cashier=owner)
         payment = PaymentFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             order=order,
             payment_method=payment_method,
             amount=10000,
@@ -138,14 +138,14 @@ class TestRefundService:
         from apps.orders.tests.factories import OrderFactory
 
         payment_method = PaymentMethodFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             provider_code="cash",
             name="Cash",
         )
 
-        order = OrderFactory(restaurant=owner.restaurant, cashier=owner)
+        order = OrderFactory(business=owner.business, cashier=owner)
         payment = PaymentFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             order=order,
             payment_method=payment_method,
             amount=10000,
@@ -168,14 +168,14 @@ class TestRefundService:
         from apps.orders.tests.factories import OrderFactory
 
         payment_method = PaymentMethodFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             provider_code="cash",
             name="Cash",
         )
 
-        order = OrderFactory(restaurant=owner.restaurant, cashier=owner)
+        order = OrderFactory(business=owner.business, cashier=owner)
         payment = PaymentFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             order=order,
             payment_method=payment_method,
             amount=10000,
@@ -199,14 +199,14 @@ class TestRefundService:
         from apps.orders.tests.factories import OrderFactory
 
         payment_method = PaymentMethodFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             provider_code="wave",
             name="Wave",
         )
 
-        order = OrderFactory(restaurant=owner.restaurant, cashier=owner)
+        order = OrderFactory(business=owner.business, cashier=owner)
         payment = PaymentFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             order=order,
             payment_method=payment_method,
             amount=10000,
@@ -228,14 +228,14 @@ class TestRefundService:
         from apps.orders.tests.factories import OrderFactory
 
         payment_method = PaymentMethodFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             provider_code="cash",
             name="Cash",
         )
 
-        order = OrderFactory(restaurant=owner.restaurant, cashier=owner)
+        order = OrderFactory(business=owner.business, cashier=owner)
         payment = PaymentFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             order=order,
             payment_method=payment_method,
             amount=10000,
@@ -279,14 +279,14 @@ class TestRefundService:
         from apps.orders.tests.factories import OrderFactory
 
         payment_method = PaymentMethodFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             provider_code="cash",
             name="Cash",
         )
 
-        order = OrderFactory(restaurant=owner.restaurant, cashier=owner)
+        order = OrderFactory(business=owner.business, cashier=owner)
         payment = PaymentFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             order=order,
             payment_method=payment_method,
             amount=10000,
@@ -314,14 +314,14 @@ class TestRefundAPI:
         from apps.orders.tests.factories import OrderFactory
 
         payment_method = PaymentMethodFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             provider_code="cash",
             name="Cash",
         )
 
-        order = OrderFactory(restaurant=owner.restaurant, cashier=owner)
+        order = OrderFactory(business=owner.business, cashier=owner)
         payment = PaymentFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             order=order,
             payment_method=payment_method,
             amount=10000,
@@ -354,14 +354,14 @@ class TestRefundAPI:
         from apps.orders.tests.factories import OrderFactory
 
         payment_method = PaymentMethodFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             provider_code="cash",
             name="Cash",
         )
 
-        order = OrderFactory(restaurant=owner.restaurant, cashier=owner)
+        order = OrderFactory(business=owner.business, cashier=owner)
         payment = PaymentFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             order=order,
             payment_method=payment_method,
             amount=8000,
@@ -401,14 +401,14 @@ class TestRefundAPI:
         from apps.orders.tests.factories import OrderFactory
 
         payment_method = PaymentMethodFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             provider_code="cash",
             name="Cash",
         )
 
-        order = OrderFactory(restaurant=owner.restaurant, cashier=owner)
+        order = OrderFactory(business=owner.business, cashier=owner)
         payment = PaymentFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             order=order,
             payment_method=payment_method,
             amount=10000,

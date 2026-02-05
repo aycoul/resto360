@@ -4,7 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from apps.core.context import get_current_restaurant
+from apps.core.context import get_current_business
 from apps.core.permissions import IsOwnerOrManager
 from apps.core.views import TenantContextMixin, TenantModelViewSet
 
@@ -245,12 +245,12 @@ class ReportViewSet(TenantContextMixin, viewsets.ViewSet):
     @action(detail=False, methods=["get"], url_path="current-stock")
     def current_stock(self, request):
         """Get current stock levels for all items."""
-        restaurant = get_current_restaurant()
+        business = get_current_business()
         include_inactive = (
             request.query_params.get("include_inactive", "false").lower() == "true"
         )
 
-        items = get_current_stock_report(restaurant, include_inactive=include_inactive)
+        items = get_current_stock_report(business, include_inactive=include_inactive)
 
         serializer = CurrentStockReportSerializer(items, many=True)
         return Response(
@@ -263,8 +263,8 @@ class ReportViewSet(TenantContextMixin, viewsets.ViewSet):
     @action(detail=False, methods=["get"], url_path="low-stock")
     def low_stock(self, request):
         """Get items at or below low stock threshold."""
-        restaurant = get_current_restaurant()
-        items = get_current_stock_report(restaurant, low_stock_only=True)
+        business = get_current_business()
+        items = get_current_stock_report(business, low_stock_only=True)
 
         serializer = CurrentStockReportSerializer(items, many=True)
         return Response(
@@ -288,9 +288,9 @@ class ReportViewSet(TenantContextMixin, viewsets.ViewSet):
         request_serializer = MovementReportRequestSerializer(data=request.query_params)
         request_serializer.is_valid(raise_exception=True)
 
-        restaurant = get_current_restaurant()
+        business = get_current_business()
         report = get_movement_report(
-            restaurant=restaurant,
+            business=business,
             start_date=request_serializer.validated_data["start_date"],
             end_date=request_serializer.validated_data["end_date"],
             stock_item_id=request_serializer.validated_data.get("stock_item"),

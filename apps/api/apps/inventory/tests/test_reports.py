@@ -30,7 +30,7 @@ class TestCurrentStockReport:
 
         # Create item below threshold
         low_item = StockItemFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             name="Low Stock Item",
             current_quantity=Decimal("5.0000"),
             low_stock_threshold=Decimal("10.0000"),
@@ -38,7 +38,7 @@ class TestCurrentStockReport:
 
         # Create item above threshold
         normal_item = StockItemFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             name="Normal Stock Item",
             current_quantity=Decimal("50.0000"),
             low_stock_threshold=Decimal("10.0000"),
@@ -107,7 +107,7 @@ class TestLowStockReport:
 
         # Create item below threshold
         low_item = StockItemFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             name="Low Stock Item",
             current_quantity=Decimal("5.0000"),
             low_stock_threshold=Decimal("10.0000"),
@@ -115,7 +115,7 @@ class TestLowStockReport:
 
         # Create item at threshold (should be included)
         at_threshold_item = StockItemFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             name="At Threshold Item",
             current_quantity=Decimal("10.0000"),
             low_stock_threshold=Decimal("10.0000"),
@@ -123,7 +123,7 @@ class TestLowStockReport:
 
         # Create item above threshold (should not be included)
         normal_item = StockItemFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             name="Normal Stock Item",
             current_quantity=Decimal("50.0000"),
             low_stock_threshold=Decimal("10.0000"),
@@ -131,7 +131,7 @@ class TestLowStockReport:
 
         # Create item without threshold (should not be included)
         no_threshold_item = StockItemFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             name="No Threshold Item",
             current_quantity=Decimal("1.0000"),
             low_stock_threshold=None,
@@ -168,7 +168,7 @@ class TestMovementReport:
         today = date.today()
 
         StockMovement.all_objects.create(
-            restaurant=sample_stock_item.restaurant,
+            business=sample_stock_item.business,
             stock_item=sample_stock_item,
             quantity_change=Decimal("10.0000"),
             movement_type=MovementType.IN,
@@ -177,7 +177,7 @@ class TestMovementReport:
             created_by=owner,
         )
         StockMovement.all_objects.create(
-            restaurant=sample_stock_item.restaurant,
+            business=sample_stock_item.business,
             stock_item=sample_stock_item,
             quantity_change=Decimal("-5.0000"),
             movement_type=MovementType.OUT,
@@ -236,7 +236,7 @@ class TestMovementReport:
 
         # Create movements for different items
         StockMovement.all_objects.create(
-            restaurant=tomatoes.restaurant,
+            business=tomatoes.business,
             stock_item=tomatoes,
             quantity_change=Decimal("10.0000"),
             movement_type=MovementType.IN,
@@ -245,7 +245,7 @@ class TestMovementReport:
             created_by=owner,
         )
         StockMovement.all_objects.create(
-            restaurant=onions.restaurant,
+            business=onions.business,
             stock_item=onions,
             quantity_change=Decimal("5.0000"),
             movement_type=MovementType.IN,

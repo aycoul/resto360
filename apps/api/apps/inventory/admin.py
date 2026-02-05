@@ -11,16 +11,16 @@ class StockItemAdmin(SimpleHistoryAdmin):
     list_display = [
         "name",
         "sku",
-        "restaurant",
+        "business",
         "current_quantity",
         "unit",
         "low_stock_threshold",
         "is_low_stock",
         "is_active",
     ]
-    list_filter = ["restaurant", "unit", "is_active"]
+    list_filter = ["business", "unit", "is_active"]
     search_fields = ["name", "sku"]
-    ordering = ["restaurant", "name"]
+    ordering = ["business", "name"]
     readonly_fields = ["current_quantity", "low_stock_alert_sent"]
 
     def is_low_stock(self, obj):
@@ -37,7 +37,7 @@ class StockMovementAdmin(admin.ModelAdmin):
 
     list_display = [
         "stock_item",
-        "restaurant",
+        "business",
         "quantity_change",
         "movement_type",
         "reason",
@@ -45,7 +45,7 @@ class StockMovementAdmin(admin.ModelAdmin):
         "created_by",
         "created_at",
     ]
-    list_filter = ["restaurant", "movement_type", "reason", "created_at"]
+    list_filter = ["business", "movement_type", "reason", "created_at"]
     search_fields = ["stock_item__name", "notes"]
     ordering = ["-created_at"]
     date_hierarchy = "created_at"
@@ -67,9 +67,9 @@ class MenuItemIngredientAdmin(admin.ModelAdmin):
         "menu_item",
         "stock_item",
         "quantity_required",
-        "restaurant",
+        "business",
     ]
-    list_filter = ["restaurant", "stock_item"]
+    list_filter = ["business", "stock_item"]
     search_fields = ["menu_item__name", "stock_item__name"]
     autocomplete_fields = ["menu_item", "stock_item"]
-    ordering = ["restaurant", "menu_item__name", "stock_item__name"]
+    ordering = ["business", "menu_item__name", "stock_item__name"]

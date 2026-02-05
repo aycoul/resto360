@@ -50,9 +50,9 @@ class TestCheckIdempotency:
         """Test that check_idempotency returns existing payment."""
         from apps.orders.tests.factories import OrderFactory
 
-        order = OrderFactory(restaurant=owner.restaurant, cashier=owner)
+        order = OrderFactory(business=owner.business, cashier=owner)
         payment = PaymentFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             order=order,
             idempotency_key="existing_key_123",
         )
@@ -67,9 +67,9 @@ class TestCheckIdempotency:
         """Test that check_idempotency populates cache when found in DB."""
         from apps.orders.tests.factories import OrderFactory
 
-        order = OrderFactory(restaurant=owner.restaurant, cashier=owner)
+        order = OrderFactory(business=owner.business, cashier=owner)
         payment = PaymentFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             order=order,
             idempotency_key="db_only_key",
         )
@@ -90,9 +90,9 @@ class TestCheckIdempotency:
         """Test that check_idempotency uses cache for fast path."""
         from apps.orders.tests.factories import OrderFactory
 
-        order = OrderFactory(restaurant=owner.restaurant, cashier=owner)
+        order = OrderFactory(business=owner.business, cashier=owner)
         payment = PaymentFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             order=order,
             idempotency_key="cached_key",
         )

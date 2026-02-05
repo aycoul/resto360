@@ -1,4 +1,4 @@
-"""Delivery models for RESTO360."""
+"""Delivery models for BIZ360 (formerly RESTO360)."""
 
 from django.contrib.gis.db import models as gis_models
 from django.contrib.gis.geos import Point
@@ -36,7 +36,7 @@ class DeliveryZone(TenantModel):
         ordering = ["name"]
 
     def __str__(self):
-        return f"{self.name} ({self.restaurant.name})"
+        return f"{self.name} ({self.business.name})"
 
     def contains_point(self, lat: float, lng: float) -> bool:
         """Check if a point is within this zone."""
@@ -49,7 +49,7 @@ class DeliveryZone(TenantModel):
         """Find the delivery zone containing a location."""
         point = Point(lng, lat, srid=4326)
         return cls.objects.filter(
-            restaurant=restaurant, polygon__contains=point, is_active=True
+            business=business, polygon__contains=point, is_active=True
         ).first()
 
 

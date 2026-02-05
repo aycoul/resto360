@@ -66,15 +66,15 @@ class TestCashDrawerSessionAPI:
         """Test closing a drawer session with correct balance."""
         # Create a cash payment during the session
         payment_method = PaymentMethodFactory(
-            restaurant=cashier.restaurant,
+            business=cashier.business,
             provider_code="cash",
             name="Cash",
         )
         from apps.orders.tests.factories import OrderFactory
 
-        order = OrderFactory(restaurant=cashier.restaurant, cashier=cashier)
+        order = OrderFactory(business=cashier.business, cashier=cashier)
         payment = Payment.all_objects.create(
-            restaurant=cashier.restaurant,
+            business=cashier.business,
             order=order,
             payment_method=payment_method,
             amount=10000,
@@ -107,15 +107,15 @@ class TestCashDrawerSessionAPI:
         """Test that variance is calculated correctly."""
         # Create a cash payment during the session
         payment_method = PaymentMethodFactory(
-            restaurant=cashier.restaurant,
+            business=cashier.business,
             provider_code="cash",
             name="Cash Variance Test",
         )
         from apps.orders.tests.factories import OrderFactory
 
-        order = OrderFactory(restaurant=cashier.restaurant, cashier=cashier)
+        order = OrderFactory(business=cashier.business, cashier=cashier)
         payment = Payment.all_objects.create(
-            restaurant=cashier.restaurant,
+            business=cashier.business,
             order=order,
             payment_method=payment_method,
             amount=10000,
@@ -146,7 +146,7 @@ class TestCashDrawerSessionAPI:
         """Test that closing an already closed session fails."""
         # Create and close a session
         session = CashDrawerSession.all_objects.create(
-            restaurant=cashier.restaurant,
+            business=cashier.business,
             cashier=cashier,
             opening_balance=50000,
         )
@@ -169,7 +169,7 @@ class TestCashDrawerSessionAPI:
         """Test that closing another user's session fails."""
         # Create session for owner, not cashier
         session = CashDrawerSession.all_objects.create(
-            restaurant=owner.restaurant,
+            business=owner.business,
             cashier=owner,
             opening_balance=50000,
         )

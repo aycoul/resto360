@@ -6,14 +6,14 @@ from datetime import timedelta
 from django.db.models import Count
 from django.utils import timezone
 
-from apps.authentication.models import Restaurant
-from apps.menu.models import MenuItem
+from apps.authentication.models import Business
+from apps.menu.models import Product
 
 from .models import DailyMenuStats, MenuView
 
 
 def track_menu_view(
-    restaurant: Restaurant,
+    business: Business,
     session_id: str,
     source: str = "link",
     user_agent: str = "",
@@ -22,7 +22,7 @@ def track_menu_view(
     Record a menu view event.
 
     Args:
-        restaurant: The restaurant whose menu was viewed
+        business: The business whose menu was viewed
         session_id: Client-generated session identifier
         source: How the menu was accessed (qr, link, whatsapp, other)
         user_agent: Browser/device user agent string
@@ -36,22 +36,22 @@ def track_menu_view(
         source = "other"
 
     return MenuView.all_objects.create(
-        restaurant=restaurant,
+        business=business,
         session_id=session_id,
         source=source,
         user_agent=user_agent[:500],  # Truncate to field max length
     )
 
 
-def get_analytics_summary(restaurant: Restaurant) -> dict:
+def get_analytics_summary(business: Business) -> dict:
     """
-    Get analytics summary for a restaurant.
+    Get analytics summary for a business.
 
     Returns view counts for today, this week, and this month,
     plus unique visitors and menu item count.
 
     Args:
-        restaurant: The restaurant to get analytics for
+        business: The business to get analytics for
 
     Returns:
         Dictionary with views_today, views_week, views_month,
@@ -62,8 +62,8 @@ def get_analytics_summary(restaurant: Restaurant) -> dict:
     week_start = today_start - timedelta(days=today_start.weekday())
     month_start = today_start.replace(day=1)
 
-    # Base queryset for this restaurant
-    views_qs = MenuView.all_objects.filter(restaurant=restaurant)
+    # Base queryset for this business
+    views_qs = MenuView.all_objects.filter(business=business)
 
     # Views today
     views_today = views_qs.filter(viewed_at__gte=today_start).count()
@@ -83,8 +83,8 @@ def get_analytics_summary(restaurant: Restaurant) -> dict:
     views_month = views_qs.filter(viewed_at__gte=month_start).count()
 
     # Menu item count
-    menu_items = MenuItem.all_objects.filter(
-        restaurant=restaurant, is_available=True
+    menu_items = Product.all_objects.filter(
+        business=business, is_available=True
     ).count()
 
     return {
@@ -96,7 +96,7 @@ def get_analytics_summary(restaurant: Restaurant) -> dict:
     }
 
 
-def aggregate_daily_stats(restaurant: Restaurant, date=None) -> DailyMenuStats:
+def aggregate_daily_stats(business: Business, date=None) -> DailyMenuStats:
     """
     Aggregate menu view stats for a specific day.
 
@@ -104,7 +104,7 @@ def aggregate_daily_stats(restaurant: Restaurant, date=None) -> DailyMenuStats:
     Typically called by a scheduled task at end of day.
 
     Args:
-        restaurant: The restaurant to aggregate stats for
+        business: The business to aggregate stats for
         date: The date to aggregate (defaults to today)
 
     Returns:
@@ -121,7 +121,7 @@ def aggregate_daily_stats(restaurant: Restaurant, date=None) -> DailyMenuStats:
 
     # Base queryset
     views_qs = MenuView.all_objects.filter(
-        restaurant=restaurant, viewed_at__gte=day_start, viewed_at__lt=day_end
+        business=business, viewed_at__gte=day_start, viewed_at__lt=day_end
     )
 
     # Total views
@@ -135,7 +135,7 @@ def aggregate_daily_stats(restaurant: Restaurant, date=None) -> DailyMenuStats:
 
     # Create or update the daily stats
     stats, _ = DailyMenuStats.all_objects.update_or_create(
-        restaurant=restaurant,
+        business=business,
         date=date,
         defaults={
             "total_views": total_views,

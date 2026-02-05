@@ -21,9 +21,9 @@ class TestReceiptDownloadAPI:
         self, owner_client, owner, order_factory, cashier_factory
     ):
         """Test downloading receipt PDF for an order."""
-        cashier = cashier_factory(restaurant=owner.restaurant)
+        cashier = cashier_factory(business=owner.business)
         order = order_factory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             cashier=cashier,
             order_number=1,
             subtotal=5000,
@@ -49,11 +49,11 @@ class TestReceiptDownloadAPI:
         assert "attachment" in response["Content-Disposition"]
         assert f"receipt-{order.order_number}" in response["Content-Disposition"]
 
-    def test_download_receipt_requires_auth(self, api_client, order_factory, cashier_factory, restaurant_factory):
+    def test_download_receipt_requires_auth(self, api_client, order_factory, cashier_factory, business_factory):
         """Test receipt download requires authentication."""
-        restaurant = restaurant_factory()
-        cashier = cashier_factory(restaurant=restaurant)
-        order = order_factory(restaurant=restaurant, cashier=cashier, order_type="takeaway")
+        business = business_factory()
+        cashier = cashier_factory(business=business)
+        order = order_factory(business=business, cashier=cashier, order_type="takeaway")
 
         response = api_client.get(f"/api/v1/orders/{order.id}/receipt/")
         assert response.status_code == 401
@@ -64,19 +64,19 @@ class TestReceiptDownloadAPI:
         response = owner_client.get(f"/api/v1/orders/{fake_id}/receipt/")
         assert response.status_code == 404
 
-    def test_cannot_download_other_restaurant_receipt(
+    def test_cannot_download_other_business_receipt(
         self,
         owner_client,
         owner,
         order_factory,
-        restaurant_factory,
+        business_factory,
         cashier_factory,
     ):
-        """Test cannot download receipt for another restaurant's order."""
-        other_restaurant = restaurant_factory()
-        other_cashier = cashier_factory(restaurant=other_restaurant)
+        """Test cannot download receipt for another business's order."""
+        other_business = business_factory()
+        other_cashier = cashier_factory(business=other_business)
         order = order_factory(
-            restaurant=other_restaurant,
+            business=other_business,
             cashier=other_cashier,
             order_type="takeaway",
         )
@@ -91,15 +91,15 @@ class TestReceiptService:
 
     @pytestmark_weasyprint
     def test_generate_receipt_pdf_content(
-        self, order_factory, order_item_factory, cashier_factory, restaurant_factory
+        self, order_factory, order_item_factory, cashier_factory, business_factory
     ):
         """Test receipt PDF includes order details."""
         from apps.receipts.services import generate_receipt_pdf, get_receipt_filename
 
-        restaurant = restaurant_factory(name="Test Restaurant")
-        cashier = cashier_factory(restaurant=restaurant)
+        business = business_factory(name="Test Business")
+        cashier = cashier_factory(business=business)
         order = order_factory(
-            restaurant=restaurant,
+            business=business,
             cashier=cashier,
             order_number=42,
             subtotal=7500,
@@ -109,7 +109,7 @@ class TestReceiptService:
         )
         order_item_factory(
             order=order,
-            restaurant=restaurant,
+            business=business,
             name="Burger",
             unit_price=5000,
             quantity=1,
@@ -117,7 +117,7 @@ class TestReceiptService:
         )
         order_item_factory(
             order=order,
-            restaurant=restaurant,
+            business=business,
             name="Fries",
             unit_price=2500,
             quantity=1,
@@ -142,15 +142,15 @@ class TestReceiptService:
             # Note: We can check the template rendering by inspecting render_to_string calls
 
     def test_receipt_filename_format(
-        self, order_factory, cashier_factory, restaurant_factory
+        self, order_factory, cashier_factory, business_factory
     ):
         """Test receipt filename format (does not require WeasyPrint)."""
         from apps.receipts.services import get_receipt_filename
 
-        restaurant = restaurant_factory()
-        cashier = cashier_factory(restaurant=restaurant)
+        business = business_factory()
+        cashier = cashier_factory(business=business)
         order = order_factory(
-            restaurant=restaurant,
+            business=business,
             cashier=cashier,
             order_number=123,
             order_type="takeaway",

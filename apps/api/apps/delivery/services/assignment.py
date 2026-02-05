@@ -13,7 +13,7 @@ from apps.orders.models import Order
 
 
 def find_nearest_available_driver(
-    restaurant,
+    business,
     pickup_location: Point,
     max_distance_km: float = 10.0,
     max_stale_minutes: int = 5,
@@ -25,7 +25,7 @@ def find_nearest_available_driver(
     then orders by distance using the Distance function.
 
     Args:
-        restaurant: The restaurant (for tenant filtering)
+        business: The business (for tenant filtering)
         pickup_location: Point where driver needs to pick up order
         max_distance_km: Maximum distance in kilometers (default 10km)
         max_stale_minutes: Reject drivers with location older than this (default 5min)
@@ -43,7 +43,7 @@ def find_nearest_available_driver(
     # Using ST_DWithin first for index usage, then ordering by actual distance
     drivers = (
         Driver.objects.filter(
-            restaurant=restaurant,
+            business=business,
             is_available=True,
             current_location__isnull=False,
             location_updated_at__gte=stale_threshold,
@@ -86,14 +86,14 @@ def assign_driver_to_delivery(
     if delivery.status != DeliveryStatus.PENDING_ASSIGNMENT:
         return None  # Wrong status for assignment
 
-    # Get pickup location from delivery (restaurant location)
+    # Get pickup location from delivery (business location)
     if not delivery.pickup_location:
         return None  # No pickup location set
 
     pickup_location = delivery.pickup_location
 
     driver = find_nearest_available_driver(
-        restaurant=delivery.restaurant,
+        business=delivery.business,
         pickup_location=pickup_location,
         max_distance_km=max_distance_km,
     )
@@ -142,22 +142,22 @@ def create_delivery_for_order(
     Raises:
         ValueError: If delivery address is outside all delivery zones
     """
-    restaurant = order.restaurant
+    business = order.business
     delivery_point = Point(delivery_lng, delivery_lat, srid=4326)  # GIS: lng, lat
 
     # Find zone for delivery address
     zone = DeliveryZone.find_zone_for_location(
-        restaurant=restaurant, lat=delivery_lat, lng=delivery_lng
+        business=business, lat=delivery_lat, lng=delivery_lng
     )
 
     if not zone:
         raise ValueError("Delivery address is outside all delivery zones")
 
-    # Get restaurant location for pickup
+    # Get business location for pickup
     pickup_location = None
-    if restaurant.latitude and restaurant.longitude:
+    if business.latitude and business.longitude:
         pickup_location = Point(
-            float(restaurant.longitude), float(restaurant.latitude), srid=4326
+            float(business.longitude), float(business.latitude), srid=4326
         )
 
     # Calculate estimated delivery time
@@ -165,10 +165,10 @@ def create_delivery_for_order(
     estimated_delivery = timezone.now() + timedelta(minutes=estimated_minutes)
 
     delivery = Delivery.objects.create(
-        restaurant=restaurant,
+        business=business,
         order=order,
         zone=zone,
-        pickup_address=restaurant.address or "",
+        pickup_address=business.address or "",
         pickup_location=pickup_location,
         delivery_address=delivery_address,
         delivery_location=delivery_point,

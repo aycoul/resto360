@@ -81,9 +81,9 @@ class StockItem(TenantModel):
                 name="stock_item_non_negative_quantity",
             ),
             models.UniqueConstraint(
-                fields=["restaurant", "sku"],
+                fields=["business", "sku"],
                 condition=~models.Q(sku=""),
-                name="unique_restaurant_sku",
+                name="unique_business_sku",
             ),
         ]
 
@@ -138,7 +138,7 @@ class StockMovement(TenantModel):
         ordering = ["-created_at"]
         indexes = [
             models.Index(fields=["stock_item", "-created_at"]),
-            models.Index(fields=["restaurant", "-created_at"]),
+            models.Index(fields=["business", "-created_at"]),
         ]
 
     def __str__(self):
@@ -158,9 +158,9 @@ class MenuItemIngredient(TenantModel):
     """Maps a menu item to its required ingredients (recipe/BOM)."""
 
     menu_item = models.ForeignKey(
-        "menu.MenuItem",
+        "menu.Product",
         on_delete=models.CASCADE,
-        related_name="ingredients",  # menuitem.ingredients.all()
+        related_name="recipe_ingredients",  # product.recipe_ingredients.all()
     )
     stock_item = models.ForeignKey(
         "inventory.StockItem",

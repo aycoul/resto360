@@ -18,9 +18,9 @@ def application():
 
 
 @pytest.fixture
-def other_restaurant(restaurant_factory):
-    """Create a different restaurant for multi-tenant testing."""
-    return restaurant_factory(name="Other Restaurant")
+def other_business(business_factory):
+    """Create a different business for multi-tenant testing."""
+    return business_factory(name="Other Business")
 
 
 @pytest.mark.asyncio
@@ -28,7 +28,7 @@ async def test_kitchen_consumer_connect_authenticated(application, owner):
     """Test authenticated user can connect to kitchen WebSocket."""
     token = AccessToken.for_user(owner)
     communicator = WebsocketCommunicator(
-        application, f"/ws/kitchen/{owner.restaurant_id}/?token={token}"
+        application, f"/ws/kitchen/{owner.business_id}/?token={token}"
     )
 
     connected, _ = await communicator.connect()
@@ -45,10 +45,10 @@ async def test_kitchen_consumer_connect_authenticated(application, owner):
 
 @pytest.mark.asyncio
 async def test_kitchen_consumer_connect_as_cashier(application, cashier):
-    """Test cashier can connect to their restaurant's kitchen WebSocket."""
+    """Test cashier can connect to their business's kitchen WebSocket."""
     token = AccessToken.for_user(cashier)
     communicator = WebsocketCommunicator(
-        application, f"/ws/kitchen/{cashier.restaurant_id}/?token={token}"
+        application, f"/ws/kitchen/{cashier.business_id}/?token={token}"
     )
 
     connected, _ = await communicator.connect()
@@ -63,10 +63,10 @@ async def test_kitchen_consumer_connect_as_cashier(application, cashier):
 
 @pytest.mark.asyncio
 async def test_kitchen_consumer_connect_as_kitchen_staff(application, kitchen_user):
-    """Test kitchen staff can connect to their restaurant's kitchen WebSocket."""
+    """Test kitchen staff can connect to their business's kitchen WebSocket."""
     token = AccessToken.for_user(kitchen_user)
     communicator = WebsocketCommunicator(
-        application, f"/ws/kitchen/{kitchen_user.restaurant_id}/?token={token}"
+        application, f"/ws/kitchen/{kitchen_user.business_id}/?token={token}"
     )
 
     connected, _ = await communicator.connect()
@@ -103,18 +103,18 @@ async def test_kitchen_consumer_reject_invalid_token(application):
 
 
 @pytest.mark.asyncio
-async def test_kitchen_consumer_reject_wrong_restaurant(
-    application, owner, other_restaurant
+async def test_kitchen_consumer_reject_wrong_business(
+    application, owner, other_business
 ):
-    """Test user cannot connect to different restaurant's kitchen."""
+    """Test user cannot connect to different business's kitchen."""
     token = AccessToken.for_user(owner)
-    # Try to connect to a different restaurant's kitchen
+    # Try to connect to a different business's kitchen
     communicator = WebsocketCommunicator(
-        application, f"/ws/kitchen/{other_restaurant.id}/?token={token}"
+        application, f"/ws/kitchen/{other_business.id}/?token={token}"
     )
 
     connected, _ = await communicator.connect()
-    # Connection should be closed with code 4003 (wrong restaurant)
+    # Connection should be closed with code 4003 (wrong business)
     assert not connected
 
 
@@ -125,7 +125,7 @@ async def test_kitchen_consumer_receives_order_created(application, owner):
 
     token = AccessToken.for_user(owner)
     communicator = WebsocketCommunicator(
-        application, f"/ws/kitchen/{owner.restaurant_id}/?token={token}"
+        application, f"/ws/kitchen/{owner.business_id}/?token={token}"
     )
 
     await communicator.connect()
@@ -136,7 +136,7 @@ async def test_kitchen_consumer_receives_order_created(application, owner):
     # Simulate order creation notification via channel layer
     channel_layer = get_channel_layer()
     await channel_layer.group_send(
-        f"kitchen_{owner.restaurant_id}",
+        f"kitchen_{owner.business_id}",
         {
             "type": "order_created",
             "order": {"id": "test-order-id", "order_number": 42, "status": "pending"},
@@ -158,7 +158,7 @@ async def test_kitchen_consumer_receives_order_updated(application, owner):
 
     token = AccessToken.for_user(owner)
     communicator = WebsocketCommunicator(
-        application, f"/ws/kitchen/{owner.restaurant_id}/?token={token}"
+        application, f"/ws/kitchen/{owner.business_id}/?token={token}"
     )
 
     await communicator.connect()
@@ -166,7 +166,7 @@ async def test_kitchen_consumer_receives_order_updated(application, owner):
 
     channel_layer = get_channel_layer()
     await channel_layer.group_send(
-        f"kitchen_{owner.restaurant_id}",
+        f"kitchen_{owner.business_id}",
         {
             "type": "order_updated",
             "order": {"id": "test-order-id", "order_number": 42, "notes": "Updated"},
@@ -187,7 +187,7 @@ async def test_kitchen_consumer_receives_status_changed(application, owner):
 
     token = AccessToken.for_user(owner)
     communicator = WebsocketCommunicator(
-        application, f"/ws/kitchen/{owner.restaurant_id}/?token={token}"
+        application, f"/ws/kitchen/{owner.business_id}/?token={token}"
     )
 
     await communicator.connect()
@@ -195,7 +195,7 @@ async def test_kitchen_consumer_receives_status_changed(application, owner):
 
     channel_layer = get_channel_layer()
     await channel_layer.group_send(
-        f"kitchen_{owner.restaurant_id}",
+        f"kitchen_{owner.business_id}",
         {
             "type": "order_status_changed",
             "order_id": "test-order-id",
@@ -215,21 +215,21 @@ async def test_kitchen_consumer_receives_status_changed(application, owner):
 
 @pytest.mark.asyncio
 async def test_kitchen_consumer_multiple_clients(application, owner, cashier):
-    """Test multiple clients in same restaurant receive same notifications."""
+    """Test multiple clients in same business receive same notifications."""
     from channels.layers import get_channel_layer
 
     # Connect owner
     owner_token = AccessToken.for_user(owner)
     owner_comm = WebsocketCommunicator(
-        application, f"/ws/kitchen/{owner.restaurant_id}/?token={owner_token}"
+        application, f"/ws/kitchen/{owner.business_id}/?token={owner_token}"
     )
     await owner_comm.connect()
     await owner_comm.receive_json_from()  # Clear initial queue
 
-    # Connect cashier (same restaurant)
+    # Connect cashier (same business)
     cashier_token = AccessToken.for_user(cashier)
     cashier_comm = WebsocketCommunicator(
-        application, f"/ws/kitchen/{cashier.restaurant_id}/?token={cashier_token}"
+        application, f"/ws/kitchen/{cashier.business_id}/?token={cashier_token}"
     )
     await cashier_comm.connect()
     await cashier_comm.receive_json_from()  # Clear initial queue
@@ -237,7 +237,7 @@ async def test_kitchen_consumer_multiple_clients(application, owner, cashier):
     # Send notification
     channel_layer = get_channel_layer()
     await channel_layer.group_send(
-        f"kitchen_{owner.restaurant_id}",
+        f"kitchen_{owner.business_id}",
         {"type": "order_created", "order": {"id": "shared-order", "order_number": 1}},
     )
 
@@ -259,7 +259,7 @@ async def test_kitchen_consumer_handles_malformed_json(application, owner):
     """Test consumer handles malformed JSON input gracefully."""
     token = AccessToken.for_user(owner)
     communicator = WebsocketCommunicator(
-        application, f"/ws/kitchen/{owner.restaurant_id}/?token={token}"
+        application, f"/ws/kitchen/{owner.business_id}/?token={token}"
     )
 
     await communicator.connect()
@@ -273,7 +273,7 @@ async def test_kitchen_consumer_handles_malformed_json(application, owner):
 
     channel_layer = get_channel_layer()
     await channel_layer.group_send(
-        f"kitchen_{owner.restaurant_id}",
+        f"kitchen_{owner.business_id}",
         {"type": "order_created", "order": {"id": "test", "order_number": 1}},
     )
 

@@ -115,41 +115,41 @@ class TestPaymentFSMTransitions:
 class TestPaymentMethod:
     """Tests for PaymentMethod model."""
 
-    def test_payment_method_unique_per_restaurant(self, owner):
-        """Test that same provider_code fails for same restaurant."""
+    def test_payment_method_unique_per_business(self, owner):
+        """Test that same provider_code fails for same business."""
         PaymentMethodFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             provider_code="wave",
             name="Wave",
         )
 
         with pytest.raises(IntegrityError):
             PaymentMethodFactory(
-                restaurant=owner.restaurant,
+                business=owner.business,
                 provider_code="wave",
                 name="Wave Duplicate",
             )
 
-    def test_payment_method_same_code_different_restaurants(self, owner):
-        """Test that same provider_code works for different restaurants."""
-        from apps.authentication.tests.factories import RestaurantFactory
+    def test_payment_method_same_code_different_businesses(self, owner):
+        """Test that same provider_code works for different businesses."""
+        from apps.authentication.tests.factories import BusinessFactory
 
-        # Create a second restaurant
-        other_restaurant = RestaurantFactory()
+        # Create a second business
+        other_business = BusinessFactory()
 
         pm1 = PaymentMethodFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             provider_code="wave",
             name="Wave",
         )
         pm2 = PaymentMethodFactory(
-            restaurant=other_restaurant,
+            business=other_business,
             provider_code="wave",
             name="Wave",
         )
 
         assert pm1.provider_code == pm2.provider_code
-        assert pm1.restaurant != pm2.restaurant
+        assert pm1.business != pm2.business
 
     def test_payment_method_str(self, sample_payment_method):
         """Test string representation of PaymentMethod."""
@@ -194,22 +194,22 @@ class TestCashDrawerSession:
 
         # Create cash drawer session
         session = CashDrawerSessionFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             cashier=cashier,
             opening_balance=50000,
         )
 
         # Create a cash payment method
         payment_method = PaymentMethodFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             provider_code="cash",
             name="Cash",
         )
 
         # Create a successful cash payment
-        order = OrderFactory(restaurant=owner.restaurant, cashier=owner)
+        order = OrderFactory(business=owner.business, cashier=owner)
         payment = PaymentFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             order=order,
             payment_method=payment_method,
             amount=10000,

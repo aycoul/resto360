@@ -16,26 +16,26 @@ class KitchenConsumer(AsyncWebsocketConsumer):
     - Order status change notifications
 
     Authentication: JWT token via query string (?token=xxx)
-    Multi-tenant: Users can only connect to their restaurant's kitchen
+    Multi-tenant: Users can only connect to their business's kitchen
     """
 
     async def connect(self):
         """Handle WebSocket connection."""
-        self.restaurant_id = self.scope["url_route"]["kwargs"]["restaurant_id"]
+        self.business_id = self.scope["url_route"]["kwargs"]["business_id"]
 
-        # Verify user is authenticated and belongs to this restaurant
+        # Verify user is authenticated and belongs to this business
         user = self.scope.get("user")
         if not user or not user.is_authenticated:
             await self.close(code=4001)
             return
 
-        # Verify user has access to this restaurant
-        user_restaurant_id = await self.get_user_restaurant_id(user)
-        if str(user_restaurant_id) != self.restaurant_id:
+        # Verify user has access to this business
+        user_business_id = await self.get_user_business_id(user)
+        if str(user_business_id) != self.business_id:
             await self.close(code=4003)
             return
 
-        self.room_group_name = f"kitchen_{self.restaurant_id}"
+        self.room_group_name = f"kitchen_{self.business_id}"
 
         # Join room group
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
@@ -116,9 +116,9 @@ class KitchenConsumer(AsyncWebsocketConsumer):
         )
 
     @database_sync_to_async
-    def get_user_restaurant_id(self, user):
+    def get_user_business_id(self, user):
         """Get user's restaurant ID (sync to async wrapper)."""
-        return user.restaurant_id
+        return user.business_id
 
     @database_sync_to_async
     def get_kitchen_queue(self):
@@ -128,7 +128,7 @@ class KitchenConsumer(AsyncWebsocketConsumer):
 
         orders = (
             Order.all_objects.filter(
-                restaurant_id=self.restaurant_id,
+                business_id=self.business_id,
                 status__in=[
                     OrderStatus.PENDING,
                     OrderStatus.PREPARING,
@@ -159,7 +159,7 @@ class KitchenConsumer(AsyncWebsocketConsumer):
 
         try:
             order = Order.all_objects.get(
-                id=order_id, restaurant_id=self.restaurant_id
+                id=order_id, business_id=self.business_id
             )
             previous_status = order.status
             order.status = new_status

@@ -8,10 +8,10 @@ from apps.menu.models import Category, MenuItem, Modifier, ModifierOption
 class TestCategoryModel:
     """Tests for the Category model."""
 
-    def test_create_category(self, restaurant):
+    def test_create_category(self, business):
         """Test creating a category with required fields."""
         category = Category.all_objects.create(
-            restaurant=restaurant,
+            business=business,
             name="Entrees",
             display_order=1,
         )
@@ -20,20 +20,20 @@ class TestCategoryModel:
         assert category.is_visible is True
         assert str(category) == "Entrees"
 
-    def test_category_ordering(self, restaurant):
+    def test_category_ordering(self, business):
         """Test categories are ordered by display_order then name."""
         Category.all_objects.create(
-            restaurant=restaurant, name="Drinks", display_order=2
+            business=business, name="Drinks", display_order=2
         )
         Category.all_objects.create(
-            restaurant=restaurant, name="Entrees", display_order=1
+            business=business, name="Entrees", display_order=1
         )
         Category.all_objects.create(
-            restaurant=restaurant, name="Appetizers", display_order=1
+            business=business, name="Appetizers", display_order=1
         )
 
         # Set tenant context for TenantManager filtering
-        set_current_restaurant(restaurant)
+        set_current_restaurant(business)
         categories = list(Category.objects.all())
 
         # display_order 1: Appetizers, Entrees (alphabetically)
@@ -42,22 +42,22 @@ class TestCategoryModel:
         assert categories[1].name == "Entrees"
         assert categories[2].name == "Drinks"
 
-    def test_category_tenant_isolation(self, restaurant_factory):
-        """Test categories are isolated by restaurant."""
-        restaurant_a = restaurant_factory()
-        restaurant_b = restaurant_factory()
+    def test_category_tenant_isolation(self, business_factory):
+        """Test categories are isolated by business."""
+        business_a = business_factory()
+        business_b = business_factory()
 
-        Category.all_objects.create(restaurant=restaurant_a, name="Category A")
-        Category.all_objects.create(restaurant=restaurant_b, name="Category B")
+        Category.all_objects.create(business=business_a, name="Category A")
+        Category.all_objects.create(business=business_b, name="Category B")
 
-        # Set context to restaurant A
-        set_current_restaurant(restaurant_a)
+        # Set context to business A
+        set_current_restaurant(business_a)
         categories_a = Category.objects.all()
         assert categories_a.count() == 1
         assert categories_a.first().name == "Category A"
 
-        # Set context to restaurant B
-        set_current_restaurant(restaurant_b)
+        # Set context to business B
+        set_current_restaurant(business_b)
         categories_b = Category.objects.all()
         assert categories_b.count() == 1
         assert categories_b.first().name == "Category B"
@@ -70,7 +70,7 @@ class TestMenuItemModel:
     def test_create_menu_item(self, category):
         """Test creating a menu item with required fields."""
         item = MenuItem.all_objects.create(
-            restaurant=category.restaurant,
+            business=category.business,
             category=category,
             name="Burger",
             price=5000,
@@ -83,7 +83,7 @@ class TestMenuItemModel:
     def test_menu_item_with_description(self, category):
         """Test menu item with optional description."""
         item = MenuItem.all_objects.create(
-            restaurant=category.restaurant,
+            business=category.business,
             category=category,
             name="Burger",
             description="Juicy beef patty with fresh vegetables",
@@ -94,7 +94,7 @@ class TestMenuItemModel:
     def test_menu_item_category_relationship(self, category):
         """Test menu item belongs to category."""
         item = MenuItem.all_objects.create(
-            restaurant=category.restaurant,
+            business=category.business,
             category=category,
             name="Burger",
             price=5000,
@@ -106,7 +106,7 @@ class TestMenuItemModel:
     def test_cascade_delete_on_category(self, category):
         """Test deleting category cascades to items."""
         item = MenuItem.all_objects.create(
-            restaurant=category.restaurant,
+            business=category.business,
             category=category,
             name="Burger",
             price=5000,
@@ -123,25 +123,25 @@ class TestMenuItemModel:
         assert MenuItem.all_objects.filter(id=item_id).count() == 0
 
     def test_menu_item_tenant_isolation(self, category_factory):
-        """Test menu items are isolated by restaurant."""
+        """Test menu items are isolated by business."""
         category_a = category_factory()
         category_b = category_factory()
 
         MenuItem.all_objects.create(
-            restaurant=category_a.restaurant,
+            business=category_a.business,
             category=category_a,
             name="Item A",
             price=1000,
         )
         MenuItem.all_objects.create(
-            restaurant=category_b.restaurant,
+            business=category_b.business,
             category=category_b,
             name="Item B",
             price=2000,
         )
 
-        # Set context to restaurant A
-        set_current_restaurant(category_a.restaurant)
+        # Set context to business A
+        set_current_restaurant(category_a.business)
         items_a = MenuItem.objects.all()
         assert items_a.count() == 1
         assert items_a.first().name == "Item A"
@@ -154,7 +154,7 @@ class TestModifierModel:
     def test_create_modifier(self, menu_item):
         """Test creating a modifier."""
         modifier = Modifier.all_objects.create(
-            restaurant=menu_item.restaurant,
+            business=menu_item.business,
             menu_item=menu_item,
             name="Size",
             required=True,
@@ -168,7 +168,7 @@ class TestModifierModel:
     def test_modifier_menu_item_relationship(self, menu_item):
         """Test modifier belongs to menu item."""
         modifier = Modifier.all_objects.create(
-            restaurant=menu_item.restaurant,
+            business=menu_item.business,
             menu_item=menu_item,
             name="Size",
         )
@@ -179,7 +179,7 @@ class TestModifierModel:
     def test_cascade_delete_on_menu_item(self, menu_item):
         """Test deleting menu item cascades to modifiers."""
         modifier = Modifier.all_objects.create(
-            restaurant=menu_item.restaurant,
+            business=menu_item.business,
             menu_item=menu_item,
             name="Size",
         )
@@ -198,7 +198,7 @@ class TestModifierOptionModel:
     def test_create_modifier_option(self, modifier):
         """Test creating a modifier option."""
         option = ModifierOption.all_objects.create(
-            restaurant=modifier.restaurant,
+            business=modifier.business,
             modifier=modifier,
             name="Large",
             price_adjustment=500,
@@ -211,7 +211,7 @@ class TestModifierOptionModel:
     def test_modifier_option_negative_price(self, modifier):
         """Test modifier option can have negative price adjustment."""
         option = ModifierOption.all_objects.create(
-            restaurant=modifier.restaurant,
+            business=modifier.business,
             modifier=modifier,
             name="Small",
             price_adjustment=-500,
@@ -221,7 +221,7 @@ class TestModifierOptionModel:
     def test_modifier_option_relationship(self, modifier):
         """Test modifier option belongs to modifier."""
         option = ModifierOption.all_objects.create(
-            restaurant=modifier.restaurant,
+            business=modifier.business,
             modifier=modifier,
             name="Large",
         )
@@ -232,7 +232,7 @@ class TestModifierOptionModel:
     def test_cascade_delete_on_modifier(self, modifier):
         """Test deleting modifier cascades to options."""
         option = ModifierOption.all_objects.create(
-            restaurant=modifier.restaurant,
+            business=modifier.business,
             modifier=modifier,
             name="Large",
         )

@@ -177,6 +177,7 @@ class Business(BaseModel):
     )
 
     class Meta:
+        db_table = "authentication_restaurant"  # Keep old table name for compatibility
         ordering = ["name"]
         verbose_name = "Business"
         verbose_name_plural = "Businesses"

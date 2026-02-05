@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=100)),
                 ('display_order', models.PositiveIntegerField(default=0)),
                 ('is_visible', models.BooleanField(default=True)),
-                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.restaurant')),
+                ('business', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.business')),
             ],
             options={
                 'verbose_name': 'Category',
@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='MenuItem',
+            name='Product',
             fields=[
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('created_at', models.DateTimeField(default=django.utils.timezone.now)),
@@ -44,10 +44,11 @@ class Migration(migrations.Migration):
                 ('image', models.ImageField(blank=True, null=True, upload_to='menu_items/')),
                 ('is_available', models.BooleanField(default=True)),
                 ('category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='items', to='menu.category')),
-                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.restaurant')),
+                ('business', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.business')),
             ],
             options={
                 'ordering': ['name'],
+                'db_table': 'menu_menuitem',
             },
         ),
         migrations.CreateModel(
@@ -60,8 +61,8 @@ class Migration(migrations.Migration):
                 ('required', models.BooleanField(default=False, help_text='Customer must select at least one option')),
                 ('max_selections', models.PositiveIntegerField(default=1, help_text='Maximum options customer can select (0 = unlimited)')),
                 ('display_order', models.PositiveIntegerField(default=0)),
-                ('menu_item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='modifiers', to='menu.menuitem')),
-                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.restaurant')),
+                ('menu_item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='modifiers', to='menu.product')),
+                ('business', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.business')),
             ],
             options={
                 'ordering': ['display_order', 'name'],
@@ -78,7 +79,7 @@ class Migration(migrations.Migration):
                 ('is_available', models.BooleanField(default=True)),
                 ('display_order', models.PositiveIntegerField(default=0)),
                 ('modifier', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='options', to='menu.modifier')),
-                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.restaurant')),
+                ('business', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.business')),
             ],
             options={
                 'ordering': ['display_order', 'name'],

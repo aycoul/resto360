@@ -108,9 +108,9 @@ class Customer(TenantModel):
     class Meta:
         ordering = ["-created_at"]
         indexes = [
-            models.Index(fields=["restaurant", "email"]),
-            models.Index(fields=["restaurant", "phone"]),
-            models.Index(fields=["restaurant", "loyalty_points"]),
+            models.Index(fields=["business", "email"]),
+            models.Index(fields=["business", "phone"]),
+            models.Index(fields=["business", "loyalty_points"]),
             models.Index(fields=["referral_code"]),
         ]
 
@@ -136,7 +136,7 @@ class Customer(TenantModel):
         self.save(update_fields=["loyalty_points", "lifetime_points", "updated_at"])
 
         return PointsTransaction.objects.create(
-            restaurant=self.restaurant,
+            business=self.business,
             customer=self,
             points=points,
             balance_after=self.loyalty_points,
@@ -154,7 +154,7 @@ class Customer(TenantModel):
         self.save(update_fields=["loyalty_points", "updated_at"])
 
         return PointsTransaction.objects.create(
-            restaurant=self.restaurant,
+            business=self.business,
             customer=self,
             points=-points,
             balance_after=self.loyalty_points,
@@ -179,7 +179,7 @@ class Customer(TenantModel):
 
 class LoyaltyProgram(TenantModel):
     """
-    Loyalty program settings for a restaurant.
+    Loyalty program settings for a business.
 
     Defines how points are earned and general program rules.
     """
@@ -226,7 +226,7 @@ class LoyaltyProgram(TenantModel):
         verbose_name_plural = "Loyalty Programs"
 
     def __str__(self):
-        return f"Loyalty Program - {self.restaurant.name}"
+        return f"Loyalty Program - {self.business.name}"
 
     def calculate_points(self, order_total: float) -> int:
         """Calculate points earned for an order total."""
@@ -303,7 +303,7 @@ class LoyaltyReward(TenantModel):
 
     # Reward Value
     menu_item = models.ForeignKey(
-        "menu.MenuItem",
+        "menu.Product",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -538,7 +538,7 @@ class Campaign(TenantModel):
 
     def get_target_customers(self):
         """Get queryset of customers matching targeting criteria."""
-        qs = Customer.objects.filter(restaurant=self.restaurant)
+        qs = Customer.objects.filter(business=self.business)
 
         if self.channel in [CampaignChannel.EMAIL, CampaignChannel.BOTH]:
             qs = qs.exclude(email="")

@@ -103,46 +103,46 @@ class CreditScoreAPI(APIView):
 
     def get(self, request):
         """Get current credit score."""
-        restaurant = getattr(request.user, "restaurant", None)
-        if not restaurant:
+        business = getattr(request.user, "business", None)
+        if not business:
             return Response(
-                {"error": "No restaurant associated with this user"},
+                {"error": "No business associated with this user"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         credit_score, created = CreditScore.objects.get_or_create(
-            restaurant=restaurant
+            business=business
         )
 
         # If new or stale, calculate
         if created or (timezone.now() - credit_score.last_calculated).days > 1:
-            self._calculate_score(credit_score, restaurant)
+            self._calculate_score(credit_score, business)
 
         serializer = CreditScoreSerializer(credit_score)
         return Response(serializer.data)
 
     def post(self, request):
         """Refresh credit score."""
-        restaurant = getattr(request.user, "restaurant", None)
-        if not restaurant:
+        business = getattr(request.user, "business", None)
+        if not business:
             return Response(
-                {"error": "No restaurant associated with this user"},
+                {"error": "No business associated with this user"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        credit_score, _ = CreditScore.objects.get_or_create(restaurant=restaurant)
-        self._calculate_score(credit_score, restaurant)
+        credit_score, _ = CreditScore.objects.get_or_create(business=business)
+        self._calculate_score(credit_score, business)
 
         serializer = CreditScoreSerializer(credit_score)
         return Response(serializer.data)
 
-    def _calculate_score(self, credit_score, restaurant):
+    def _calculate_score(self, credit_score, business):
         """Calculate credit score from restaurant data."""
         # This would normally aggregate real data from orders, payments, etc.
         # For now, we'll use mock calculations
 
         # Calculate platform tenure
-        tenure_days = (timezone.now() - restaurant.created_at).days
+        tenure_days = (timezone.now() - business.created_at).days
         credit_score.platform_tenure_days = tenure_days
 
         # Tenure score (0-100)
@@ -189,23 +189,23 @@ class LoanApplicationViewSet(viewsets.ModelViewSet):
         return LoanApplicationListSerializer
 
     def get_queryset(self):
-        restaurant = getattr(self.request.user, "restaurant", None)
-        if not restaurant:
+        business = getattr(self.request.user, "business", None)
+        if not business:
             return LoanApplication.objects.none()
-        return LoanApplication.objects.filter(restaurant=restaurant)
+        return LoanApplication.objects.filter(business=business)
 
     def perform_create(self, serializer):
-        restaurant = getattr(self.request.user, "restaurant", None)
-        if not restaurant:
-            raise serializers.ValidationError("No restaurant associated with this user")
+        business = getattr(self.request.user, "business", None)
+        if not business:
+            raise serializers.ValidationError("No business associated with this user")
 
         # Get credit score
-        credit_score = CreditScore.objects.filter(restaurant=restaurant).first()
+        credit_score = CreditScore.objects.filter(business=business).first()
         credit_score_value = credit_score.score if credit_score else 0
         monthly_revenue = credit_score.avg_monthly_revenue if credit_score else 0
 
         serializer.save(
-            restaurant=restaurant,
+            business=business,
             applicant=self.request.user,
             credit_score_at_application=credit_score_value,
             monthly_revenue_at_application=monthly_revenue,
@@ -268,10 +268,10 @@ class LoanViewSet(viewsets.ReadOnlyModelViewSet):
         return LoanListSerializer
 
     def get_queryset(self):
-        restaurant = getattr(self.request.user, "restaurant", None)
-        if not restaurant:
+        business = getattr(self.request.user, "business", None)
+        if not business:
             return Loan.objects.none()
-        return Loan.objects.filter(restaurant=restaurant)
+        return Loan.objects.filter(business=business)
 
     @action(detail=True, methods=["get"])
     def repayments(self, request, pk=None):
@@ -340,19 +340,19 @@ class FinancingDashboardAPI(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        restaurant = getattr(request.user, "restaurant", None)
-        if not restaurant:
+        business = getattr(request.user, "business", None)
+        if not business:
             return Response(
-                {"error": "No restaurant associated with this user"},
+                {"error": "No business associated with this user"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         # Get credit score
-        credit_score = CreditScore.objects.filter(restaurant=restaurant).first()
+        credit_score = CreditScore.objects.filter(business=business).first()
 
         # Get active loans
         active_loans = Loan.objects.filter(
-            restaurant=restaurant,
+            business=business,
             status=Loan.Status.ACTIVE,
         )
 
@@ -366,7 +366,7 @@ class FinancingDashboardAPI(APIView):
 
         # Pending applications
         pending_apps = LoanApplication.objects.filter(
-            restaurant=restaurant,
+            business=business,
             status__in=[
                 LoanApplication.Status.SUBMITTED,
                 LoanApplication.Status.UNDER_REVIEW,
@@ -411,14 +411,14 @@ class LoanEligibilityAPI(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        restaurant = getattr(request.user, "restaurant", None)
-        if not restaurant:
+        business = getattr(request.user, "business", None)
+        if not business:
             return Response(
-                {"error": "No restaurant associated with this user"},
+                {"error": "No business associated with this user"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        credit_score = CreditScore.objects.filter(restaurant=restaurant).first()
+        credit_score = CreditScore.objects.filter(business=business).first()
 
         if not credit_score:
             return Response({
@@ -548,29 +548,29 @@ class FinancingSettingsAPI(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        restaurant = getattr(request.user, "restaurant", None)
-        if not restaurant:
+        business = getattr(request.user, "business", None)
+        if not business:
             return Response(
-                {"error": "No restaurant associated with this user"},
+                {"error": "No business associated with this user"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         settings, _ = FinancingSettings.objects.get_or_create(
-            restaurant=restaurant
+            business=business
         )
         serializer = FinancingSettingsSerializer(settings)
         return Response(serializer.data)
 
     def put(self, request):
-        restaurant = getattr(request.user, "restaurant", None)
-        if not restaurant:
+        business = getattr(request.user, "business", None)
+        if not business:
             return Response(
-                {"error": "No restaurant associated with this user"},
+                {"error": "No business associated with this user"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         settings, _ = FinancingSettings.objects.get_or_create(
-            restaurant=restaurant
+            business=business
         )
 
         serializer = FinancingSettingsSerializer(settings, data=request.data, partial=True)

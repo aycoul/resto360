@@ -65,7 +65,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="deliveryzones",
-                        to="authentication.restaurant",
+                        to="authentication.business",
                     ),
                 ),
             ],
@@ -135,7 +135,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="drivers",
-                        to="authentication.restaurant",
+                        to="authentication.business",
                     ),
                 ),
                 (

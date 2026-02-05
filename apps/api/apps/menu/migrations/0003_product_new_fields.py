@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
     operations = [
         # Universal product fields
         migrations.AddField(
-            model_name="menuitem",
+            model_name="product",
             name="sku",
             field=models.CharField(
                 blank=True,
@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AddField(
-            model_name="menuitem",
+            model_name="product",
             name="barcode",
             field=models.CharField(
                 blank=True,
@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
         ),
         # Tax handling fields
         migrations.AddField(
-            model_name="menuitem",
+            model_name="product",
             name="tax_rate",
             field=models.DecimalField(
                 decimal_places=2,
@@ -43,7 +43,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AddField(
-            model_name="menuitem",
+            model_name="product",
             name="is_tax_inclusive",
             field=models.BooleanField(
                 default=True,
@@ -51,7 +51,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AddField(
-            model_name="menuitem",
+            model_name="product",
             name="tax_exempt",
             field=models.BooleanField(
                 default=False,
@@ -60,7 +60,7 @@ class Migration(migrations.Migration):
         ),
         # QR Reorder feature fields
         migrations.AddField(
-            model_name="menuitem",
+            model_name="product",
             name="reorder_qr_enabled",
             field=models.BooleanField(
                 default=False,
@@ -68,7 +68,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AddField(
-            model_name="menuitem",
+            model_name="product",
             name="reorder_quantity",
             field=models.PositiveIntegerField(
                 default=1,
@@ -77,7 +77,7 @@ class Migration(migrations.Migration):
         ),
         # Food-specific fields
         migrations.AddField(
-            model_name="menuitem",
+            model_name="product",
             name="allergens",
             field=models.JSONField(
                 blank=True,
@@ -86,7 +86,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AddField(
-            model_name="menuitem",
+            model_name="product",
             name="dietary_tags",
             field=models.JSONField(
                 blank=True,
@@ -95,7 +95,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AddField(
-            model_name="menuitem",
+            model_name="product",
             name="spice_level",
             field=models.PositiveSmallIntegerField(
                 choices=[
@@ -110,7 +110,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AddField(
-            model_name="menuitem",
+            model_name="product",
             name="prep_time_minutes",
             field=models.PositiveSmallIntegerField(
                 blank=True,
@@ -120,7 +120,7 @@ class Migration(migrations.Migration):
         ),
         # Nutrition fields
         migrations.AddField(
-            model_name="menuitem",
+            model_name="product",
             name="calories",
             field=models.PositiveIntegerField(
                 blank=True,
@@ -129,7 +129,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AddField(
-            model_name="menuitem",
+            model_name="product",
             name="protein_grams",
             field=models.DecimalField(
                 blank=True,
@@ -140,7 +140,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AddField(
-            model_name="menuitem",
+            model_name="product",
             name="carbs_grams",
             field=models.DecimalField(
                 blank=True,
@@ -151,7 +151,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AddField(
-            model_name="menuitem",
+            model_name="product",
             name="fat_grams",
             field=models.DecimalField(
                 blank=True,
@@ -162,7 +162,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AddField(
-            model_name="menuitem",
+            model_name="product",
             name="fiber_grams",
             field=models.DecimalField(
                 blank=True,
@@ -173,7 +173,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AddField(
-            model_name="menuitem",
+            model_name="product",
             name="sodium_mg",
             field=models.PositiveIntegerField(
                 blank=True,
@@ -183,7 +183,7 @@ class Migration(migrations.Migration):
         ),
         # Ingredients list
         migrations.AddField(
-            model_name="menuitem",
+            model_name="product",
             name="ingredients",
             field=models.TextField(
                 blank=True,
@@ -192,7 +192,7 @@ class Migration(migrations.Migration):
         ),
         # Update image upload path
         migrations.AlterField(
-            model_name="menuitem",
+            model_name="product",
             name="image",
             field=models.ImageField(
                 blank=True,
@@ -202,7 +202,7 @@ class Migration(migrations.Migration):
         ),
         # Update model options for Product name
         migrations.AlterModelOptions(
-            name="menuitem",
+            name="product",
             options={
                 "ordering": ["name"],
                 "verbose_name": "Product",

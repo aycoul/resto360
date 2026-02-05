@@ -48,12 +48,12 @@ class SocialDashboardView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        restaurant = request.user.restaurant
+        business = request.user.business
         now = timezone.now()
         month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
 
-        posts = SocialPost.objects.filter(restaurant=restaurant)
-        accounts = SocialAccount.objects.filter(restaurant=restaurant, is_active=True)
+        posts = SocialPost.objects.filter(business=business)
+        accounts = SocialAccount.objects.filter(business=business, is_active=True)
 
         # Stats
         total_posts = posts.count()
@@ -65,7 +65,7 @@ class SocialDashboardView(APIView):
 
         # Total engagement from publishes
         total_engagement = PostPublish.objects.filter(
-            post__restaurant=restaurant,
+            post__business=business,
             status=PostStatus.PUBLISHED,
         ).aggregate(
             total=Sum("likes") + Sum("comments") + Sum("shares")
@@ -77,7 +77,7 @@ class SocialDashboardView(APIView):
         # Top performing (by engagement)
         top_post_ids = (
             PostPublish.objects.filter(
-                post__restaurant=restaurant,
+                post__business=business,
                 status=PostStatus.PUBLISHED,
             )
             .values("post")
@@ -108,10 +108,10 @@ class SocialAccountViewSet(viewsets.ModelViewSet):
     serializer_class = SocialAccountSerializer
 
     def get_queryset(self):
-        return SocialAccount.objects.filter(restaurant=self.request.user.restaurant)
+        return SocialAccount.objects.filter(business=self.request.user.business)
 
     def perform_create(self, serializer):
-        serializer.save(restaurant=self.request.user.restaurant)
+        serializer.save(business=self.request.user.business)
 
     @action(detail=True, methods=["post"])
     def disconnect(self, request, pk=None):
@@ -137,7 +137,7 @@ class PostTemplateViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return PostTemplate.objects.filter(restaurant=self.request.user.restaurant)
+        return PostTemplate.objects.filter(business=self.request.user.business)
 
     def get_serializer_class(self):
         if self.action in ["create", "update", "partial_update"]:
@@ -145,7 +145,7 @@ class PostTemplateViewSet(viewsets.ModelViewSet):
         return PostTemplateSerializer
 
     def perform_create(self, serializer):
-        serializer.save(restaurant=self.request.user.restaurant)
+        serializer.save(business=self.request.user.business)
 
 
 class SocialPostViewSet(viewsets.ModelViewSet):
@@ -154,7 +154,7 @@ class SocialPostViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        qs = SocialPost.objects.filter(restaurant=self.request.user.restaurant)
+        qs = SocialPost.objects.filter(business=self.request.user.business)
         qs = qs.select_related("template", "menu_item")
         qs = qs.prefetch_related("media", "publishes__account")
 
@@ -173,7 +173,7 @@ class SocialPostViewSet(viewsets.ModelViewSet):
         return SocialPostSerializer
 
     def perform_create(self, serializer):
-        post = serializer.save(restaurant=self.request.user.restaurant)
+        post = serializer.save(business=self.request.user.business)
 
         # Create publish records for specified accounts
         account_ids = serializer.validated_data.get("account_ids", [])
@@ -181,11 +181,11 @@ class SocialPostViewSet(viewsets.ModelViewSet):
             try:
                 account = SocialAccount.objects.get(
                     id=account_id,
-                    restaurant=self.request.user.restaurant,
+                    business=self.request.user.business,
                     is_active=True,
                 )
                 PostPublish.objects.create(
-                    restaurant=self.request.user.restaurant,
+                    business=self.request.user.business,
                     post=post,
                     account=account,
                 )
@@ -212,14 +212,14 @@ class SocialPostViewSet(viewsets.ModelViewSet):
             try:
                 account = SocialAccount.objects.get(
                     id=account_id,
-                    restaurant=request.user.restaurant,
+                    business=request.user.business,
                     is_active=True,
                 )
                 PostPublish.objects.update_or_create(
                     post=post,
                     account=account,
                     defaults={
-                        "restaurant": request.user.restaurant,
+                        "business": request.user.business,
                         "status": PostStatus.SCHEDULED,
                     },
                 )
@@ -267,7 +267,7 @@ class SocialPostViewSet(viewsets.ModelViewSet):
             )
 
         media = PostMedia.objects.create(
-            restaurant=request.user.restaurant,
+            business=request.user.business,
             post=post,
             file=request.FILES["file"],
             media_type=request.data.get("media_type", "image"),
@@ -291,7 +291,7 @@ class ContentCalendarViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        qs = ContentCalendar.objects.filter(restaurant=self.request.user.restaurant)
+        qs = ContentCalendar.objects.filter(business=self.request.user.business)
         qs = qs.select_related("post")
 
         # Filter by date range
@@ -311,7 +311,7 @@ class ContentCalendarViewSet(viewsets.ModelViewSet):
         return ContentCalendarSerializer
 
     def perform_create(self, serializer):
-        serializer.save(restaurant=self.request.user.restaurant)
+        serializer.save(business=self.request.user.business)
 
 
 class AICaptionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -321,7 +321,7 @@ class AICaptionViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = AICaptionSerializer
 
     def get_queryset(self):
-        return AICaption.objects.filter(restaurant=self.request.user.restaurant)
+        return AICaption.objects.filter(business=self.request.user.business)
 
     @action(detail=False, methods=["post"])
     def generate(self, request):
@@ -339,7 +339,7 @@ class AICaptionViewSet(viewsets.ReadOnlyModelViewSet):
         try:
             menu_item = MenuItem.objects.get(
                 id=menu_item_id,
-                category__restaurant=request.user.restaurant,
+                category__business=request.user.business,
             )
         except MenuItem.DoesNotExist:
             return Response(
@@ -353,7 +353,7 @@ class AICaptionViewSet(viewsets.ReadOnlyModelViewSet):
         hashtags = self._generate_hashtags(menu_item, language) if include_hashtags else ""
 
         ai_caption = AICaption.objects.create(
-            restaurant=request.user.restaurant,
+            business=request.user.business,
             menu_item=menu_item,
             caption=caption,
             hashtags=hashtags,
@@ -403,13 +403,13 @@ class SocialAnalyticsView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        restaurant = request.user.restaurant
+        business = request.user.business
         days = int(request.query_params.get("days", 30))
         end_date = timezone.now().date()
         start_date = end_date - timedelta(days=days)
 
         analytics = SocialAnalytics.objects.filter(
-            account__restaurant=restaurant,
+            account__business=business,
             date__gte=start_date,
             date__lte=end_date,
         ).select_related("account")
@@ -434,10 +434,10 @@ class ConnectAccountView(APIView):
         # In production, this would redirect to OAuth flow
         # For now, create a placeholder account
         account = SocialAccount.objects.create(
-            restaurant=request.user.restaurant,
+            business=request.user.business,
             platform=platform,
             account_name=f"Demo {platform.title()} Account",
-            account_id=f"demo_{platform}_{request.user.restaurant.id}",
+            account_id=f"demo_{platform}_{request.user.business.id}",
         )
 
         return Response(SocialAccountSerializer(account).data)

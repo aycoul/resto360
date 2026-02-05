@@ -37,15 +37,15 @@ class WebsiteView(APIView):
 
     def get(self, request):
         """Get website configuration."""
-        restaurant = request.user.restaurant
-        website, _ = Website.objects.get_or_create(restaurant=restaurant)
+        business = request.user.business
+        website, _ = Website.objects.get_or_create(business=business)
         serializer = WebsiteSerializer(website, context={"request": request})
         return Response(serializer.data)
 
     def patch(self, request):
         """Update website configuration."""
-        restaurant = request.user.restaurant
-        website, _ = Website.objects.get_or_create(restaurant=restaurant)
+        business = request.user.business
+        website, _ = Website.objects.get_or_create(business=business)
         serializer = WebsiteUpdateSerializer(website, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -59,13 +59,13 @@ class WebsitePublishView(APIView):
 
     def post(self, request):
         """Publish website."""
-        website, _ = Website.objects.get_or_create(restaurant=request.user.restaurant)
+        website, _ = Website.objects.get_or_create(business=request.user.business)
         website.publish()
         return Response(WebsiteSerializer(website, context={"request": request}).data)
 
     def delete(self, request):
         """Unpublish website."""
-        website, _ = Website.objects.get_or_create(restaurant=request.user.restaurant)
+        website, _ = Website.objects.get_or_create(business=request.user.business)
         website.unpublish()
         return Response(WebsiteSerializer(website, context={"request": request}).data)
 
@@ -77,12 +77,12 @@ class WebsiteGalleryViewSet(viewsets.ModelViewSet):
     serializer_class = WebsiteGalleryImageSerializer
 
     def get_queryset(self):
-        website, _ = Website.objects.get_or_create(restaurant=self.request.user.restaurant)
+        website, _ = Website.objects.get_or_create(business=self.request.user.business)
         return WebsiteGalleryImage.objects.filter(website=website)
 
     def perform_create(self, serializer):
-        website, _ = Website.objects.get_or_create(restaurant=self.request.user.restaurant)
-        serializer.save(restaurant=self.request.user.restaurant, website=website)
+        website, _ = Website.objects.get_or_create(business=self.request.user.business)
+        serializer.save(business=self.request.user.business, website=website)
 
 
 class WebsiteBusinessHoursViewSet(viewsets.ModelViewSet):
@@ -92,12 +92,12 @@ class WebsiteBusinessHoursViewSet(viewsets.ModelViewSet):
     serializer_class = WebsiteBusinessHoursSerializer
 
     def get_queryset(self):
-        website, _ = Website.objects.get_or_create(restaurant=self.request.user.restaurant)
+        website, _ = Website.objects.get_or_create(business=self.request.user.business)
         return WebsiteBusinessHours.objects.filter(website=website)
 
     def perform_create(self, serializer):
-        website, _ = Website.objects.get_or_create(restaurant=self.request.user.restaurant)
-        serializer.save(restaurant=self.request.user.restaurant, website=website)
+        website, _ = Website.objects.get_or_create(business=self.request.user.business)
+        serializer.save(business=self.request.user.business, website=website)
 
 
 class WebsiteContactFormViewSet(viewsets.ReadOnlyModelViewSet):
@@ -107,7 +107,7 @@ class WebsiteContactFormViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = WebsiteContactFormSerializer
 
     def get_queryset(self):
-        website, _ = Website.objects.get_or_create(restaurant=self.request.user.restaurant)
+        website, _ = Website.objects.get_or_create(business=self.request.user.business)
         return WebsiteContactForm.objects.filter(website=website)
 
     @action(detail=True, methods=["post"])
@@ -183,7 +183,7 @@ class PublicContactFormView(APIView):
 
         serializer = WebsiteContactFormCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(restaurant=website.restaurant, website=website)
+        serializer.save(business=website.business, website=website)
 
         return Response(
             {"detail": "Message sent successfully"},
@@ -211,7 +211,7 @@ class CheckSubdomainView(APIView):
 
         # Check if taken
         website = Website.objects.filter(subdomain=subdomain).first()
-        if website and website.restaurant != request.user.restaurant:
+        if website and website.business != request.user.business:
             return Response({"available": False, "reason": "Subdomain is taken"})
 
         return Response({"available": True})
@@ -240,7 +240,7 @@ class UpdateSubdomainView(APIView):
 
         # Check if taken
         existing = Website.objects.filter(subdomain=subdomain).exclude(
-            restaurant=request.user.restaurant
+            business=request.user.business
         ).first()
         if existing:
             return Response(
@@ -248,7 +248,7 @@ class UpdateSubdomainView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        website, _ = Website.objects.get_or_create(restaurant=request.user.restaurant)
+        website, _ = Website.objects.get_or_create(business=request.user.business)
         website.subdomain = subdomain
         website.save(update_fields=["subdomain", "updated_at"])
 

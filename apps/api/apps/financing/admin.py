@@ -94,7 +94,7 @@ class LoanProductAdmin(admin.ModelAdmin):
 @admin.register(CreditScore)
 class CreditScoreAdmin(admin.ModelAdmin):
     list_display = [
-        "restaurant",
+        "business",
         "score_display",
         "score_band",
         "avg_monthly_revenue",
@@ -102,7 +102,7 @@ class CreditScoreAdmin(admin.ModelAdmin):
         "last_calculated",
     ]
     list_filter = ["score_band"]
-    search_fields = ["restaurant__name"]
+    search_fields = ["business__name"]
     readonly_fields = [
         "score",
         "score_band",
@@ -150,7 +150,7 @@ class LoanRepaymentInline(admin.TabularInline):
 class LoanApplicationAdmin(admin.ModelAdmin):
     list_display = [
         "application_number",
-        "restaurant",
+        "business",
         "partner",
         "amount_requested",
         "term_months",
@@ -159,8 +159,8 @@ class LoanApplicationAdmin(admin.ModelAdmin):
         "created_at",
     ]
     list_filter = ["status", "partner", "purpose"]
-    search_fields = ["application_number", "restaurant__name", "partner__name"]
-    autocomplete_fields = ["restaurant", "partner", "loan_product"]
+    search_fields = ["application_number", "business__name", "partner__name"]
+    autocomplete_fields = ["business", "partner", "loan_product"]
     readonly_fields = [
         "application_number",
         "credit_score_at_application",
@@ -177,7 +177,7 @@ class LoanApplicationAdmin(admin.ModelAdmin):
             {
                 "fields": [
                     "application_number",
-                    "restaurant",
+                    "business",
                     "applicant",
                     "partner",
                     "loan_product",
@@ -239,7 +239,7 @@ class LoanApplicationAdmin(admin.ModelAdmin):
 class LoanAdmin(admin.ModelAdmin):
     list_display = [
         "loan_number",
-        "restaurant",
+        "business",
         "partner",
         "principal",
         "outstanding_balance",
@@ -248,8 +248,8 @@ class LoanAdmin(admin.ModelAdmin):
         "disbursement_date",
     ]
     list_filter = ["status", "partner", "auto_deduct_enabled"]
-    search_fields = ["loan_number", "restaurant__name", "partner__name"]
-    autocomplete_fields = ["restaurant", "partner", "application"]
+    search_fields = ["loan_number", "business__name", "partner__name"]
+    autocomplete_fields = ["business", "partner", "application"]
     readonly_fields = [
         "loan_number",
         "total_interest",
@@ -260,7 +260,7 @@ class LoanAdmin(admin.ModelAdmin):
     ]
     inlines = [LoanRepaymentInline]
     fieldsets = [
-        (None, {"fields": ["loan_number", "application", "restaurant", "partner"]}),
+        (None, {"fields": ["loan_number", "application", "business", "partner"]}),
         (
             "Loan Terms",
             {
@@ -320,7 +320,7 @@ class LoanRepaymentAdmin(admin.ModelAdmin):
         "status",
     ]
     list_filter = ["status", "payment_type", "is_late"]
-    search_fields = ["loan__loan_number", "loan__restaurant__name", "payment_reference"]
+    search_fields = ["loan__loan_number", "loan__business__name", "payment_reference"]
     autocomplete_fields = ["loan"]
     readonly_fields = ["payment_number", "balance_after"]
 
@@ -328,11 +328,11 @@ class LoanRepaymentAdmin(admin.ModelAdmin):
 @admin.register(FinancingSettings)
 class FinancingSettingsAdmin(admin.ModelAdmin):
     list_display = [
-        "restaurant",
+        "business",
         "financing_enabled",
         "auto_deduct_consent",
         "max_auto_deduct_percentage",
     ]
     list_filter = ["financing_enabled", "auto_deduct_consent"]
-    search_fields = ["restaurant__name"]
-    autocomplete_fields = ["restaurant", "preferred_partner"]
+    search_fields = ["business__name"]
+    autocomplete_fields = ["business", "preferred_partner"]

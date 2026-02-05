@@ -4,10 +4,10 @@ from rest_framework.test import APIClient
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.authentication.tests.factories import (
+    BusinessFactory,
     CashierFactory,
     ManagerFactory,
     OwnerFactory,
-    RestaurantFactory,
 )
 
 from .factories import (
@@ -15,17 +15,19 @@ from .factories import (
     MenuItemFactory,
     ModifierFactory,
     ModifierOptionFactory,
+    ProductFactory,
 )
 
 # Register authentication factories
-register(RestaurantFactory)
+register(BusinessFactory)
 register(OwnerFactory, "owner")
 register(ManagerFactory, "manager")
 register(CashierFactory, "cashier")
 
 # Register menu factories
 register(CategoryFactory)
-register(MenuItemFactory)
+register(ProductFactory)  # Base factory for fixture resolution
+register(MenuItemFactory, "menu_item")  # Alias with explicit name
 register(ModifierFactory)
 register(ModifierOptionFactory)
 
@@ -63,36 +65,36 @@ def cashier_client(api_client, cashier):
 @pytest.fixture
 def sample_menu(owner):
     """Create a sample menu structure for testing."""
-    restaurant = owner.restaurant
+    business = owner.business
 
     # Create categories
-    entrees = CategoryFactory(restaurant=restaurant, name="Entrees", display_order=1)
-    drinks = CategoryFactory(restaurant=restaurant, name="Drinks", display_order=2)
+    entrees = CategoryFactory(business=business, name="Entrees", display_order=1)
+    drinks = CategoryFactory(business=business, name="Drinks", display_order=2)
     desserts = CategoryFactory(
-        restaurant=restaurant, name="Desserts", display_order=3, is_visible=False
+        business=business, name="Desserts", display_order=3, is_visible=False
     )
 
     # Create menu items
     burger = MenuItemFactory(
-        restaurant=restaurant,
+        business=business,
         category=entrees,
         name="Burger",
         price=5000,
     )
     fries = MenuItemFactory(
-        restaurant=restaurant,
+        business=business,
         category=entrees,
         name="Fries",
         price=2000,
     )
     cola = MenuItemFactory(
-        restaurant=restaurant,
+        business=business,
         category=drinks,
         name="Cola",
         price=1000,
     )
     unavailable_item = MenuItemFactory(
-        restaurant=restaurant,
+        business=business,
         category=entrees,
         name="Unavailable Item",
         price=3000,
@@ -101,26 +103,26 @@ def sample_menu(owner):
 
     # Create modifier for burger (Size)
     size_modifier = ModifierFactory(
-        restaurant=restaurant,
+        business=business,
         menu_item=burger,
         name="Size",
         required=True,
         max_selections=1,
     )
     ModifierOptionFactory(
-        restaurant=restaurant,
+        business=business,
         modifier=size_modifier,
         name="Small",
         price_adjustment=-500,
     )
     ModifierOptionFactory(
-        restaurant=restaurant,
+        business=business,
         modifier=size_modifier,
         name="Medium",
         price_adjustment=0,
     )
     ModifierOptionFactory(
-        restaurant=restaurant,
+        business=business,
         modifier=size_modifier,
         name="Large",
         price_adjustment=500,
@@ -128,27 +130,27 @@ def sample_menu(owner):
 
     # Create modifier for burger (Extras)
     extras_modifier = ModifierFactory(
-        restaurant=restaurant,
+        business=business,
         menu_item=burger,
         name="Extras",
         required=False,
         max_selections=0,  # Unlimited
     )
     ModifierOptionFactory(
-        restaurant=restaurant,
+        business=business,
         modifier=extras_modifier,
         name="Cheese",
         price_adjustment=300,
     )
     ModifierOptionFactory(
-        restaurant=restaurant,
+        business=business,
         modifier=extras_modifier,
         name="Bacon",
         price_adjustment=500,
     )
 
     return {
-        "restaurant": restaurant,
+        "business": business,
         "categories": {"entrees": entrees, "drinks": drinks, "desserts": desserts},
         "items": {
             "burger": burger,

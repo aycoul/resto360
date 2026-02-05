@@ -12,17 +12,17 @@ from .factories import DeliveryFactory, DriverFactory
 
 
 @pytest.fixture
-def driver_with_location(restaurant, user):
+def driver_with_location(business, user):
     """Create a driver with location for testing."""
-    driver = DriverFactory(restaurant=restaurant, user=user, is_available=True)
+    driver = DriverFactory(business=business, user=user, is_available=True)
     driver.update_location(lat=5.33, lng=-4.01)
     return driver
 
 
 @pytest.fixture
-def delivery_with_driver(restaurant, driver_with_location):
+def delivery_with_driver(business, driver_with_location):
     """Create a delivery with assigned driver."""
-    delivery = DeliveryFactory(restaurant=restaurant)
+    delivery = DeliveryFactory(business=business)
     delivery.assign(driver_with_location)
     delivery.save()
     return delivery
@@ -51,10 +51,10 @@ class TestDriverLocationConsumer:
 
     @pytest.mark.asyncio
     @pytest.mark.django_db(transaction=True)
-    async def test_connect_wrong_driver(self, user, restaurant):
+    async def test_connect_wrong_driver(self, user, business):
         """Test that user can only connect to their own driver profile."""
         # Create a different driver
-        other_driver = await database_sync_to_async(DriverFactory)(restaurant=restaurant)
+        other_driver = await database_sync_to_async(DriverFactory)(business=business)
 
         communicator = WebsocketCommunicator(
             DriverLocationConsumer.as_asgi(),

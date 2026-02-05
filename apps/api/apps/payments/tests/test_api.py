@@ -20,7 +20,7 @@ class TestPaymentInitiate:
         """Cash payments complete immediately with SUCCESS status."""
         from apps.orders.tests.factories import OrderFactory
 
-        order = OrderFactory(restaurant=owner.restaurant, cashier=owner, total=15000)
+        order = OrderFactory(business=owner.business, cashier=owner, total=15000)
 
         url = reverse("payment-initiate")
         data = {
@@ -52,13 +52,13 @@ class TestPaymentInitiate:
 
         # Create Wave payment method
         wave_method = PaymentMethodFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             provider_code="wave",
             name="Wave",
             is_active=True,
         )
 
-        order = OrderFactory(restaurant=owner.restaurant, cashier=owner, total=25000)
+        order = OrderFactory(business=owner.business, cashier=owner, total=25000)
 
         # Mock provider
         mock_provider = MagicMock()
@@ -93,7 +93,7 @@ class TestPaymentInitiate:
         """Same idempotency key returns existing payment."""
         from apps.orders.tests.factories import OrderFactory
 
-        order = OrderFactory(restaurant=owner.restaurant, cashier=owner, total=10000)
+        order = OrderFactory(business=owner.business, cashier=owner, total=10000)
         idempotency_key = f"idem_{uuid.uuid4().hex}"
 
         url = reverse("payment-initiate")
@@ -142,13 +142,13 @@ class TestPaymentInitiate:
 
         # Create inactive payment method
         PaymentMethodFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             provider_code="wave",
             name="Wave (disabled)",
             is_active=False,
         )
 
-        order = OrderFactory(restaurant=owner.restaurant, cashier=owner, total=5000)
+        order = OrderFactory(business=owner.business, cashier=owner, total=5000)
 
         url = reverse("payment-initiate")
         data = {
@@ -187,19 +187,19 @@ class TestPaymentStatus:
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
     def test_get_payment_status_tenant_isolation(self, owner_client, owner):
-        """Cannot access payments from other restaurants."""
-        from apps.authentication.tests.factories import RestaurantFactory
+        """Cannot access payments from other businesses."""
+        from apps.authentication.tests.factories import BusinessFactory
         from apps.orders.tests.factories import OrderFactory
         from apps.payments.tests.factories import PaymentFactory, PaymentMethodFactory
 
-        # Create payment for another restaurant
-        other_restaurant = RestaurantFactory()
+        # Create payment for another business
+        other_business = BusinessFactory()
         other_method = PaymentMethodFactory(
-            restaurant=other_restaurant, provider_code="cash"
+            business=other_business, provider_code="cash"
         )
-        other_order = OrderFactory(restaurant=other_restaurant)
+        other_order = OrderFactory(business=other_business)
         other_payment = PaymentFactory(
-            restaurant=other_restaurant,
+            business=other_business,
             order=other_order,
             payment_method=other_method,
         )
@@ -217,7 +217,7 @@ class TestPaymentList:
     """Tests for GET /api/payments/"""
 
     def test_list_payments(self, owner_client, owner, sample_payment):
-        """Returns list of payments for the restaurant."""
+        """Returns list of payments for the business."""
         url = reverse("payment-list")
 
         response = owner_client.get(url)
@@ -235,18 +235,18 @@ class TestPaymentList:
         from apps.orders.tests.factories import OrderFactory
         from apps.payments.tests.factories import PaymentFactory, PaymentMethodFactory
 
-        method = PaymentMethodFactory(restaurant=owner.restaurant, provider_code="cash")
-        order = OrderFactory(restaurant=owner.restaurant, cashier=owner)
+        method = PaymentMethodFactory(business=owner.business, provider_code="cash")
+        order = OrderFactory(business=owner.business, cashier=owner)
 
         # Create payments with different statuses
         pending_payment = PaymentFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             order=order,
             payment_method=method,
             status=PaymentStatus.PENDING,
         )
         success_payment = PaymentFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             order=order,
             payment_method=method,
             status=PaymentStatus.PENDING,

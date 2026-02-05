@@ -6,10 +6,10 @@ from rest_framework.test import APIClient
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.authentication.tests.factories import (
+    BusinessFactory,
     CashierFactory,
     ManagerFactory,
     OwnerFactory,
-    RestaurantFactory,
 )
 from apps.orders.tests.factories import OrderFactory
 
@@ -20,7 +20,7 @@ from .factories import (
 )
 
 # Register authentication factories
-register(RestaurantFactory)
+register(BusinessFactory)
 register(OwnerFactory, "owner")
 register(ManagerFactory, "manager")
 register(CashierFactory, "cashier")
@@ -66,9 +66,9 @@ def cashier_client(api_client, cashier):
 
 @pytest.fixture
 def sample_payment_method(owner):
-    """Create a sample payment method for the owner's restaurant."""
+    """Create a sample payment method for the owner's business."""
     return PaymentMethodFactory(
-        restaurant=owner.restaurant,
+        business=owner.business,
         provider_code="cash",
         name="Cash",
         is_active=True,
@@ -77,12 +77,12 @@ def sample_payment_method(owner):
 
 @pytest.fixture
 def sample_payment(owner, sample_payment_method):
-    """Create a sample payment for the owner's restaurant."""
+    """Create a sample payment for the owner's business."""
     from apps.orders.tests.factories import OrderFactory
 
-    order = OrderFactory(restaurant=owner.restaurant, cashier=owner)
+    order = OrderFactory(business=owner.business, cashier=owner)
     return PaymentFactory(
-        restaurant=owner.restaurant,
+        business=owner.business,
         order=order,
         payment_method=sample_payment_method,
         amount=15000,
@@ -93,7 +93,7 @@ def sample_payment(owner, sample_payment_method):
 def sample_cash_drawer_session(cashier):
     """Create a sample open cash drawer session."""
     return CashDrawerSessionFactory(
-        restaurant=cashier.restaurant,
+        business=cashier.business,
         cashier=cashier,
         opening_balance=50000,
     )

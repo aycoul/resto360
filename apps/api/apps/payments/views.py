@@ -114,7 +114,7 @@ class PaymentViewSet(TenantContextMixin, viewsets.ModelViewSet):
         # Get the order
         try:
             order = Order.objects.filter(
-                restaurant=request.user.restaurant,
+                business=request.user.business,
                 id=order_id,
             ).first()
 
@@ -132,7 +132,7 @@ class PaymentViewSet(TenantContextMixin, viewsets.ModelViewSet):
 
         # Get the payment method
         payment_method = PaymentMethod.objects.filter(
-            restaurant=request.user.restaurant,
+            business=request.user.business,
             provider_code=provider_code,
             is_active=True,
         ).first()
@@ -177,7 +177,7 @@ class PaymentViewSet(TenantContextMixin, viewsets.ModelViewSet):
         """
         result = get_payment_status(
             payment_id=pk,
-            restaurant=request.user.restaurant,
+            business=request.user.business,
         )
 
         if not result:
@@ -386,7 +386,7 @@ class CashDrawerSessionViewSet(TenantContextMixin, viewsets.ModelViewSet):
 
         # Create new session
         session = CashDrawerSession.objects.create(
-            restaurant=request.user.restaurant,
+            business=request.user.business,
             cashier=request.user,
             opening_balance=serializer.validated_data["opening_balance"],
         )
@@ -500,7 +500,7 @@ class ReconciliationView(TenantContextMixin, viewsets.GenericViewSet):
             # Get range report
             try:
                 results = get_reconciliation_range(
-                    restaurant=request.user.restaurant,
+                    business=request.user.business,
                     start_date=start_date,
                     end_date=end_date,
                 )
@@ -526,7 +526,7 @@ class ReconciliationView(TenantContextMixin, viewsets.GenericViewSet):
                 )
 
         result = get_daily_reconciliation(
-            restaurant=request.user.restaurant,
+            business=request.user.business,
             date=date,
         )
 

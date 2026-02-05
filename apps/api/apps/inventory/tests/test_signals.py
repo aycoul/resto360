@@ -164,24 +164,24 @@ class TestOrderCompletionSignal:
         from .factories import MenuItemIngredientFactory, StockItemFactory
 
         owner = order_with_ingredients.owner
-        restaurant = owner.restaurant
+        business = owner.business
 
         stock_item = StockItemFactory(
-            restaurant=restaurant,
+            business=business,
             current_quantity=Decimal("50.0000"),
         )
-        category = CategoryFactory(restaurant=restaurant)
-        menu_item = MenuItemFactory(restaurant=restaurant, category=category)
+        category = CategoryFactory(business=business)
+        menu_item = MenuItemFactory(business=business, category=category)
         MenuItemIngredientFactory(
-            restaurant=restaurant,
+            business=business,
             menu_item=menu_item,
             stock_item=stock_item,
             quantity_required=Decimal("0.5"),
         )
 
-        order = OrderFactory(restaurant=restaurant, cashier=owner)
+        order = OrderFactory(business=business, cashier=owner)
         OrderItemFactory(
-            restaurant=restaurant, order=order, menu_item=menu_item, quantity=1
+            business=business, order=order, menu_item=menu_item, quantity=1
         )
 
         # Patch the service to raise an unexpected exception

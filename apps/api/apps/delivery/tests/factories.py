@@ -3,7 +3,7 @@
 import factory
 from django.contrib.gis.geos import Point, Polygon
 
-from apps.authentication.tests.factories import RestaurantFactory, UserFactory
+from apps.authentication.tests.factories import BusinessFactory, UserFactory
 from apps.delivery.models import Delivery, DeliveryZone, Driver
 
 
@@ -13,7 +13,7 @@ class DeliveryZoneFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = DeliveryZone
 
-    restaurant = factory.SubFactory(RestaurantFactory)
+    business = factory.SubFactory(BusinessFactory)
     name = factory.Sequence(lambda n: f"Zone {n}")
     polygon = factory.LazyFunction(
         lambda: Polygon(
@@ -39,9 +39,9 @@ class DriverFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Driver
 
-    restaurant = factory.SubFactory(RestaurantFactory)
+    business = factory.SubFactory(BusinessFactory)
     user = factory.SubFactory(
-        UserFactory, role="driver", restaurant=factory.SelfAttribute("..restaurant")
+        UserFactory, role="driver", business=factory.SelfAttribute("..business")
     )
     phone = factory.LazyAttribute(lambda obj: obj.user.phone)
     vehicle_type = "motorcycle"
@@ -56,16 +56,16 @@ class DeliveryFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Delivery
 
-    restaurant = factory.SubFactory(RestaurantFactory)
+    business = factory.SubFactory(BusinessFactory)
     order = factory.LazyAttribute(
-        lambda obj: _create_order(obj.restaurant)
+        lambda obj: _create_order(obj.business)
     )
     zone = factory.SubFactory(
-        DeliveryZoneFactory, restaurant=factory.SelfAttribute("..restaurant")
+        DeliveryZoneFactory, business=factory.SelfAttribute("..business")
     )
     status = "pending_assignment"
     pickup_address = factory.LazyAttribute(
-        lambda obj: obj.restaurant.address or "123 Restaurant St"
+        lambda obj: obj.business.address or "123 Restaurant St"
     )
     pickup_location = factory.LazyFunction(lambda: Point(-4.01, 5.33, srid=4326))
     delivery_address = "456 Customer Ave, Abidjan"
@@ -75,11 +75,11 @@ class DeliveryFactory(factory.django.DjangoModelFactory):
     customer_phone = factory.Faker("phone_number")
 
 
-def _create_order(restaurant):
+def _create_order(business):
     """Helper to create an order for a delivery."""
     from apps.orders.tests.factories import OrderFactory
 
     return OrderFactory(
-        restaurant=restaurant,
+        business=business,
         order_type="delivery",
     )

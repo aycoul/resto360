@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
                 ('variance', models.IntegerField(blank=True, help_text='Difference between actual and expected (can be negative)', null=True)),
                 ('variance_notes', models.TextField(blank=True, help_text='Notes explaining any variance')),
                 ('cashier', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='cash_drawer_sessions', to=settings.AUTH_USER_MODEL)),
-                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.restaurant')),
+                ('business', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.business')),
             ],
             options={
                 'ordering': ['-opened_at'],
@@ -54,11 +54,11 @@ class Migration(migrations.Migration):
                 ('is_active', models.BooleanField(default=True)),
                 ('config', models.JSONField(blank=True, default=dict, help_text='Provider-specific configuration (NOT secrets)')),
                 ('display_order', models.PositiveIntegerField(default=0, help_text='Order in which to display payment methods')),
-                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.restaurant')),
+                ('business', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.business')),
             ],
             options={
                 'ordering': ['display_order', 'name'],
-                'unique_together': {('restaurant', 'provider_code')},
+                'unique_together': {('business', 'provider_code')},
             },
             managers=[
                 ('all_objects', django.db.models.manager.Manager()),
@@ -82,12 +82,12 @@ class Migration(migrations.Migration):
                 ('initiated_at', models.DateTimeField(auto_now_add=True)),
                 ('completed_at', models.DateTimeField(blank=True, null=True)),
                 ('order', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='payments', to='orders.order')),
-                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.restaurant')),
+                ('business', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to='authentication.business')),
                 ('payment_method', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='payments', to='payments.paymentmethod')),
             ],
             options={
                 'ordering': ['-initiated_at'],
-                'indexes': [models.Index(fields=['restaurant', 'status'], name='payments_pa_restaur_c8c99d_idx'), models.Index(fields=['provider_reference'], name='payments_pa_provide_48cfd7_idx')],
+                'indexes': [models.Index(fields=['business', 'status'], name='payments_pa_busines_c8c99d_idx'), models.Index(fields=['provider_reference'], name='payments_pa_provide_48cfd7_idx')],
             },
             managers=[
                 ('all_objects', django.db.models.manager.Manager()),

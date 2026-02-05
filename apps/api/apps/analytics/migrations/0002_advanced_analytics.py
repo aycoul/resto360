@@ -47,7 +47,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="%(class)ss",
-                        to="authentication.restaurant",
+                        to="authentication.business",
                     ),
                 ),
             ],
@@ -81,7 +81,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="performance_stats",
-                        to="menu.menuitem",
+                        to="menu.product",
                     ),
                 ),
                 (
@@ -89,7 +89,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="%(class)ss",
-                        to="authentication.restaurant",
+                        to="authentication.business",
                     ),
                 ),
             ],
@@ -130,7 +130,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="%(class)ss",
-                        to="authentication.restaurant",
+                        to="authentication.business",
                     ),
                 ),
             ],
@@ -163,7 +163,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="%(class)ss",
-                        to="authentication.restaurant",
+                        to="authentication.business",
                     ),
                 ),
             ],
@@ -206,7 +206,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="%(class)ss",
-                        to="authentication.restaurant",
+                        to="authentication.business",
                     ),
                 ),
             ],
@@ -247,7 +247,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="%(class)ss",
-                        to="authentication.restaurant",
+                        to="authentication.business",
                     ),
                 ),
             ],
@@ -323,7 +323,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="%(class)ss",
-                        to="authentication.restaurant",
+                        to="authentication.business",
                     ),
                 ),
             ],

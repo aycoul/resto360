@@ -12,13 +12,13 @@ class PaymentMethodAdmin(admin.ModelAdmin):
     list_display = [
         "name",
         "provider_code",
-        "restaurant",
+        "business",
         "is_active",
         "display_order",
     ]
-    list_filter = ["restaurant", "provider_code", "is_active"]
+    list_filter = ["business", "provider_code", "is_active"]
     search_fields = ["name", "provider_code"]
-    ordering = ["restaurant", "display_order", "name"]
+    ordering = ["business", "display_order", "name"]
 
 
 @admin.register(Payment)
@@ -28,7 +28,7 @@ class PaymentAdmin(admin.ModelAdmin):
     list_display = [
         "idempotency_key",
         "order",
-        "restaurant",
+        "business",
         "amount",
         "status",
         "provider_code",
@@ -36,7 +36,7 @@ class PaymentAdmin(admin.ModelAdmin):
         "initiated_at",
         "completed_at",
     ]
-    list_filter = ["restaurant", "status", "provider_code", "initiated_at"]
+    list_filter = ["business", "status", "provider_code", "initiated_at"]
     search_fields = ["idempotency_key", "provider_reference", "order__order_number"]
     ordering = ["-initiated_at"]
     date_hierarchy = "initiated_at"
@@ -59,7 +59,7 @@ class CashDrawerSessionAdmin(admin.ModelAdmin):
 
     list_display = [
         "cashier",
-        "restaurant",
+        "business",
         "opened_at",
         "opening_balance",
         "closed_at",
@@ -68,7 +68,7 @@ class CashDrawerSessionAdmin(admin.ModelAdmin):
         "variance",
         "is_open",
     ]
-    list_filter = ["restaurant", "cashier", "opened_at"]
+    list_filter = ["business", "cashier", "opened_at"]
     search_fields = ["cashier__phone", "cashier__full_name"]
     ordering = ["-opened_at"]
     date_hierarchy = "opened_at"

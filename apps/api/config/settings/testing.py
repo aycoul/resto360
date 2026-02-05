@@ -60,6 +60,18 @@ if SKIP_GIS_APPS:
         "apps.payments",
         # Skip: "apps.delivery",
         "apps.analytics",
+        "apps.locations",
+        "apps.ai",
+        "apps.reservations",
+        "apps.reviews",
+        "apps.crm",
+        "apps.website",
+        "apps.social",
+        "apps.marketplace",
+        "apps.financing",
+        "apps.invoicing",
+        "apps.forecasting",
+        "apps.reorder",
     ]
 
     AUTH_USER_MODEL = "authentication.User"

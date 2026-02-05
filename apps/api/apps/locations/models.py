@@ -1,7 +1,7 @@
 """
 Multi-location Support Models
 
-Manage restaurant chains with multiple locations, shared menus,
+Manage business chains with multiple locations, shared menus,
 and centralized brand settings.
 """
 
@@ -14,8 +14,8 @@ from apps.core.models import BaseModel
 
 class Brand(BaseModel):
     """
-    A brand represents a restaurant chain/franchise.
-    Brands can have multiple locations (restaurants).
+    A brand represents a business chain/franchise.
+    Brands can have multiple locations (businesss).
     """
 
     name = models.CharField(max_length=200)
@@ -132,13 +132,13 @@ class LocationPriceOverride(BaseModel):
     Price overrides for menu items at specific locations.
     """
 
-    restaurant = models.ForeignKey(
-        "authentication.Restaurant",
+    business = models.ForeignKey(
+        "authentication.Business",
         on_delete=models.CASCADE,
         related_name="price_overrides",
     )
     menu_item = models.ForeignKey(
-        "menu.MenuItem",
+        "menu.Product",
         on_delete=models.CASCADE,
         related_name="location_overrides",
     )
@@ -147,10 +147,10 @@ class LocationPriceOverride(BaseModel):
     reason = models.CharField(max_length=200, blank=True)
 
     class Meta:
-        unique_together = ["restaurant", "menu_item"]
+        unique_together = ["business", "menu_item"]
 
     def __str__(self):
-        return f"{self.restaurant.name} - {self.menu_item.name}: {self.price}"
+        return f"{self.business.name} - {self.menu_item.name}: {self.price}"
 
 
 class LocationItemAvailability(BaseModel):
@@ -158,13 +158,13 @@ class LocationItemAvailability(BaseModel):
     Control item availability at specific locations.
     """
 
-    restaurant = models.ForeignKey(
-        "authentication.Restaurant",
+    business = models.ForeignKey(
+        "authentication.Business",
         on_delete=models.CASCADE,
         related_name="item_availability",
     )
     menu_item = models.ForeignKey(
-        "menu.MenuItem",
+        "menu.Product",
         on_delete=models.CASCADE,
         related_name="location_availability",
     )
@@ -173,11 +173,11 @@ class LocationItemAvailability(BaseModel):
     reason = models.CharField(max_length=200, blank=True)
 
     class Meta:
-        unique_together = ["restaurant", "menu_item"]
+        unique_together = ["business", "menu_item"]
 
     def __str__(self):
         status = "Available" if self.is_available else "Unavailable"
-        return f"{self.restaurant.name} - {self.menu_item.name}: {status}"
+        return f"{self.business.name} - {self.menu_item.name}: {status}"
 
 
 class SharedMenu(BaseModel):
@@ -264,8 +264,8 @@ class LocationMenuSync(BaseModel):
     Track which shared menus are synced to which locations.
     """
 
-    restaurant = models.ForeignKey(
-        "authentication.Restaurant",
+    business = models.ForeignKey(
+        "authentication.Business",
         on_delete=models.CASCADE,
         related_name="menu_syncs",
     )
@@ -282,10 +282,10 @@ class LocationMenuSync(BaseModel):
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        unique_together = ["restaurant", "shared_menu"]
+        unique_together = ["business", "shared_menu"]
 
     def __str__(self):
-        return f"{self.restaurant.name} <- {self.shared_menu.name}"
+        return f"{self.business.name} <- {self.shared_menu.name}"
 
 
 class BrandReport(BaseModel):

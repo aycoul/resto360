@@ -8,7 +8,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.authentication.models import Restaurant
+from apps.authentication.models import Business
 
 from .models import (
     BusinessHours,
@@ -43,10 +43,10 @@ class TableConfigurationViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return TableConfiguration.objects.filter(restaurant=self.request.user.restaurant)
+        return TableConfiguration.objects.filter(business=self.request.user.business)
 
     def perform_create(self, serializer):
-        serializer.save(restaurant=self.request.user.restaurant)
+        serializer.save(business=self.request.user.business)
 
 
 class BusinessHoursViewSet(viewsets.ModelViewSet):
@@ -56,10 +56,10 @@ class BusinessHoursViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return BusinessHours.objects.filter(restaurant=self.request.user.restaurant)
+        return BusinessHours.objects.filter(business=self.request.user.business)
 
     def perform_create(self, serializer):
-        serializer.save(restaurant=self.request.user.restaurant)
+        serializer.save(business=self.request.user.business)
 
 
 class SpecialHoursViewSet(viewsets.ModelViewSet):
@@ -70,12 +70,12 @@ class SpecialHoursViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return SpecialHours.objects.filter(
-            restaurant=self.request.user.restaurant,
+            business=self.request.user.business,
             date__gte=date.today(),
         )
 
     def perform_create(self, serializer):
-        serializer.save(restaurant=self.request.user.restaurant)
+        serializer.save(business=self.request.user.business)
 
 
 class ReservationSettingsView(APIView):
@@ -85,14 +85,14 @@ class ReservationSettingsView(APIView):
 
     def get(self, request):
         settings, _ = ReservationSettings.objects.get_or_create(
-            restaurant=request.user.restaurant
+            business=request.user.business
         )
         serializer = ReservationSettingsSerializer(settings)
         return Response(serializer.data)
 
     def patch(self, request):
         settings, _ = ReservationSettings.objects.get_or_create(
-            restaurant=request.user.restaurant
+            business=request.user.business
         )
         serializer = ReservationSettingsSerializer(settings, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
@@ -111,7 +111,7 @@ class ReservationViewSet(viewsets.ModelViewSet):
         return ReservationSerializer
 
     def get_queryset(self):
-        qs = Reservation.objects.filter(restaurant=self.request.user.restaurant)
+        qs = Reservation.objects.filter(business=self.request.user.business)
 
         # Filter by date
         date_str = self.request.query_params.get("date")
@@ -140,13 +140,13 @@ class ReservationViewSet(viewsets.ModelViewSet):
     def get_serializer_context(self):
         context = super().get_serializer_context()
         settings, _ = ReservationSettings.objects.get_or_create(
-            restaurant=self.request.user.restaurant
+            business=self.request.user.business
         )
         context["settings"] = settings
         return context
 
     def perform_create(self, serializer):
-        service = ReservationService(self.request.user.restaurant)
+        service = ReservationService(self.request.user.business)
         data = serializer.validated_data
 
         reservation = service.create_reservation(
@@ -237,7 +237,7 @@ class AvailabilityView(APIView):
         target_date = serializer.validated_data["date"]
         party_size = serializer.validated_data["party_size"]
 
-        service = AvailabilityService(request.user.restaurant)
+        service = AvailabilityService(request.user.business)
         slots = service.get_availability(target_date, party_size)
 
         return Response({
@@ -263,7 +263,7 @@ class DailySummaryView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        service = ReservationService(request.user.restaurant)
+        service = ReservationService(request.user.business)
         summary = service.get_daily_summary(target_date)
         return Response(summary)
 
@@ -275,7 +275,7 @@ class UpcomingReservationsView(APIView):
 
     def get(self, request):
         days = int(request.query_params.get("days", 7))
-        service = ReservationService(request.user.restaurant)
+        service = ReservationService(request.user.business)
         reservations = service.get_upcoming_reservations(days)
         return Response(ReservationSerializer(reservations, many=True).data)
 
@@ -292,14 +292,14 @@ class WaitlistViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Waitlist.objects.filter(
-            restaurant=self.request.user.restaurant,
+            business=self.request.user.business,
             created_at__date=date.today(),
             is_cancelled=False,
             is_seated=False,
         ).order_by("created_at")
 
     def perform_create(self, serializer):
-        serializer.save(restaurant=self.request.user.restaurant)
+        serializer.save(business=self.request.user.business)
 
     @action(detail=True, methods=["post"])
     def notify(self, request, pk=None):
@@ -333,7 +333,7 @@ class PublicAvailabilityView(APIView):
 
     def post(self, request, slug):
         try:
-            restaurant = Restaurant.objects.get(slug=slug)
+            business = Business.objects.get(slug=slug)
         except Restaurant.DoesNotExist:
             return Response(
                 {"error": "Restaurant not found"},
@@ -346,7 +346,7 @@ class PublicAvailabilityView(APIView):
         target_date = serializer.validated_data["date"]
         party_size = serializer.validated_data["party_size"]
 
-        service = AvailabilityService(restaurant)
+        service = AvailabilityService(business)
         slots = service.get_availability(target_date, party_size)
 
         return Response({
@@ -364,14 +364,14 @@ class PublicCreateReservationView(APIView):
 
     def post(self, request, slug):
         try:
-            restaurant = Restaurant.objects.get(slug=slug)
+            business = Business.objects.get(slug=slug)
         except Restaurant.DoesNotExist:
             return Response(
                 {"error": "Restaurant not found"},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        settings, _ = ReservationSettings.objects.get_or_create(restaurant=restaurant)
+        settings, _ = ReservationSettings.objects.get_or_create(business=business)
 
         serializer = PublicCreateReservationSerializer(
             data=request.data,
@@ -379,11 +379,11 @@ class PublicCreateReservationView(APIView):
         )
         serializer.is_valid(raise_exception=True)
 
-        service = ReservationService(restaurant)
+        service = ReservationService(business)
         data = serializer.validated_data
 
         # Check availability
-        availability = AvailabilityService(restaurant)
+        availability = AvailabilityService(business)
         available_tables = availability.check_table_availability(
             data["date"],
             data["time"],
@@ -426,7 +426,7 @@ class PublicReservationLookupView(APIView):
 
     def get(self, request, slug, code):
         try:
-            restaurant = Restaurant.objects.get(slug=slug)
+            business = Business.objects.get(slug=slug)
         except Restaurant.DoesNotExist:
             return Response(
                 {"error": "Restaurant not found"},
@@ -435,7 +435,7 @@ class PublicReservationLookupView(APIView):
 
         try:
             reservation = Reservation.all_objects.get(
-                restaurant=restaurant,
+                business=business,
                 confirmation_code=code.upper(),
             )
         except Reservation.DoesNotExist:
@@ -466,7 +466,7 @@ class PublicCancelReservationView(APIView):
 
     def post(self, request, slug, code):
         try:
-            restaurant = Restaurant.objects.get(slug=slug)
+            business = Business.objects.get(slug=slug)
         except Restaurant.DoesNotExist:
             return Response(
                 {"error": "Restaurant not found"},
@@ -475,7 +475,7 @@ class PublicCancelReservationView(APIView):
 
         try:
             reservation = Reservation.all_objects.get(
-                restaurant=restaurant,
+                business=business,
                 confirmation_code=code.upper(),
             )
         except Reservation.DoesNotExist:
@@ -491,7 +491,7 @@ class PublicCancelReservationView(APIView):
             )
 
         # Check cancellation deadline
-        settings, _ = ReservationSettings.objects.get_or_create(restaurant=restaurant)
+        settings, _ = ReservationSettings.objects.get_or_create(business=business)
         from datetime import datetime
         from django.utils import timezone
 

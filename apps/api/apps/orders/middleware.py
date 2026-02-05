@@ -26,7 +26,7 @@ def get_user_from_token(token_str):
     try:
         token = AccessToken(token_str)
         user_id = token.payload.get("user_id")
-        return User.objects.select_related("restaurant").get(id=user_id)
+        return User.objects.select_related("business").get(id=user_id)
     except (TokenError, User.DoesNotExist):
         return AnonymousUser()
 
@@ -39,7 +39,7 @@ class JWTAuthMiddleware(BaseMiddleware):
     and sets scope['user'] to the authenticated user.
 
     Usage:
-        ws://host/ws/kitchen/{restaurant_id}/?token={jwt_access_token}
+        ws://host/ws/kitchen/{business_id}/?token={jwt_access_token}
     """
 
     async def __call__(self, scope, receive, send):

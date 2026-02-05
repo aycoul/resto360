@@ -5,45 +5,45 @@ from apps.authentication.models import User
 pytestmark = pytest.mark.django_db
 
 
-class TestRestaurantModel:
-    """Tests for Restaurant model."""
+class TestBusinessModel:
+    """Tests for Business model."""
 
-    def test_create_restaurant(self, restaurant_factory):
-        restaurant = restaurant_factory(name="Chez Mama", slug="chez-mama")
-        assert restaurant.name == "Chez Mama"
-        assert restaurant.slug == "chez-mama"
-        assert restaurant.currency == "XOF"
-        assert restaurant.timezone == "Africa/Abidjan"
+    def test_create_business(self, business_factory):
+        business = business_factory(name="Chez Mama", slug="chez-mama")
+        assert business.name == "Chez Mama"
+        assert business.slug == "chez-mama"
+        assert business.currency == "XOF"
+        assert business.timezone == "Africa/Abidjan"
 
-    def test_restaurant_str(self, restaurant_factory):
-        restaurant = restaurant_factory(name="Test Restaurant")
-        assert str(restaurant) == "Test Restaurant"
+    def test_business_str(self, business_factory):
+        business = business_factory(name="Test Business")
+        assert str(business) == "Test Business"
 
-    def test_restaurant_has_uuid_id(self, restaurant_factory):
-        restaurant = restaurant_factory()
-        assert restaurant.id is not None
-        assert len(str(restaurant.id)) == 36  # UUID format
+    def test_business_has_uuid_id(self, business_factory):
+        business = business_factory()
+        assert business.id is not None
+        assert len(str(business.id)) == 36  # UUID format
 
-    def test_restaurant_default_active(self, restaurant_factory):
-        restaurant = restaurant_factory()
-        assert restaurant.is_active is True
+    def test_business_default_active(self, business_factory):
+        business = business_factory()
+        assert business.is_active is True
 
 
 class TestUserModel:
     """Tests for User model."""
 
-    def test_create_user(self, user_factory, restaurant_factory):
-        restaurant = restaurant_factory()
+    def test_create_user(self, user_factory, business_factory):
+        business = business_factory()
         user = user_factory(
             phone="+2250701234567",
             name="Jean Dupont",
-            restaurant=restaurant,
+            business=business,
             role="cashier",
         )
         assert user.phone == "+2250701234567"
         assert user.name == "Jean Dupont"
         assert user.role == "cashier"
-        assert user.restaurant == restaurant
+        assert user.business == business
 
     def test_create_superuser(self):
         user = User.objects.create_superuser(
@@ -62,7 +62,7 @@ class TestUserModel:
     def test_owner_permissions(self, owner_factory):
         owner = owner_factory()
         permissions = owner.get_permissions_list()
-        assert "manage_restaurant" in permissions
+        assert "manage_business" in permissions
         assert "manage_staff" in permissions
         assert "manage_menu" in permissions
         assert "view_reports" in permissions
@@ -75,7 +75,7 @@ class TestUserModel:
         assert "manage_menu" in permissions
         assert "view_reports" in permissions
         assert "manage_orders" in permissions
-        assert "manage_restaurant" not in permissions
+        assert "manage_business" not in permissions
         assert "manage_staff" not in permissions
 
     def test_cashier_permissions(self, cashier_factory):
@@ -83,7 +83,7 @@ class TestUserModel:
         permissions = cashier.get_permissions_list()
         assert "create_orders" in permissions
         assert "manage_orders" in permissions
-        assert "manage_restaurant" not in permissions
+        assert "manage_business" not in permissions
         assert "manage_menu" not in permissions
 
     def test_password_hashing(self, user_factory):

@@ -208,7 +208,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
                 .values("name", "times_ordered")
             ),
             "top_customers": list(
-                orders.values("restaurant__name")
+                orders.values("business__name")
                 .annotate(order_count=Count("id"), total_spent=Sum("total"))
                 .order_by("-total_spent")[:5]
             ),
@@ -298,27 +298,27 @@ class CartViewSet(viewsets.ViewSet):
 
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_restaurant(self, request):
-        return getattr(request.user, "restaurant", None)
+    def get_business(self, request):
+        return getattr(request.user, "business", None)
 
     def list(self, request):
-        """List all carts for the current restaurant."""
-        restaurant = self.get_restaurant(request)
-        if not restaurant:
-            return Response({"error": "No restaurant associated with this user"}, status=400)
+        """List all carts for the current business."""
+        business = self.get_business(request)
+        if not business:
+            return Response({"error": "No business associated with this user"}, status=400)
 
-        carts = Cart.objects.filter(restaurant=restaurant)
+        carts = Cart.objects.filter(business=business)
         serializer = CartSerializer(carts, many=True)
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
         """Get cart for a specific supplier."""
-        restaurant = self.get_restaurant(request)
-        if not restaurant:
-            return Response({"error": "No restaurant associated with this user"}, status=400)
+        business = self.get_business(request)
+        if not business:
+            return Response({"error": "No business associated with this user"}, status=400)
 
         try:
-            cart = Cart.objects.get(restaurant=restaurant, supplier_id=pk)
+            cart = Cart.objects.get(business=business, supplier_id=pk)
             serializer = CartSerializer(cart)
             return Response(serializer.data)
         except Cart.DoesNotExist:
@@ -327,9 +327,9 @@ class CartViewSet(viewsets.ViewSet):
     @action(detail=False, methods=["post"])
     def add_item(self, request):
         """Add item to cart."""
-        restaurant = self.get_restaurant(request)
-        if not restaurant:
-            return Response({"error": "No restaurant associated with this user"}, status=400)
+        business = self.get_business(request)
+        if not business:
+            return Response({"error": "No business associated with this user"}, status=400)
 
         serializer = AddToCartSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -339,7 +339,7 @@ class CartViewSet(viewsets.ViewSet):
 
         # Get or create cart for this supplier
         cart, _ = Cart.objects.get_or_create(
-            restaurant=restaurant,
+            business=business,
             supplier=product.supplier,
         )
 
@@ -359,9 +359,9 @@ class CartViewSet(viewsets.ViewSet):
     @action(detail=False, methods=["post"])
     def update_item(self, request):
         """Update cart item quantity."""
-        restaurant = self.get_restaurant(request)
-        if not restaurant:
-            return Response({"error": "No restaurant associated with this user"}, status=400)
+        business = self.get_business(request)
+        if not business:
+            return Response({"error": "No business associated with this user"}, status=400)
 
         item_id = request.data.get("item_id")
         serializer = UpdateCartItemSerializer(data=request.data)
@@ -370,7 +370,7 @@ class CartViewSet(viewsets.ViewSet):
         try:
             cart_item = CartItem.objects.get(
                 id=item_id,
-                cart__restaurant=restaurant,
+                cart__business=business,
             )
 
             if serializer.validated_data["quantity"] == 0:
@@ -389,16 +389,16 @@ class CartViewSet(viewsets.ViewSet):
     @action(detail=False, methods=["post"])
     def remove_item(self, request):
         """Remove item from cart."""
-        restaurant = self.get_restaurant(request)
-        if not restaurant:
-            return Response({"error": "No restaurant associated with this user"}, status=400)
+        business = self.get_business(request)
+        if not business:
+            return Response({"error": "No business associated with this user"}, status=400)
 
         item_id = request.data.get("item_id")
 
         try:
             cart_item = CartItem.objects.get(
                 id=item_id,
-                cart__restaurant=restaurant,
+                cart__business=business,
             )
             cart = cart_item.cart
             cart_item.delete()
@@ -411,12 +411,12 @@ class CartViewSet(viewsets.ViewSet):
     @action(detail=True, methods=["post"])
     def clear(self, request, pk=None):
         """Clear cart for a specific supplier."""
-        restaurant = self.get_restaurant(request)
-        if not restaurant:
-            return Response({"error": "No restaurant associated with this user"}, status=400)
+        business = self.get_business(request)
+        if not business:
+            return Response({"error": "No business associated with this user"}, status=400)
 
         try:
-            cart = Cart.objects.get(restaurant=restaurant, supplier_id=pk)
+            cart = Cart.objects.get(business=business, supplier_id=pk)
             cart.items.all().delete()
             return Response({"message": "Cart cleared"})
         except Cart.DoesNotExist:
@@ -437,19 +437,19 @@ class SupplierOrderViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        restaurant = getattr(user, "restaurant", None)
+        business = getattr(user, "business", None)
 
         # Check if user is a supplier owner
         supplier_ids = Supplier.objects.filter(owner=user).values_list("id", flat=True)
 
-        if restaurant and supplier_ids:
-            # User has both restaurant and supplier - show both
+        if business and supplier_ids:
+            # User has both business and supplier - show both
             return SupplierOrder.objects.filter(
-                Q(restaurant=restaurant) | Q(supplier_id__in=supplier_ids)
+                Q(business=business) | Q(supplier_id__in=supplier_ids)
             )
-        elif restaurant:
-            # Restaurant user - show their orders
-            return SupplierOrder.objects.filter(restaurant=restaurant)
+        elif business:
+            # Business user - show their orders
+            return SupplierOrder.objects.filter(business=business)
         elif supplier_ids:
             # Supplier user - show orders to them
             return SupplierOrder.objects.filter(supplier_id__in=supplier_ids)
@@ -459,16 +459,16 @@ class SupplierOrderViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"])
     def create_from_cart(self, request):
         """Create an order from the current cart."""
-        restaurant = getattr(request.user, "restaurant", None)
-        if not restaurant:
-            return Response({"error": "No restaurant associated with this user"}, status=400)
+        business = getattr(request.user, "business", None)
+        if not business:
+            return Response({"error": "No business associated with this user"}, status=400)
 
         serializer = CreateOrderFromCartSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         try:
             cart = Cart.objects.get(
-                restaurant=restaurant,
+                business=business,
                 supplier_id=serializer.validated_data["supplier_id"],
             )
         except Cart.DoesNotExist:
@@ -480,7 +480,7 @@ class SupplierOrderViewSet(viewsets.ModelViewSet):
         # Create order
         order = SupplierOrder.objects.create(
             supplier=cart.supplier,
-            restaurant=restaurant,
+            business=business,
             placed_by=request.user,
             status=SupplierOrder.Status.SUBMITTED,
             submitted_at=timezone.now(),
@@ -563,13 +563,13 @@ class SupplierOrderViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=["post"])
     def cancel(self, request, pk=None):
-        """Cancel an order (restaurant only, if not yet shipped)."""
+        """Cancel an order (business only, if not yet shipped)."""
         order = self.get_object()
-        restaurant = getattr(request.user, "restaurant", None)
+        business = getattr(request.user, "business", None)
 
-        if order.restaurant != restaurant:
+        if order.business != business:
             return Response(
-                {"error": "Only the ordering restaurant can cancel"},
+                {"error": "Only the ordering business can cancel"},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
@@ -605,18 +605,18 @@ class SupplierReviewViewSet(viewsets.ModelViewSet):
         return SupplierReviewSerializer
 
     def perform_create(self, serializer):
-        restaurant = getattr(self.request.user, "restaurant", None)
-        if not restaurant:
-            raise serializers.ValidationError("No restaurant associated with this user")
+        business = getattr(self.request.user, "business", None)
+        if not business:
+            raise serializers.ValidationError("No business associated with this user")
 
         # Check if user has ordered from this supplier
         order = serializer.validated_data.get("order")
         is_verified = False
-        if order and order.restaurant == restaurant:
+        if order and order.business == business:
             is_verified = True
 
         serializer.save(
-            restaurant=restaurant,
+            business=business,
             reviewed_by=self.request.user,
             is_verified=is_verified,
         )
@@ -656,30 +656,30 @@ class SupplierFavoriteViewSet(viewsets.ViewSet):
 
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_restaurant(self, request):
-        return getattr(request.user, "restaurant", None)
+    def get_business(self, request):
+        return getattr(request.user, "business", None)
 
     def list(self, request):
         """List all favorite suppliers."""
-        restaurant = self.get_restaurant(request)
-        if not restaurant:
-            return Response({"error": "No restaurant associated with this user"}, status=400)
+        business = self.get_business(request)
+        if not business:
+            return Response({"error": "No business associated with this user"}, status=400)
 
-        favorites = SupplierFavorite.objects.filter(restaurant=restaurant)
+        favorites = SupplierFavorite.objects.filter(business=business)
         serializer = SupplierFavoriteSerializer(favorites, many=True)
         return Response(serializer.data)
 
     def create(self, request):
         """Add a supplier to favorites."""
-        restaurant = self.get_restaurant(request)
-        if not restaurant:
-            return Response({"error": "No restaurant associated with this user"}, status=400)
+        business = self.get_business(request)
+        if not business:
+            return Response({"error": "No business associated with this user"}, status=400)
 
         serializer = AddFavoriteSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         favorite, created = SupplierFavorite.objects.get_or_create(
-            restaurant=restaurant,
+            business=business,
             supplier_id=serializer.validated_data["supplier_id"],
             defaults={"notes": serializer.validated_data.get("notes", "")},
         )
@@ -695,13 +695,13 @@ class SupplierFavoriteViewSet(viewsets.ViewSet):
 
     def destroy(self, request, pk=None):
         """Remove a supplier from favorites."""
-        restaurant = self.get_restaurant(request)
-        if not restaurant:
-            return Response({"error": "No restaurant associated with this user"}, status=400)
+        business = self.get_business(request)
+        if not business:
+            return Response({"error": "No business associated with this user"}, status=400)
 
         try:
             favorite = SupplierFavorite.objects.get(
-                restaurant=restaurant,
+                business=business,
                 supplier_id=pk,
             )
             favorite.delete()

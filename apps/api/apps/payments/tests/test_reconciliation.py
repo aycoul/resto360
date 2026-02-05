@@ -17,7 +17,7 @@ class TestDailyReconciliation:
 
     def test_daily_reconciliation_empty(self, owner):
         """Test reconciliation with no payments for the day."""
-        result = get_daily_reconciliation(owner.restaurant)
+        result = get_daily_reconciliation(owner.business)
 
         assert result["totals"]["count"] == 0
         assert result["totals"]["amount"] == 0
@@ -35,16 +35,16 @@ class TestDailyReconciliation:
 
         # Create payment method
         payment_method = PaymentMethodFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             provider_code="cash",
             name="Cash",
         )
 
         # Create 3 successful cash payments
         for i, amount in enumerate([10000, 15000, 5000]):
-            order = OrderFactory(restaurant=owner.restaurant, cashier=owner)
+            order = OrderFactory(business=owner.business, cashier=owner)
             payment = PaymentFactory(
-                restaurant=owner.restaurant,
+                business=owner.business,
                 order=order,
                 payment_method=payment_method,
                 amount=amount,
@@ -56,7 +56,7 @@ class TestDailyReconciliation:
             payment.mark_success()
             payment.save()
 
-        result = get_daily_reconciliation(owner.restaurant)
+        result = get_daily_reconciliation(owner.business)
 
         assert len(result["by_provider"]) == 1
         assert result["by_provider"][0]["provider_code"] == "cash"
@@ -73,21 +73,21 @@ class TestDailyReconciliation:
 
         # Create payment methods
         cash_method = PaymentMethodFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             provider_code="cash",
             name="Cash",
         )
         wave_method = PaymentMethodFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             provider_code="wave",
             name="Wave Money",
         )
 
         # Create 2 cash payments totaling 20000
         for i, amount in enumerate([10000, 10000]):
-            order = OrderFactory(restaurant=owner.restaurant, cashier=owner)
+            order = OrderFactory(business=owner.business, cashier=owner)
             payment = PaymentFactory(
-                restaurant=owner.restaurant,
+                business=owner.business,
                 order=order,
                 payment_method=cash_method,
                 amount=amount,
@@ -100,9 +100,9 @@ class TestDailyReconciliation:
 
         # Create 3 wave payments totaling 45000
         for i, amount in enumerate([15000, 15000, 15000]):
-            order = OrderFactory(restaurant=owner.restaurant, cashier=owner)
+            order = OrderFactory(business=owner.business, cashier=owner)
             payment = PaymentFactory(
-                restaurant=owner.restaurant,
+                business=owner.business,
                 order=order,
                 payment_method=wave_method,
                 amount=amount,
@@ -113,7 +113,7 @@ class TestDailyReconciliation:
             payment.mark_success()
             payment.save()
 
-        result = get_daily_reconciliation(owner.restaurant)
+        result = get_daily_reconciliation(owner.business)
 
         assert len(result["by_provider"]) == 2
         assert result["totals"]["count"] == 5
@@ -133,14 +133,14 @@ class TestDailyReconciliation:
         from apps.orders.tests.factories import OrderFactory
 
         payment_method = PaymentMethodFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             provider_code="cash",
             name="Cash",
         )
 
-        order = OrderFactory(restaurant=owner.restaurant, cashier=owner)
+        order = OrderFactory(business=owner.business, cashier=owner)
         payment = PaymentFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             order=order,
             payment_method=payment_method,
             amount=10000,
@@ -153,7 +153,7 @@ class TestDailyReconciliation:
         payment.mark_refunded()
         payment.save()
 
-        result = get_daily_reconciliation(owner.restaurant)
+        result = get_daily_reconciliation(owner.business)
 
         # Refund status payments are tracked in refunds section
         # Note: Once refunded, status is REFUNDED not SUCCESS, so totals.count=0
@@ -171,16 +171,16 @@ class TestDailyReconciliation:
         from apps.orders.tests.factories import OrderFactory
 
         payment_method = PaymentMethodFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             provider_code="cash",
             name="Cash",
         )
 
         # Create payment on 2026-02-03 (yesterday)
         with freeze_time("2026-02-03 12:00:00"):
-            order1 = OrderFactory(restaurant=owner.restaurant, cashier=owner)
+            order1 = OrderFactory(business=owner.business, cashier=owner)
             payment1 = PaymentFactory(
-                restaurant=owner.restaurant,
+                business=owner.business,
                 order=order1,
                 payment_method=payment_method,
                 amount=5000,
@@ -193,9 +193,9 @@ class TestDailyReconciliation:
 
         # Create payment on 2026-02-04 (today)
         with freeze_time("2026-02-04 12:00:00"):
-            order2 = OrderFactory(restaurant=owner.restaurant, cashier=owner)
+            order2 = OrderFactory(business=owner.business, cashier=owner)
             payment2 = PaymentFactory(
-                restaurant=owner.restaurant,
+                business=owner.business,
                 order=order2,
                 payment_method=payment_method,
                 amount=10000,
@@ -207,12 +207,12 @@ class TestDailyReconciliation:
             payment2.save()
 
         # Get reconciliation for today (2026-02-04)
-        today_result = get_daily_reconciliation(owner.restaurant, date(2026, 2, 4))
+        today_result = get_daily_reconciliation(owner.business, date(2026, 2, 4))
         assert today_result["totals"]["count"] == 1
         assert today_result["totals"]["amount"] == 10000
 
         # Get reconciliation for yesterday (2026-02-03)
-        yesterday_result = get_daily_reconciliation(owner.restaurant, date(2026, 2, 3))
+        yesterday_result = get_daily_reconciliation(owner.business, date(2026, 2, 3))
         assert yesterday_result["totals"]["count"] == 1
         assert yesterday_result["totals"]["amount"] == 5000
 
@@ -221,15 +221,15 @@ class TestDailyReconciliation:
         from apps.orders.tests.factories import OrderFactory
 
         payment_method = PaymentMethodFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             provider_code="wave",
             name="Wave",
         )
 
         # Create a processing (pending) payment
-        order = OrderFactory(restaurant=owner.restaurant, cashier=owner)
+        order = OrderFactory(business=owner.business, cashier=owner)
         payment = PaymentFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             order=order,
             payment_method=payment_method,
             amount=15000,
@@ -239,7 +239,7 @@ class TestDailyReconciliation:
         payment.start_processing()
         payment.save()
 
-        result = get_daily_reconciliation(owner.restaurant)
+        result = get_daily_reconciliation(owner.business)
 
         assert result["pending"]["count"] == 1
         assert result["pending"]["amount"] == 15000
@@ -250,15 +250,15 @@ class TestDailyReconciliation:
         from apps.orders.tests.factories import OrderFactory
 
         payment_method = PaymentMethodFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             provider_code="wave",
             name="Wave",
         )
 
         # Create a failed payment
-        order = OrderFactory(restaurant=owner.restaurant, cashier=owner)
+        order = OrderFactory(business=owner.business, cashier=owner)
         payment = PaymentFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             order=order,
             payment_method=payment_method,
             amount=20000,
@@ -269,7 +269,7 @@ class TestDailyReconciliation:
         payment.mark_failed(error_code="declined", error_message="Card declined")
         payment.save()
 
-        result = get_daily_reconciliation(owner.restaurant)
+        result = get_daily_reconciliation(owner.business)
 
         assert result["failed"]["count"] == 1
         assert result["failed"]["amount"] == 20000
@@ -286,7 +286,7 @@ class TestReconciliationRange:
         from apps.orders.tests.factories import OrderFactory
 
         payment_method = PaymentMethodFactory(
-            restaurant=owner.restaurant,
+            business=owner.business,
             provider_code="cash",
             name="Cash",
         )
@@ -294,9 +294,9 @@ class TestReconciliationRange:
         # Create payments across 3 days
         for i, day in enumerate([2, 3, 4]):
             with freeze_time(f"2026-02-0{day} 12:00:00"):
-                order = OrderFactory(restaurant=owner.restaurant, cashier=owner)
+                order = OrderFactory(business=owner.business, cashier=owner)
                 payment = PaymentFactory(
-                    restaurant=owner.restaurant,
+                    business=owner.business,
                     order=order,
                     payment_method=payment_method,
                     amount=10000 * (i + 1),
@@ -309,7 +309,7 @@ class TestReconciliationRange:
 
         # Get range report
         results = get_reconciliation_range(
-            owner.restaurant,
+            owner.business,
             date(2026, 2, 2),
             date(2026, 2, 4),
         )
@@ -326,7 +326,7 @@ class TestReconciliationRange:
         """Test that range request over 90 days raises ValueError."""
         with pytest.raises(ValueError, match="90 days"):
             get_reconciliation_range(
-                owner.restaurant,
+                owner.business,
                 date(2026, 1, 1),
                 date(2026, 4, 15),  # 104 days
             )

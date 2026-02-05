@@ -42,7 +42,7 @@ class Migration(migrations.Migration):
                 ('started_at', models.DateTimeField(blank=True, null=True)),
                 ('completed_at', models.DateTimeField(blank=True, null=True)),
                 ('celery_task_id', models.CharField(blank=True, max_length=255)),
-                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='ai_jobs', to='authentication.restaurant')),
+                ('business', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='ai_jobs', to='authentication.business')),
             ],
             options={
                 'verbose_name': 'AI Job',
@@ -73,7 +73,7 @@ class Migration(migrations.Migration):
                 ('total_tokens', models.IntegerField(default=0)),
                 ('estimated_cost_cents', models.IntegerField(default=0)),
                 ('job', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='usage_records', to='ai.aijob')),
-                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='ai_usage', to='authentication.restaurant')),
+                ('business', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='ai_usage', to='authentication.business')),
             ],
             options={
                 'verbose_name': 'AI Usage',
@@ -108,7 +108,7 @@ class Migration(migrations.Migration):
                 ('valid_items', models.IntegerField(default=0)),
                 ('created_items', models.IntegerField(default=0)),
                 ('confirmed_at', models.DateTimeField(blank=True, null=True)),
-                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='menu_imports', to='authentication.restaurant')),
+                ('business', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='menu_imports', to='authentication.business')),
             ],
             options={
                 'verbose_name': 'Menu Import Batch',

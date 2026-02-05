@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.postgres.fields import ArrayField
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 
@@ -136,16 +135,15 @@ class Product(TenantModel):
     )
 
     # Food-specific fields (conditional on business_type)
-    allergens = ArrayField(
-        models.CharField(max_length=20, choices=ALLERGEN_CHOICES),
-        blank=True,
+    # Using JSONField for SQLite compatibility (stores list as JSON)
+    allergens = models.JSONField(
         default=list,
+        blank=True,
         help_text="List of allergens present in this item (food only)",
     )
-    dietary_tags = ArrayField(
-        models.CharField(max_length=20, choices=DIETARY_TAG_CHOICES),
-        blank=True,
+    dietary_tags = models.JSONField(
         default=list,
+        blank=True,
         help_text="Dietary certifications/tags for this item (food only)",
     )
     spice_level = models.PositiveSmallIntegerField(
@@ -210,6 +208,7 @@ class Product(TenantModel):
     objects = TenantManager()
 
     class Meta:
+        db_table = "menu_menuitem"  # Keep old table name for compatibility
         ordering = ["name"]
         verbose_name = "Product"
         verbose_name_plural = "Products"

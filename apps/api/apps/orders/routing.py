@@ -6,7 +6,7 @@ from . import consumers
 
 websocket_urlpatterns = [
     re_path(
-        r"ws/kitchen/(?P<restaurant_id>[0-9a-f-]+)/$",
+        r"ws/kitchen/(?P<business_id>[0-9a-f-]+)/$",
         consumers.KitchenConsumer.as_asgi(),
     ),
 ]

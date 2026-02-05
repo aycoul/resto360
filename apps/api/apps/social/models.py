@@ -63,7 +63,7 @@ class SocialAccount(TenantModel):
     last_sync_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
-        unique_together = ["restaurant", "platform", "account_id"]
+        unique_together = ["business", "platform", "account_id"]
 
     def __str__(self):
         return f"{self.get_platform_display()} - {self.account_name}"
@@ -157,7 +157,7 @@ class SocialPost(TenantModel):
 
     # Menu item reference (for menu item posts)
     menu_item = models.ForeignKey(
-        "menu.MenuItem",
+        "menu.Product",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -298,7 +298,7 @@ class AICaption(TenantModel):
     """
 
     menu_item = models.ForeignKey(
-        "menu.MenuItem",
+        "menu.Product",
         on_delete=models.CASCADE,
         related_name="ai_captions",
     )

@@ -1,23 +1,24 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from .models import Restaurant, User
+from .models import Business, User
 
 
-@admin.register(Restaurant)
-class RestaurantAdmin(admin.ModelAdmin):
-    """Admin configuration for Restaurant model."""
+@admin.register(Business)
+class BusinessAdmin(admin.ModelAdmin):
+    """Admin configuration for Business model."""
 
     list_display = [
         "name",
         "slug",
+        "business_type",
         "phone",
         "timezone",
         "currency",
         "is_active",
         "created_at",
     ]
-    list_filter = ["is_active", "currency"]
+    list_filter = ["is_active", "currency", "business_type"]
     search_fields = ["name", "slug", "phone"]
     prepopulated_fields = {"slug": ("name",)}
 
@@ -26,15 +27,15 @@ class RestaurantAdmin(admin.ModelAdmin):
 class UserAdmin(BaseUserAdmin):
     """Admin configuration for custom User model."""
 
-    list_display = ["phone", "name", "role", "restaurant", "is_active", "is_staff"]
-    list_filter = ["role", "is_active", "is_staff", "restaurant"]
+    list_display = ["phone", "name", "role", "business", "is_active", "is_staff"]
+    list_filter = ["role", "is_active", "is_staff", "business"]
     search_fields = ["phone", "name", "email"]
     ordering = ["name"]
 
     fieldsets = (
         (None, {"fields": ("phone", "password")}),
         ("Personal info", {"fields": ("name", "email", "language")}),
-        ("Restaurant", {"fields": ("restaurant", "role")}),
+        ("Business", {"fields": ("business", "role")}),
         (
             "Permissions",
             {
@@ -60,7 +61,7 @@ class UserAdmin(BaseUserAdmin):
                     "name",
                     "password1",
                     "password2",
-                    "restaurant",
+                    "business",
                     "role",
                 ),
             },

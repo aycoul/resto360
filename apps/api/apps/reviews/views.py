@@ -8,7 +8,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.authentication.models import Restaurant
+from apps.authentication.models import Business
 
 from .models import (
     FeedbackRequest,
@@ -45,7 +45,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         return ReviewSerializer
 
     def get_queryset(self):
-        qs = Review.objects.filter(restaurant=self.request.user.restaurant)
+        qs = Review.objects.filter(business=self.request.user.business)
 
         # Filter by status
         status_filter = self.request.query_params.get("status")
@@ -74,7 +74,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """Create a review (staff-created)."""
         settings, _ = ReviewSettings.objects.get_or_create(
-            restaurant=self.request.user.restaurant
+            business=self.request.user.business
         )
 
         # Determine status based on settings
@@ -85,7 +85,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
                 initial_status = ReviewStatus.APPROVED
 
         serializer.save(
-            restaurant=self.request.user.restaurant,
+            business=self.request.user.business,
             status=initial_status,
             source=ReviewSource.WEBSITE,
         )
@@ -137,7 +137,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
 
         ReviewResponse.objects.create(
-            restaurant=self.request.user.restaurant,
+            business=self.request.user.business,
             review=review,
             **serializer.validated_data,
         )
@@ -180,7 +180,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
     def _update_summary(self):
         """Update review summary cache."""
         summary, _ = ReviewSummary.objects.get_or_create(
-            restaurant=self.request.user.restaurant
+            business=self.request.user.business
         )
         summary.refresh()
 
@@ -192,13 +192,13 @@ class ReviewSettingsView(APIView):
 
     def get(self, request):
         settings, _ = ReviewSettings.objects.get_or_create(
-            restaurant=request.user.restaurant
+            business=request.user.business
         )
         return Response(ReviewSettingsSerializer(settings).data)
 
     def patch(self, request):
         settings, _ = ReviewSettings.objects.get_or_create(
-            restaurant=request.user.restaurant
+            business=request.user.business
         )
         serializer = ReviewSettingsSerializer(settings, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
@@ -213,7 +213,7 @@ class ReviewSummaryView(APIView):
 
     def get(self, request):
         summary, created = ReviewSummary.objects.get_or_create(
-            restaurant=request.user.restaurant
+            business=request.user.business
         )
 
         # Refresh if new or stale (older than 1 hour)
@@ -237,11 +237,11 @@ class FeedbackRequestViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return FeedbackRequest.objects.filter(
-            restaurant=self.request.user.restaurant
+            business=self.request.user.business
         ).order_by("-created_at")
 
     def perform_create(self, serializer):
-        serializer.save(restaurant=self.request.user.restaurant)
+        serializer.save(business=self.request.user.business)
 
     @action(detail=True, methods=["post"])
     def send(self, request, pk=None):
@@ -263,7 +263,7 @@ class PublicReviewsView(APIView):
 
     def get(self, request, slug):
         try:
-            restaurant = Restaurant.objects.get(slug=slug)
+            business = Business.objects.get(slug=slug)
         except Restaurant.DoesNotExist:
             return Response(
                 {"error": "Restaurant not found"},
@@ -271,14 +271,14 @@ class PublicReviewsView(APIView):
             )
 
         # Get settings
-        settings, _ = ReviewSettings.objects.get_or_create(restaurant=restaurant)
+        settings, _ = ReviewSettings.objects.get_or_create(business=business)
 
         if not settings.show_reviews_on_menu:
             return Response({"reviews": [], "summary": None})
 
         # Get approved reviews
         reviews = Review.objects.filter(
-            restaurant=restaurant,
+            business=business,
             status=ReviewStatus.APPROVED,
         ).select_related("response").prefetch_related("photos")
 
@@ -289,7 +289,7 @@ class PublicReviewsView(APIView):
         # Get summary
         summary = None
         if settings.show_average_rating:
-            summary_obj, _ = ReviewSummary.objects.get_or_create(restaurant=restaurant)
+            summary_obj, _ = ReviewSummary.objects.get_or_create(business=business)
             if (timezone.now() - summary_obj.last_updated).total_seconds() > 3600:
                 summary_obj.refresh()
             summary = ReviewSummarySerializer(summary_obj).data
@@ -310,7 +310,7 @@ class PublicSubmitReviewView(APIView):
 
     def post(self, request, slug):
         try:
-            restaurant = Restaurant.objects.get(slug=slug)
+            business = Business.objects.get(slug=slug)
         except Restaurant.DoesNotExist:
             return Response(
                 {"error": "Restaurant not found"},
@@ -321,7 +321,7 @@ class PublicSubmitReviewView(APIView):
         serializer.is_valid(raise_exception=True)
 
         # Get settings
-        settings, _ = ReviewSettings.objects.get_or_create(restaurant=restaurant)
+        settings, _ = ReviewSettings.objects.get_or_create(business=business)
 
         # Determine status
         initial_status = ReviewStatus.PENDING
@@ -331,7 +331,7 @@ class PublicSubmitReviewView(APIView):
                 initial_status = ReviewStatus.APPROVED
 
         review = Review.objects.create(
-            restaurant=restaurant,
+            business=business,
             status=initial_status,
             source=ReviewSource.WEBSITE,
             **serializer.validated_data,
@@ -339,7 +339,7 @@ class PublicSubmitReviewView(APIView):
 
         # Update summary if approved
         if initial_status == ReviewStatus.APPROVED:
-            summary, _ = ReviewSummary.objects.get_or_create(restaurant=restaurant)
+            summary, _ = ReviewSummary.objects.get_or_create(business=business)
             summary.refresh()
 
         return Response({
@@ -377,7 +377,7 @@ class SubmitFeedbackView(APIView):
 
         return Response({
             "customer_name": feedback_request.customer_name,
-            "restaurant_name": feedback_request.restaurant.name,
+            "restaurant_name": feedback_request.business.name,
         })
 
     def post(self, request, token):
@@ -401,7 +401,7 @@ class SubmitFeedbackView(APIView):
 
         # Get settings
         settings, _ = ReviewSettings.objects.get_or_create(
-            restaurant=feedback_request.restaurant
+            business=feedback_request.business
         )
 
         # Determine status
@@ -420,7 +420,7 @@ class SubmitFeedbackView(APIView):
 
         # Create review
         review = Review.objects.create(
-            restaurant=feedback_request.restaurant,
+            business=feedback_request.business,
             status=initial_status,
             source=source,
             is_verified=True,  # Verified because it came from feedback request
@@ -446,7 +446,7 @@ class SubmitFeedbackView(APIView):
         # Update summary if approved
         if initial_status == ReviewStatus.APPROVED:
             summary, _ = ReviewSummary.objects.get_or_create(
-                restaurant=feedback_request.restaurant
+                business=feedback_request.business
             )
             summary.refresh()
 

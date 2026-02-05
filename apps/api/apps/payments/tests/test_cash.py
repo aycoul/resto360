@@ -41,11 +41,11 @@ class TestCashProvider:
         from apps.orders.tests.factories import OrderFactory
 
         provider = CashProvider()
-        order = OrderFactory(restaurant=owner.restaurant, cashier=owner)
+        order = OrderFactory(business=owner.business, cashier=owner)
 
         # Create a payment with SUCCESS status
         payment = Payment.all_objects.create(
-            restaurant=owner.restaurant,
+            business=owner.business,
             order=order,
             payment_method=sample_payment_method,
             amount=15000,

@@ -108,41 +108,41 @@ class TestDeductIngredientsForOrder:
 
         from .factories import MenuItemIngredientFactory, StockItemFactory
 
-        restaurant = owner.restaurant
+        business = owner.business
 
         # Create two stock items
         tomatoes = StockItemFactory(
-            restaurant=restaurant,
+            business=business,
             name="Tomatoes",
             current_quantity=Decimal("50.0000"),
         )
         onions = StockItemFactory(
-            restaurant=restaurant,
+            business=business,
             name="Onions",
             current_quantity=Decimal("30.0000"),
         )
 
         # Create menu item with multiple ingredients
-        category = CategoryFactory(restaurant=restaurant)
-        burger = MenuItemFactory(restaurant=restaurant, category=category, name="Burger")
+        category = CategoryFactory(business=business)
+        burger = MenuItemFactory(business=business, category=category, name="Burger")
 
         MenuItemIngredientFactory(
-            restaurant=restaurant,
+            business=business,
             menu_item=burger,
             stock_item=tomatoes,
             quantity_required=Decimal("0.1"),  # 0.1 kg tomatoes per burger
         )
         MenuItemIngredientFactory(
-            restaurant=restaurant,
+            business=business,
             menu_item=burger,
             stock_item=onions,
             quantity_required=Decimal("0.05"),  # 0.05 kg onions per burger
         )
 
         # Create order for 3 burgers
-        order = OrderFactory(restaurant=restaurant, cashier=owner)
+        order = OrderFactory(business=business, cashier=owner)
         OrderItemFactory(
-            restaurant=restaurant,
+            business=business,
             order=order,
             menu_item=burger,
             quantity=3,

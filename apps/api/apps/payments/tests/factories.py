@@ -6,9 +6,9 @@ import factory
 from factory.django import DjangoModelFactory
 
 from apps.authentication.tests.factories import (
+    BusinessFactory,
     CashierFactory,
     OwnerFactory,
-    RestaurantFactory,
 )
 from apps.orders.tests.factories import OrderFactory
 
@@ -26,7 +26,7 @@ class PaymentMethodFactory(DjangoModelFactory):
     class Meta:
         model = PaymentMethod
 
-    restaurant = factory.SubFactory(RestaurantFactory)
+    business = factory.SubFactory(BusinessFactory)
     provider_code = "cash"
     name = "Cash"
     is_active = True
@@ -40,11 +40,11 @@ class PaymentFactory(DjangoModelFactory):
     class Meta:
         model = Payment
 
-    restaurant = factory.LazyAttribute(lambda o: o.order.restaurant)
+    business = factory.LazyAttribute(lambda o: o.order.business)
     order = factory.SubFactory(OrderFactory)
     payment_method = factory.LazyAttribute(
         lambda o: PaymentMethodFactory(
-            restaurant=o.order.restaurant, provider_code="cash"
+            business=o.order.business, provider_code="cash"
         )
     )
     amount = 10000
@@ -62,7 +62,7 @@ class CashDrawerSessionFactory(DjangoModelFactory):
     class Meta:
         model = CashDrawerSession
 
-    restaurant = factory.LazyAttribute(lambda o: o.cashier.restaurant)
+    business = factory.LazyAttribute(lambda o: o.cashier.business)
     cashier = factory.SubFactory(CashierFactory)
     opening_balance = 50000
     closed_at = None

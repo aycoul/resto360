@@ -7,7 +7,7 @@ from apps.authentication.tests.factories import (
     CashierFactory,
     ManagerFactory,
     OwnerFactory,
-    RestaurantFactory,
+    BusinessFactory,
 )
 
 from apps.menu.tests.factories import CategoryFactory, MenuItemFactory
@@ -16,7 +16,7 @@ from apps.orders.tests.factories import OrderFactory, OrderItemFactory
 from .factories import MenuItemIngredientFactory, StockItemFactory, StockMovementFactory
 
 # Register authentication factories
-register(RestaurantFactory)
+register(BusinessFactory)
 register(OwnerFactory, "owner")
 register(ManagerFactory, "manager")
 register(CashierFactory, "cashier")
@@ -28,7 +28,7 @@ register(MenuItemIngredientFactory)
 
 # Register menu factories (needed for recipe tests)
 register(CategoryFactory)
-register(MenuItemFactory)
+register(MenuItemFactory, "menu_item")  # Explicit name since MenuItemFactory = ProductFactory
 
 # Register order factories (needed for signal tests)
 register(OrderFactory)
@@ -67,9 +67,9 @@ def cashier_client(api_client, cashier):
 
 @pytest.fixture
 def sample_stock_item(owner):
-    """Create a sample stock item for the owner's restaurant."""
+    """Create a sample stock item for the owner's business."""
     return StockItemFactory(
-        restaurant=owner.restaurant,
+        business=owner.business,
         name="Tomatoes",
         sku="TOM-001",
         unit="kg",
@@ -81,11 +81,11 @@ def sample_stock_item(owner):
 @pytest.fixture
 def sample_inventory(owner):
     """Create a sample inventory with multiple items."""
-    restaurant = owner.restaurant
+    business = owner.business
 
     items = {
         "tomatoes": StockItemFactory(
-            restaurant=restaurant,
+            business=business,
             name="Tomatoes",
             sku="TOM-001",
             unit="kg",
@@ -93,7 +93,7 @@ def sample_inventory(owner):
             low_stock_threshold="5.0000",
         ),
         "onions": StockItemFactory(
-            restaurant=restaurant,
+            business=business,
             name="Onions",
             sku="ONI-001",
             unit="kg",
@@ -101,7 +101,7 @@ def sample_inventory(owner):
             low_stock_threshold="3.0000",
         ),
         "cooking_oil": StockItemFactory(
-            restaurant=restaurant,
+            business=business,
             name="Cooking Oil",
             sku="OIL-001",
             unit="L",
@@ -109,7 +109,7 @@ def sample_inventory(owner):
             low_stock_threshold="2.0000",
         ),
         "napkins": StockItemFactory(
-            restaurant=restaurant,
+            business=business,
             name="Napkins",
             sku="NAP-001",
             unit="piece",
@@ -117,7 +117,7 @@ def sample_inventory(owner):
             low_stock_threshold="50.0000",
         ),
         "inactive_item": StockItemFactory(
-            restaurant=restaurant,
+            business=business,
             name="Discontinued Item",
             sku="DIS-001",
             unit="piece",
@@ -126,7 +126,7 @@ def sample_inventory(owner):
         ),
     }
 
-    return {"restaurant": restaurant, "items": items}
+    return {"business": business, "items": items}
 
 
 @pytest.fixture
@@ -136,20 +136,20 @@ def order_with_ingredients(owner, db):
 
     from apps.orders.models import OrderStatus
 
-    restaurant = owner.restaurant
+    business = owner.business
 
     # Create stock item with enough quantity
     stock_item = StockItemFactory(
-        restaurant=restaurant,
+        business=business,
         name="Test Ingredient",
         current_quantity=Decimal("100.0000"),
         low_stock_threshold=Decimal("10.0000"),
     )
 
     # Create a menu item
-    category = CategoryFactory(restaurant=restaurant, name="Test Category")
+    category = CategoryFactory(business=business, name="Test Category")
     menu_item = MenuItemFactory(
-        restaurant=restaurant,
+        business=business,
         category=category,
         name="Test Menu Item",
         price=1500,
@@ -157,7 +157,7 @@ def order_with_ingredients(owner, db):
 
     # Create ingredient mapping: 0.5 kg per menu item
     ingredient = MenuItemIngredientFactory(
-        restaurant=restaurant,
+        business=business,
         menu_item=menu_item,
         stock_item=stock_item,
         quantity_required=Decimal("0.5000"),
@@ -165,12 +165,12 @@ def order_with_ingredients(owner, db):
 
     # Create order with the menu item (quantity 2 = 1.0 kg needed)
     order = OrderFactory(
-        restaurant=restaurant,
+        business=business,
         cashier=owner,
         status=OrderStatus.PENDING,
     )
     order_item = OrderItemFactory(
-        restaurant=restaurant,
+        business=business,
         order=order,
         menu_item=menu_item,
         name=menu_item.name,
@@ -199,20 +199,20 @@ def order_with_insufficient_stock(owner, db):
 
     from apps.orders.models import OrderStatus
 
-    restaurant = owner.restaurant
+    business = owner.business
 
     # Create stock item with very low quantity
     stock_item = StockItemFactory(
-        restaurant=restaurant,
+        business=business,
         name="Low Stock Ingredient",
         current_quantity=Decimal("0.1000"),  # Very low
         low_stock_threshold=Decimal("1.0000"),
     )
 
     # Create a menu item
-    category = CategoryFactory(restaurant=restaurant, name="Test Category 2")
+    category = CategoryFactory(business=business, name="Test Category 2")
     menu_item = MenuItemFactory(
-        restaurant=restaurant,
+        business=business,
         category=category,
         name="Test Menu Item 2",
         price=2000,
@@ -220,7 +220,7 @@ def order_with_insufficient_stock(owner, db):
 
     # Create ingredient mapping: 1.0 kg per menu item (more than available)
     MenuItemIngredientFactory(
-        restaurant=restaurant,
+        business=business,
         menu_item=menu_item,
         stock_item=stock_item,
         quantity_required=Decimal("1.0000"),
@@ -228,12 +228,12 @@ def order_with_insufficient_stock(owner, db):
 
     # Create order (quantity 1 = 1.0 kg needed, but only 0.1 available)
     order = OrderFactory(
-        restaurant=restaurant,
+        business=business,
         cashier=owner,
         status=OrderStatus.PENDING,
     )
     OrderItemFactory(
-        restaurant=restaurant,
+        business=business,
         order=order,
         menu_item=menu_item,
         name=menu_item.name,
@@ -256,12 +256,12 @@ def order_without_ingredients(owner, db):
     """Create an order with menu items that have NO ingredient mappings."""
     from apps.orders.models import OrderStatus
 
-    restaurant = owner.restaurant
+    business = owner.business
 
     # Create a menu item without any ingredient mappings
-    category = CategoryFactory(restaurant=restaurant, name="Test Category 3")
+    category = CategoryFactory(business=business, name="Test Category 3")
     menu_item = MenuItemFactory(
-        restaurant=restaurant,
+        business=business,
         category=category,
         name="No Ingredients Item",
         price=1000,
@@ -269,12 +269,12 @@ def order_without_ingredients(owner, db):
 
     # Create order
     order = OrderFactory(
-        restaurant=restaurant,
+        business=business,
         cashier=owner,
         status=OrderStatus.PENDING,
     )
     OrderItemFactory(
-        restaurant=restaurant,
+        business=business,
         order=order,
         menu_item=menu_item,
         name=menu_item.name,

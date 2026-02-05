@@ -52,18 +52,18 @@ class CRMSummaryView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        restaurant = request.user.restaurant
+        business = request.user.business
         now = timezone.now()
         month_ago = now - timedelta(days=30)
 
         # Get customer stats
-        customers = Customer.objects.filter(restaurant=restaurant)
+        customers = Customer.objects.filter(business=business)
         total_customers = customers.count()
         active_customers = customers.filter(last_visit_at__gte=month_ago).count()
         new_customers = customers.filter(created_at__gte=month_ago).count()
 
         # Get points stats
-        transactions = PointsTransaction.objects.filter(restaurant=restaurant)
+        transactions = PointsTransaction.objects.filter(business=business)
         total_issued = transactions.filter(points__gt=0).aggregate(
             total=Sum("points")
         )["total"] or 0
@@ -73,14 +73,14 @@ class CRMSummaryView(APIView):
 
         # Get rewards stats
         total_rewards = RewardRedemption.objects.filter(
-            restaurant=restaurant, is_used=True
+            business=business, is_used=True
         ).count()
 
         # Average customer value
         avg_value = customers.aggregate(avg=Avg("total_spent"))["avg"] or 0
 
         # Customers by tier
-        tiers = LoyaltyTier.objects.filter(restaurant=restaurant)
+        tiers = LoyaltyTier.objects.filter(business=business)
         customers_by_tier = [
             {
                 "tier": tier.name,
@@ -119,14 +119,14 @@ class LoyaltyProgramView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        restaurant = request.user.restaurant
-        program, _ = LoyaltyProgram.objects.get_or_create(restaurant=restaurant)
+        business = request.user.business
+        program, _ = LoyaltyProgram.objects.get_or_create(business=business)
         serializer = LoyaltyProgramSerializer(program)
         return Response(serializer.data)
 
     def patch(self, request):
-        restaurant = request.user.restaurant
-        program, _ = LoyaltyProgram.objects.get_or_create(restaurant=restaurant)
+        business = request.user.business
+        program, _ = LoyaltyProgram.objects.get_or_create(business=business)
         serializer = LoyaltyProgramUpdateSerializer(program, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -139,7 +139,7 @@ class LoyaltyTierViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return LoyaltyTier.objects.filter(restaurant=self.request.user.restaurant)
+        return LoyaltyTier.objects.filter(business=self.request.user.business)
 
     def get_serializer_class(self):
         if self.action in ["create", "update", "partial_update"]:
@@ -147,7 +147,7 @@ class LoyaltyTierViewSet(viewsets.ModelViewSet):
         return LoyaltyTierSerializer
 
     def perform_create(self, serializer):
-        serializer.save(restaurant=self.request.user.restaurant)
+        serializer.save(business=self.request.user.business)
 
 
 class CustomerViewSet(viewsets.ModelViewSet):
@@ -156,7 +156,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        qs = Customer.objects.filter(restaurant=self.request.user.restaurant)
+        qs = Customer.objects.filter(business=self.request.user.business)
         qs = qs.select_related("tier", "referred_by")
 
         # Search filters
@@ -188,12 +188,12 @@ class CustomerViewSet(viewsets.ModelViewSet):
         return CustomerSerializer
 
     def perform_create(self, serializer):
-        restaurant = self.request.user.restaurant
-        customer = serializer.save(restaurant=restaurant)
+        business = self.request.user.business
+        customer = serializer.save(business=business)
 
         # Award signup bonus if program is active
         try:
-            program = LoyaltyProgram.objects.get(restaurant=restaurant, is_active=True)
+            program = LoyaltyProgram.objects.get(business=business, is_active=True)
             if program.signup_bonus > 0:
                 customer.add_points(
                     program.signup_bonus,
@@ -261,7 +261,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
         try:
             reward = LoyaltyReward.objects.get(
                 id=serializer.validated_data["reward_id"],
-                restaurant=customer.restaurant,
+                business=customer.business,
             )
         except LoyaltyReward.DoesNotExist:
             return Response(
@@ -297,7 +297,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
 
         # Create redemption record
         redemption = RewardRedemption.objects.create(
-            restaurant=customer.restaurant,
+            business=customer.business,
             customer=customer,
             reward=reward,
             points_used=reward.points_required,
@@ -317,7 +317,7 @@ class LoyaltyRewardViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return LoyaltyReward.objects.filter(restaurant=self.request.user.restaurant)
+        return LoyaltyReward.objects.filter(business=self.request.user.business)
 
     def get_serializer_class(self):
         if self.action in ["create", "update", "partial_update"]:
@@ -325,7 +325,7 @@ class LoyaltyRewardViewSet(viewsets.ModelViewSet):
         return LoyaltyRewardSerializer
 
     def perform_create(self, serializer):
-        serializer.save(restaurant=self.request.user.restaurant)
+        serializer.save(business=self.request.user.business)
 
 
 class CampaignViewSet(viewsets.ModelViewSet):
@@ -334,7 +334,7 @@ class CampaignViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Campaign.objects.filter(restaurant=self.request.user.restaurant)
+        return Campaign.objects.filter(business=self.request.user.business)
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -344,7 +344,7 @@ class CampaignViewSet(viewsets.ModelViewSet):
         return CampaignSerializer
 
     def perform_create(self, serializer):
-        serializer.save(restaurant=self.request.user.restaurant)
+        serializer.save(business=self.request.user.business)
 
     @action(detail=True, methods=["post"])
     def schedule(self, request, pk=None):
@@ -436,7 +436,7 @@ class RewardRedemptionViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = RewardRedemptionSerializer
 
     def get_queryset(self):
-        qs = RewardRedemption.objects.filter(restaurant=self.request.user.restaurant)
+        qs = RewardRedemption.objects.filter(business=self.request.user.business)
         qs = qs.select_related("customer", "reward")
 
         unused = self.request.query_params.get("unused")
@@ -481,7 +481,7 @@ class ValidateRedemptionCodeView(APIView):
         try:
             redemption = RewardRedemption.objects.get(
                 code=code,
-                restaurant=request.user.restaurant,
+                business=request.user.business,
             )
         except RewardRedemption.DoesNotExist:
             return Response(

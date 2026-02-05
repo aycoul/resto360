@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="invoice_sequences",
-                        to="authentication.restaurant",
+                        to="authentication.business",
                     ),
                 ),
             ],

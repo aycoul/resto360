@@ -20,15 +20,15 @@ class OrderItemInline(admin.TabularInline):
 
 @admin.register(Table)
 class TableAdmin(admin.ModelAdmin):
-    list_display = ["number", "restaurant", "capacity", "is_active"]
-    list_filter = ["restaurant", "is_active"]
+    list_display = ["number", "business", "capacity", "is_active"]
+    list_filter = ["business", "is_active"]
     search_fields = ["number"]
 
 
 @admin.register(DailySequence)
 class DailySequenceAdmin(admin.ModelAdmin):
-    list_display = ["restaurant", "date", "last_number"]
-    list_filter = ["restaurant", "date"]
+    list_display = ["business", "date", "last_number"]
+    list_filter = ["business", "date"]
     date_hierarchy = "date"
 
 
@@ -36,14 +36,14 @@ class DailySequenceAdmin(admin.ModelAdmin):
 class OrderAdmin(admin.ModelAdmin):
     list_display = [
         "order_number",
-        "restaurant",
+        "business",
         "order_type",
         "status",
         "total",
         "cashier",
         "created_at",
     ]
-    list_filter = ["restaurant", "status", "order_type", "created_at"]
+    list_filter = ["business", "status", "order_type", "created_at"]
     search_fields = ["order_number", "customer_name", "customer_phone"]
     readonly_fields = ["order_number", "subtotal", "total"]
     date_hierarchy = "created_at"
@@ -53,6 +53,6 @@ class OrderAdmin(admin.ModelAdmin):
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
     list_display = ["name", "order", "quantity", "unit_price", "line_total"]
-    list_filter = ["order__restaurant"]
+    list_filter = ["order__business"]
     search_fields = ["name", "order__order_number"]
     inlines = [OrderItemModifierInline]

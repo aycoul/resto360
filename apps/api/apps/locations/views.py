@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.authentication.models import Restaurant
+from apps.authentication.models import Business
 
 from .models import (
     Brand,
@@ -49,12 +49,12 @@ class BrandPermissionMixin:
     """Mixin to check brand access permissions."""
 
     def get_brand(self):
-        """Get the brand from the user's restaurant or brand manager access."""
+        """Get the brand from the user's business or brand manager access."""
         user = self.request.user
 
-        # Check if user's restaurant belongs to a brand
-        if hasattr(user, "restaurant") and user.restaurant and user.restaurant.brand:
-            return user.restaurant.brand
+        # Check if user's business belongs to a brand
+        if hasattr(user, "business") and user.business and user.business.brand:
+            return user.business.brand
 
         # Check if user is a brand manager
         brand_access = BrandManager.objects.filter(
@@ -73,9 +73,9 @@ class BrandPermissionMixin:
         if user.is_superuser:
             return True
 
-        # Check restaurant brand
-        if hasattr(user, "restaurant") and user.restaurant:
-            if user.restaurant.brand == brand:
+        # Check business brand
+        if hasattr(user, "business") and user.business:
+            if user.business.brand == brand:
                 return True
 
         # Check brand manager access
@@ -102,7 +102,7 @@ class BrandDashboardView(BrandPermissionMixin, APIView):
         month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
 
         # Get brand locations
-        locations = Restaurant.objects.filter(brand=brand)
+        locations = Business.objects.filter(brand=brand)
         total_locations = locations.count()
         active_locations = locations.filter(is_active=True).count()
 
@@ -147,9 +147,9 @@ class BrandViewSet(BrandPermissionMixin, viewsets.ModelViewSet):
         # Get brands user has access to
         brand_ids = []
 
-        # Check restaurant brand
-        if hasattr(user, "restaurant") and user.restaurant and user.restaurant.brand:
-            brand_ids.append(user.restaurant.brand_id)
+        # Check business brand
+        if hasattr(user, "business") and user.business and user.business.brand:
+            brand_ids.append(user.business.brand_id)
 
         # Check brand manager access
         manager_brands = BrandManager.objects.filter(
@@ -168,7 +168,7 @@ class BrandViewSet(BrandPermissionMixin, viewsets.ModelViewSet):
     def locations(self, request, pk=None):
         """List all locations for a brand."""
         brand = self.get_object()
-        locations = Restaurant.objects.filter(brand=brand)
+        locations = Business.objects.filter(brand=brand)
 
         # Filter by active status
         is_active = request.query_params.get("is_active")
@@ -267,21 +267,21 @@ class SharedMenuViewSet(BrandPermissionMixin, viewsets.ModelViewSet):
     def sync_to_location(self, request, pk=None):
         """Sync shared menu to a location."""
         shared_menu = self.get_object()
-        restaurant_id = request.data.get("restaurant_id")
+        business_id = request.data.get("business_id")
 
         try:
-            restaurant = Restaurant.objects.get(
-                id=restaurant_id,
+            business = Business.objects.get(
+                id=business_id,
                 brand=shared_menu.brand,
             )
-        except Restaurant.DoesNotExist:
+        except Business.DoesNotExist:
             return Response(
                 {"detail": "Location not found or not part of this brand"},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
         sync, created = LocationMenuSync.objects.update_or_create(
-            restaurant=restaurant,
+            business=business,
             shared_menu=shared_menu,
             defaults={
                 "is_active": True,
@@ -300,7 +300,7 @@ class SharedMenuViewSet(BrandPermissionMixin, viewsets.ModelViewSet):
         shared_menu = self.get_object()
         syncs = LocationMenuSync.objects.filter(
             shared_menu=shared_menu, is_active=True
-        ).select_related("restaurant")
+        ).select_related("business")
 
         serializer = LocationMenuSyncSerializer(syncs, many=True)
         return Response(serializer.data)
@@ -344,14 +344,14 @@ class LocationPriceOverrideViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if hasattr(user, "restaurant") and user.restaurant:
+        if hasattr(user, "business") and user.business:
             return LocationPriceOverride.objects.filter(
-                restaurant=user.restaurant
+                business=user.business
             ).select_related("menu_item")
         return LocationPriceOverride.objects.none()
 
     def perform_create(self, serializer):
-        serializer.save(restaurant=self.request.user.restaurant)
+        serializer.save(business=self.request.user.business)
 
 
 class LocationItemAvailabilityViewSet(viewsets.ModelViewSet):
@@ -362,14 +362,14 @@ class LocationItemAvailabilityViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if hasattr(user, "restaurant") and user.restaurant:
+        if hasattr(user, "business") and user.business:
             return LocationItemAvailability.objects.filter(
-                restaurant=user.restaurant
+                business=user.business
             ).select_related("menu_item")
         return LocationItemAvailability.objects.none()
 
     def perform_create(self, serializer):
-        serializer.save(restaurant=self.request.user.restaurant)
+        serializer.save(business=self.request.user.business)
 
 
 class BrandAnnouncementViewSet(BrandPermissionMixin, viewsets.ModelViewSet):
@@ -409,10 +409,10 @@ class BrandAnnouncementViewSet(BrandPermissionMixin, viewsets.ModelViewSet):
 
         # Filter by location group if applicable
         user = request.user
-        if hasattr(user, "restaurant") and user.restaurant and user.restaurant.location_group:
+        if hasattr(user, "business") and user.business and user.business.location_group:
             announcements = announcements.filter(
                 models.Q(target_groups__isnull=True)
-                | models.Q(target_groups=user.restaurant.location_group)
+                | models.Q(target_groups=user.business.location_group)
             ).distinct()
 
         serializer = self.get_serializer(announcements, many=True)

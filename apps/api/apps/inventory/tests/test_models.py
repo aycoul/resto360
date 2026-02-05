@@ -20,7 +20,7 @@ class TestStockItemModel:
     def test_create_stock_item(self, owner):
         """Test creating a stock item with all fields."""
         item = StockItem.all_objects.create(
-            restaurant=owner.restaurant,
+            business=owner.business,
             name="Test Item",
             sku="TEST-001",
             unit=UnitType.KG,
@@ -45,7 +45,7 @@ class TestStockItemModel:
     def test_is_low_stock_below_threshold(self, owner):
         """Test is_low_stock when quantity is at or below threshold."""
         item = StockItem.all_objects.create(
-            restaurant=owner.restaurant,
+            business=owner.business,
             name="Low Stock Item",
             unit=UnitType.PIECE,
             current_quantity=Decimal("5.0000"),
@@ -56,7 +56,7 @@ class TestStockItemModel:
     def test_is_low_stock_above_threshold(self, owner):
         """Test is_low_stock when quantity is above threshold."""
         item = StockItem.all_objects.create(
-            restaurant=owner.restaurant,
+            business=owner.business,
             name="Normal Stock Item",
             unit=UnitType.PIECE,
             current_quantity=Decimal("50.0000"),
@@ -67,7 +67,7 @@ class TestStockItemModel:
     def test_is_low_stock_no_threshold(self, owner):
         """Test is_low_stock when no threshold is set."""
         item = StockItem.all_objects.create(
-            restaurant=owner.restaurant,
+            business=owner.business,
             name="No Threshold Item",
             unit=UnitType.PIECE,
             current_quantity=Decimal("0.0000"),
@@ -79,16 +79,16 @@ class TestStockItemModel:
         """Test that negative quantities are rejected."""
         with pytest.raises(IntegrityError):
             StockItem.all_objects.create(
-                restaurant=owner.restaurant,
+                business=owner.business,
                 name="Negative Item",
                 unit=UnitType.PIECE,
                 current_quantity=Decimal("-1.0000"),
             )
 
-    def test_unique_sku_per_restaurant(self, owner):
-        """Test that SKU must be unique per restaurant."""
+    def test_unique_sku_per_business(self, owner):
+        """Test that SKU must be unique per business."""
         StockItem.all_objects.create(
-            restaurant=owner.restaurant,
+            business=owner.business,
             name="Item 1",
             sku="UNIQUE-SKU",
             unit=UnitType.PIECE,
@@ -96,7 +96,7 @@ class TestStockItemModel:
 
         with pytest.raises(IntegrityError):
             StockItem.all_objects.create(
-                restaurant=owner.restaurant,
+                business=owner.business,
                 name="Item 2",
                 sku="UNIQUE-SKU",
                 unit=UnitType.PIECE,
@@ -105,13 +105,13 @@ class TestStockItemModel:
     def test_empty_sku_allowed_multiple_times(self, owner):
         """Test that empty SKU can be used multiple times."""
         item1 = StockItem.all_objects.create(
-            restaurant=owner.restaurant,
+            business=owner.business,
             name="Item 1",
             sku="",
             unit=UnitType.PIECE,
         )
         item2 = StockItem.all_objects.create(
-            restaurant=owner.restaurant,
+            business=owner.business,
             name="Item 2",
             sku="",
             unit=UnitType.PIECE,
@@ -120,26 +120,26 @@ class TestStockItemModel:
         assert item1.id != item2.id
         assert item1.sku == item2.sku == ""
 
-    def test_same_sku_different_restaurants(self, owner):
-        """Test that same SKU can be used in different restaurants."""
-        from apps.authentication.tests.factories import RestaurantFactory
+    def test_same_sku_different_businesses(self, owner):
+        """Test that same SKU can be used in different businesses."""
+        from apps.authentication.tests.factories import BusinessFactory
 
-        other_restaurant = RestaurantFactory()
+        other_business = BusinessFactory()
         item1 = StockItem.all_objects.create(
-            restaurant=owner.restaurant,
+            business=owner.business,
             name="Item 1",
             sku="SHARED-SKU",
             unit=UnitType.PIECE,
         )
         item2 = StockItem.all_objects.create(
-            restaurant=other_restaurant,
+            business=other_business,
             name="Item 2",
             sku="SHARED-SKU",
             unit=UnitType.PIECE,
         )
 
         assert item1.sku == item2.sku
-        assert item1.restaurant != item2.restaurant
+        assert item1.business != item2.business
 
     def test_history_tracking(self, stock_item):
         """Test that django-simple-history tracks changes."""
@@ -162,7 +162,7 @@ class TestStockMovementModel:
     def test_create_stock_movement(self, stock_item, owner):
         """Test creating a stock movement record."""
         movement = StockMovement.all_objects.create(
-            restaurant=stock_item.restaurant,
+            business=stock_item.business,
             stock_item=stock_item,
             quantity_change=Decimal("10.0000"),
             movement_type=MovementType.IN,
@@ -183,7 +183,7 @@ class TestStockMovementModel:
     def test_stock_movement_str_representation(self, stock_item, owner):
         """Test string representation of stock movement."""
         movement = StockMovement.all_objects.create(
-            restaurant=stock_item.restaurant,
+            business=stock_item.business,
             stock_item=stock_item,
             quantity_change=Decimal("10.0000"),
             movement_type=MovementType.IN,
@@ -202,7 +202,7 @@ class TestStockMovementModel:
     def test_stock_movement_immutability(self, stock_item, owner):
         """Test that existing movements cannot be updated."""
         movement = StockMovement.all_objects.create(
-            restaurant=stock_item.restaurant,
+            business=stock_item.business,
             stock_item=stock_item,
             quantity_change=Decimal("10.0000"),
             movement_type=MovementType.IN,
@@ -227,7 +227,7 @@ class TestStockMovementModel:
         # Create movements with explicit timestamps
         older_time = timezone.now() - timedelta(minutes=5)
         movement1 = StockMovement.all_objects.create(
-            restaurant=stock_item.restaurant,
+            business=stock_item.business,
             stock_item=stock_item,
             quantity_change=Decimal("5.0000"),
             movement_type=MovementType.IN,
@@ -240,7 +240,7 @@ class TestStockMovementModel:
         movement1.refresh_from_db()
 
         movement2 = StockMovement.all_objects.create(
-            restaurant=stock_item.restaurant,
+            business=stock_item.business,
             stock_item=stock_item,
             quantity_change=Decimal("-3.0000"),
             movement_type=MovementType.OUT,
@@ -260,7 +260,7 @@ class TestStockMovementModel:
 
         order_id = uuid.uuid4()
         movement = StockMovement.all_objects.create(
-            restaurant=stock_item.restaurant,
+            business=stock_item.business,
             stock_item=stock_item,
             quantity_change=Decimal("-2.0000"),
             movement_type=MovementType.OUT,

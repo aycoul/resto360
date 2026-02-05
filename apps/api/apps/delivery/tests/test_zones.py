@@ -13,7 +13,7 @@ from .factories import DeliveryZoneFactory
 class TestDeliveryZoneModel:
     """Tests for DeliveryZone model."""
 
-    def test_create_zone(self, restaurant):
+    def test_create_zone(self, business):
         """Test creating a delivery zone."""
         polygon = Polygon(
             [
@@ -27,7 +27,7 @@ class TestDeliveryZoneModel:
         )
 
         zone = DeliveryZone.objects.create(
-            restaurant=restaurant,
+            business=business,
             name="Central Zone",
             polygon=polygon,
             delivery_fee=1500,
@@ -38,9 +38,9 @@ class TestDeliveryZoneModel:
         assert zone.name == "Central Zone"
         assert zone.delivery_fee == 1500
 
-    def test_contains_point_inside(self, restaurant, point_inside_abidjan):
+    def test_contains_point_inside(self, business, point_inside_abidjan):
         """Test point inside zone returns True."""
-        zone = DeliveryZoneFactory(restaurant=restaurant)
+        zone = DeliveryZoneFactory(business=business)
 
         result = zone.contains_point(
             lat=point_inside_abidjan["lat"], lng=point_inside_abidjan["lng"]
@@ -48,9 +48,9 @@ class TestDeliveryZoneModel:
 
         assert result is True
 
-    def test_contains_point_outside(self, restaurant, point_outside_abidjan):
+    def test_contains_point_outside(self, business, point_outside_abidjan):
         """Test point outside zone returns False."""
-        zone = DeliveryZoneFactory(restaurant=restaurant)
+        zone = DeliveryZoneFactory(business=business)
 
         result = zone.contains_point(
             lat=point_outside_abidjan["lat"], lng=point_outside_abidjan["lng"]
@@ -58,36 +58,36 @@ class TestDeliveryZoneModel:
 
         assert result is False
 
-    def test_find_zone_for_location(self, restaurant, point_inside_abidjan):
+    def test_find_zone_for_location(self, business, point_inside_abidjan):
         """Test finding zone for a location."""
-        zone = DeliveryZoneFactory(restaurant=restaurant)
+        zone = DeliveryZoneFactory(business=business)
 
         found = DeliveryZone.find_zone_for_location(
-            restaurant=restaurant,
+            business=business,
             lat=point_inside_abidjan["lat"],
             lng=point_inside_abidjan["lng"],
         )
 
         assert found == zone
 
-    def test_find_zone_for_location_outside(self, restaurant, point_outside_abidjan):
+    def test_find_zone_for_location_outside(self, business, point_outside_abidjan):
         """Test no zone found for location outside all zones."""
-        DeliveryZoneFactory(restaurant=restaurant)
+        DeliveryZoneFactory(business=business)
 
         found = DeliveryZone.find_zone_for_location(
-            restaurant=restaurant,
+            business=business,
             lat=point_outside_abidjan["lat"],
             lng=point_outside_abidjan["lng"],
         )
 
         assert found is None
 
-    def test_inactive_zone_not_found(self, restaurant, point_inside_abidjan):
+    def test_inactive_zone_not_found(self, business, point_inside_abidjan):
         """Test inactive zones are not returned."""
-        DeliveryZoneFactory(restaurant=restaurant, is_active=False)
+        DeliveryZoneFactory(business=business, is_active=False)
 
         found = DeliveryZone.find_zone_for_location(
-            restaurant=restaurant,
+            business=business,
             lat=point_inside_abidjan["lat"],
             lng=point_inside_abidjan["lng"],
         )
@@ -99,27 +99,27 @@ class TestDeliveryZoneModel:
 class TestDeliveryZoneAPI:
     """Tests for delivery zone API endpoints."""
 
-    def test_list_zones(self, auth_client, restaurant):
+    def test_list_zones(self, auth_client, business):
         """Test listing delivery zones."""
-        DeliveryZoneFactory(restaurant=restaurant)
-        DeliveryZoneFactory(restaurant=restaurant)
+        DeliveryZoneFactory(business=business)
+        DeliveryZoneFactory(business=business)
 
         response = auth_client.get("/api/v1/delivery/zones/")
 
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data) == 2
 
-    def test_list_zones_tenant_isolation(self, auth_client, restaurant):
-        """Test zones are filtered by restaurant."""
-        DeliveryZoneFactory(restaurant=restaurant)
-        DeliveryZoneFactory()  # Different restaurant
+    def test_list_zones_tenant_isolation(self, auth_client, business):
+        """Test zones are filtered by business."""
+        DeliveryZoneFactory(business=business)
+        DeliveryZoneFactory()  # Different business
 
         response = auth_client.get("/api/v1/delivery/zones/")
 
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data) == 1
 
-    def test_create_zone(self, auth_client, restaurant, polygon_abidjan):
+    def test_create_zone(self, auth_client, business, polygon_abidjan):
         """Test creating a delivery zone via API."""
         data = {
             "name": "New Zone",
@@ -137,9 +137,9 @@ class TestDeliveryZoneAPI:
         assert response.data["properties"]["name"] == "New Zone"
         assert response.data["properties"]["delivery_fee"] == 2000
 
-    def test_retrieve_zone_geojson(self, auth_client, restaurant):
+    def test_retrieve_zone_geojson(self, auth_client, business):
         """Test retrieving zone returns GeoJSON."""
-        zone = DeliveryZoneFactory(restaurant=restaurant)
+        zone = DeliveryZoneFactory(business=business)
 
         response = auth_client.get(f"/api/v1/delivery/zones/{zone.id}/")
 
@@ -149,10 +149,10 @@ class TestDeliveryZoneAPI:
         assert "coordinates" in response.data["geometry"]
 
     def test_check_address_deliverable(
-        self, auth_client, restaurant, point_inside_abidjan
+        self, auth_client, business, point_inside_abidjan
     ):
         """Test check_address returns zone when deliverable."""
-        zone = DeliveryZoneFactory(restaurant=restaurant)
+        zone = DeliveryZoneFactory(business=business)
 
         response = auth_client.post(
             "/api/v1/delivery/zones/check_address/",
@@ -166,10 +166,10 @@ class TestDeliveryZoneAPI:
         assert response.data["zone"]["delivery_fee"] == zone.delivery_fee
 
     def test_check_address_not_deliverable(
-        self, auth_client, restaurant, point_outside_abidjan
+        self, auth_client, business, point_outside_abidjan
     ):
         """Test check_address returns not deliverable for outside address."""
-        DeliveryZoneFactory(restaurant=restaurant)
+        DeliveryZoneFactory(business=business)
 
         response = auth_client.post(
             "/api/v1/delivery/zones/check_address/",
@@ -182,7 +182,7 @@ class TestDeliveryZoneAPI:
         assert response.data["zone"] is None
         assert "outside" in response.data["message"].lower()
 
-    def test_check_address_validation(self, auth_client, restaurant):
+    def test_check_address_validation(self, auth_client, business):
         """Test check_address validates coordinates."""
         response = auth_client.post(
             "/api/v1/delivery/zones/check_address/",

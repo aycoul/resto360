@@ -19,7 +19,7 @@ class AnalyticsModelsTest(TestCase):
     """Tests for analytics models."""
 
     def setUp(self):
-        self.restaurant = Restaurant.objects.create(
+        self.business = Restaurant.objects.create(
             name="Test Restaurant",
             slug="test-restaurant",
             phone="+2250700000001",
@@ -28,14 +28,14 @@ class AnalyticsModelsTest(TestCase):
     def test_menu_view_creation(self):
         """Test creating a MenuView record."""
         view = MenuView.all_objects.create(
-            restaurant=self.restaurant,
+            business=self.business,
             session_id="test-session-123",
             source="qr",
             user_agent="Mozilla/5.0 Test",
         )
 
         self.assertIsNotNone(view.id)
-        self.assertEqual(view.restaurant, self.restaurant)
+        self.assertEqual(view.business, self.business)
         self.assertEqual(view.session_id, "test-session-123")
         self.assertEqual(view.source, "qr")
         self.assertEqual(view.user_agent, "Mozilla/5.0 Test")
@@ -46,7 +46,7 @@ class AnalyticsModelsTest(TestCase):
         from datetime import date
 
         stats = DailyMenuStats.all_objects.create(
-            restaurant=self.restaurant,
+            business=self.business,
             date=date.today(),
             total_views=100,
             unique_visitors=50,
@@ -63,7 +63,7 @@ class AnalyticsServicesTest(TestCase):
     """Tests for analytics service functions."""
 
     def setUp(self):
-        self.restaurant = Restaurant.objects.create(
+        self.business = Restaurant.objects.create(
             name="Test Restaurant",
             slug="test-restaurant",
             phone="+2250700000002",
@@ -72,21 +72,21 @@ class AnalyticsServicesTest(TestCase):
     def test_track_menu_view(self):
         """Test tracking a menu view."""
         view = track_menu_view(
-            restaurant=self.restaurant,
+            business=self.business,
             session_id="session-abc",
             source="qr",
             user_agent="Test Agent",
         )
 
         self.assertIsNotNone(view.id)
-        self.assertEqual(view.restaurant, self.restaurant)
+        self.assertEqual(view.business, self.business)
         self.assertEqual(view.session_id, "session-abc")
         self.assertEqual(view.source, "qr")
 
     def test_track_menu_view_invalid_source(self):
         """Test that invalid source defaults to 'other'."""
         view = track_menu_view(
-            restaurant=self.restaurant,
+            business=self.business,
             session_id="session-xyz",
             source="invalid",
             user_agent="Test Agent",
@@ -99,7 +99,7 @@ class AnalyticsServicesTest(TestCase):
         long_agent = "A" * 600  # Longer than 500 char limit
 
         view = track_menu_view(
-            restaurant=self.restaurant,
+            business=self.business,
             session_id="session-long",
             source="link",
             user_agent=long_agent,
@@ -112,19 +112,19 @@ class AnalyticsServicesTest(TestCase):
         # Create some test views
         for i in range(5):
             track_menu_view(
-                restaurant=self.restaurant,
+                business=self.business,
                 session_id=f"session-{i}",
                 source="link",
             )
 
         # Create a duplicate session to test unique count
         track_menu_view(
-            restaurant=self.restaurant,
+            business=self.business,
             session_id="session-0",
             source="qr",
         )
 
-        summary = get_analytics_summary(self.restaurant)
+        summary = get_analytics_summary(self.business)
 
         self.assertEqual(summary["views_today"], 6)
         self.assertEqual(summary["unique_today"], 5)  # Only 5 unique sessions
@@ -137,12 +137,12 @@ class AnalyticsServicesTest(TestCase):
         # Create test views
         for i in range(3):
             track_menu_view(
-                restaurant=self.restaurant,
+                business=self.business,
                 session_id=f"session-{i}",
                 source="qr" if i == 0 else "link",
             )
 
-        stats = aggregate_daily_stats(self.restaurant)
+        stats = aggregate_daily_stats(self.business)
 
         self.assertEqual(stats.total_views, 3)
         self.assertEqual(stats.unique_visitors, 3)
@@ -153,7 +153,7 @@ class TrackMenuViewAPITest(APITestCase):
     """Tests for the public tracking endpoint."""
 
     def setUp(self):
-        self.restaurant = Restaurant.objects.create(
+        self.business = Restaurant.objects.create(
             name="Test Restaurant",
             slug="test-restaurant",
             phone="+2250700000003",
@@ -180,8 +180,8 @@ class TrackMenuViewAPITest(APITestCase):
         view = MenuView.all_objects.first()
         self.assertEqual(view.source, "qr")
 
-    def test_track_menu_view_nonexistent_restaurant(self):
-        """Test tracking view for non-existent restaurant."""
+    def test_track_menu_view_nonexistent_business(self):
+        """Test tracking view for non-existent business."""
         data = {
             "restaurant_slug": "nonexistent-slug",
             "session_id": str(uuid.uuid4()),
@@ -193,10 +193,10 @@ class TrackMenuViewAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(MenuView.all_objects.count(), 0)
 
-    def test_track_menu_view_inactive_restaurant(self):
-        """Test tracking view for inactive restaurant."""
-        self.restaurant.is_active = False
-        self.restaurant.save()
+    def test_track_menu_view_inactive_business(self):
+        """Test tracking view for inactive business."""
+        self.business.is_active = False
+        self.business.save()
 
         data = {
             "restaurant_slug": "test-restaurant",
@@ -224,7 +224,7 @@ class AnalyticsSummaryAPITest(APITestCase):
     """Tests for the authenticated summary endpoint."""
 
     def setUp(self):
-        self.restaurant = Restaurant.objects.create(
+        self.business = Restaurant.objects.create(
             name="Test Restaurant",
             slug="test-restaurant",
             phone="+2250700000004",
@@ -234,7 +234,7 @@ class AnalyticsSummaryAPITest(APITestCase):
             phone="+2250700000005",
             password="testpass123",
             name="Test Owner",
-            restaurant=self.restaurant,
+            business=self.business,
             role="owner",
         )
         self.summary_url = reverse("analytics-summary")
@@ -249,7 +249,7 @@ class AnalyticsSummaryAPITest(APITestCase):
         # Create some views
         for i in range(3):
             track_menu_view(
-                restaurant=self.restaurant,
+                business=self.business,
                 session_id=f"session-{i}",
                 source="link",
             )
@@ -269,18 +269,18 @@ class AnalyticsSummaryAPITest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_analytics_summary_no_restaurant(self):
-        """Test summary for user without restaurant."""
-        # Create user without restaurant
-        user_no_restaurant = User.objects.create_user(
+    def test_analytics_summary_no_business(self):
+        """Test summary for user without business."""
+        # Create user without business
+        user_no_business = User.objects.create_user(
             phone="+2250700000006",
             password="testpass123",
-            name="No Restaurant User",
+            name="No Business User",
         )
-        refresh = RefreshToken.for_user(user_no_restaurant)
+        refresh = RefreshToken.for_user(user_no_business)
         auth_header = {"HTTP_AUTHORIZATION": f"Bearer {refresh.access_token}"}
 
         response = self.client.get(self.summary_url, **auth_header)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn("No restaurant", response.data["detail"])
+        self.assertIn("No business", response.data["detail"])

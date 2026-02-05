@@ -13,7 +13,7 @@ def send_low_stock_alert(self, stock_item_id: str, current_quantity: float, thre
     Send low stock alert notification.
 
     This is a placeholder that logs the alert. In production, this would:
-    - Send email to restaurant managers
+    - Send email to business managers
     - Push notification via WebSocket
     - Send SMS if critical
 
@@ -25,10 +25,10 @@ def send_low_stock_alert(self, stock_item_id: str, current_quantity: float, thre
     from apps.inventory.models import StockItem
 
     try:
-        stock_item = StockItem.all_objects.select_related("restaurant").get(id=stock_item_id)
+        stock_item = StockItem.all_objects.select_related("business").get(id=stock_item_id)
 
         alert_message = (
-            f"LOW STOCK ALERT: {stock_item.name} at {stock_item.restaurant.name}\n"
+            f"LOW STOCK ALERT: {stock_item.name} at {stock_item.business.name}\n"
             f"Current: {current_quantity} {stock_item.unit}\n"
             f"Threshold: {threshold} {stock_item.unit}"
         )
