@@ -87,7 +87,7 @@ def add_stock(
             reference_type, reference_id = reference
 
         StockMovement.all_objects.create(
-            restaurant=stock_item.restaurant,
+            business=stock_item.business,
             stock_item=stock_item,
             quantity_change=Decimal(str(quantity)),
             movement_type=MovementType.IN,
@@ -162,7 +162,7 @@ def deduct_stock(
             reference_type, reference_id = reference
 
         StockMovement.all_objects.create(
-            restaurant=stock_item.restaurant,
+            business=stock_item.business,
             stock_item=stock_item,
             quantity_change=-Decimal(str(quantity)),  # Negative for deduction
             movement_type=MovementType.OUT,
@@ -228,7 +228,7 @@ def adjust_stock(
 
         # Create immutable movement record
         StockMovement.all_objects.create(
-            restaurant=stock_item.restaurant,
+            business=stock_item.business,
             stock_item=stock_item,
             quantity_change=quantity_change,
             movement_type=MovementType.ADJUSTMENT,
@@ -310,7 +310,7 @@ def deduct_ingredients_for_order(order):
             # Get recipe ingredients for this menu item
             ingredients = MenuItemIngredient.all_objects.filter(
                 menu_item=order_item.menu_item,
-                restaurant=order.restaurant,
+                business=order.business,
             ).select_related("stock_item")
 
             if not ingredients.exists():
@@ -352,19 +352,19 @@ def deduct_ingredients_for_order(order):
 # =============================================================================
 
 
-def get_current_stock_report(restaurant, include_inactive=False, low_stock_only=False):
+def get_current_stock_report(business, include_inactive=False, low_stock_only=False):
     """
     Get current stock levels for all items.
 
     Args:
-        restaurant: Restaurant instance
+        business: Business instance
         include_inactive: Include inactive stock items
         low_stock_only: Only return items at or below threshold
 
     Returns:
         QuerySet of StockItems (model has is_low_stock property)
     """
-    queryset = StockItem.objects.filter(restaurant=restaurant)
+    queryset = StockItem.objects.filter(business=business)
 
     if not include_inactive:
         queryset = queryset.filter(is_active=True)
@@ -380,13 +380,13 @@ def get_current_stock_report(restaurant, include_inactive=False, low_stock_only=
 
 
 def get_movement_report(
-    restaurant, start_date: date, end_date: date, stock_item_id=None
+    business, start_date: date, end_date: date, stock_item_id=None
 ):
     """
     Generate stock movement report for date range.
 
     Args:
-        restaurant: Restaurant instance
+        business: Business instance
         start_date: Report start date (inclusive)
         end_date: Report end date (inclusive)
         stock_item_id: Optional - filter to specific stock item
@@ -395,7 +395,7 @@ def get_movement_report(
         Dict with summary and daily breakdown
     """
     queryset = StockMovement.objects.filter(
-        restaurant=restaurant,
+        business=business,
         created_at__date__gte=start_date,
         created_at__date__lte=end_date,
     )

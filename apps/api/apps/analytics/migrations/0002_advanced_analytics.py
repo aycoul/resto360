@@ -43,10 +43,10 @@ class Migration(migrations.Migration):
                 ("total_items_sold", models.PositiveIntegerField(default=0)),
                 ("orders_by_hour", models.JSONField(blank=True, default=dict)),
                 (
-                    "restaurant",
+                    "business",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="daily_sales_stats",
+                        related_name="%(class)ss",
                         to="authentication.restaurant",
                     ),
                 ),
@@ -54,7 +54,7 @@ class Migration(migrations.Migration):
             options={
                 "ordering": ["-date"],
                 "verbose_name_plural": "Daily sales stats",
-                "unique_together": {("restaurant", "date")},
+                "unique_together": {("business", "date")},
             },
         ),
         migrations.CreateModel(
@@ -85,17 +85,17 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "restaurant",
+                    "business",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="item_performance",
+                        related_name="%(class)ss",
                         to="authentication.restaurant",
                     ),
                 ),
             ],
             options={
                 "ordering": ["-date", "-quantity_sold"],
-                "unique_together": {("restaurant", "menu_item", "date")},
+                "unique_together": {("business", "menu_item", "date")},
             },
         ),
         migrations.CreateModel(
@@ -126,17 +126,17 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "restaurant",
+                    "business",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="category_performance",
+                        related_name="%(class)ss",
                         to="authentication.restaurant",
                     ),
                 ),
             ],
             options={
                 "ordering": ["-date", "-revenue"],
-                "unique_together": {("restaurant", "category", "date")},
+                "unique_together": {("business", "category", "date")},
             },
         ),
         migrations.CreateModel(
@@ -159,17 +159,17 @@ class Migration(migrations.Migration):
                 ("revenue", models.DecimalField(decimal_places=0, default=0, max_digits=10)),
                 ("items_sold", models.PositiveIntegerField(default=0)),
                 (
-                    "restaurant",
+                    "business",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="hourly_stats",
+                        related_name="%(class)ss",
                         to="authentication.restaurant",
                     ),
                 ),
             ],
             options={
                 "ordering": ["-date", "hour"],
-                "unique_together": {("restaurant", "date", "hour")},
+                "unique_together": {("business", "date", "hour")},
             },
         ),
         migrations.CreateModel(
@@ -202,17 +202,17 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "restaurant",
+                    "business",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="customer_stats",
+                        related_name="%(class)ss",
                         to="authentication.restaurant",
                     ),
                 ),
             ],
             options={
                 "ordering": ["-date"],
-                "unique_together": {("restaurant", "date")},
+                "unique_together": {("business", "date")},
             },
         ),
         migrations.CreateModel(
@@ -243,17 +243,17 @@ class Migration(migrations.Migration):
                 ("sent_at", models.DateTimeField(blank=True, null=True)),
                 ("sent_to", models.JSONField(blank=True, default=list)),
                 (
-                    "restaurant",
+                    "business",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="weekly_reports",
+                        related_name="%(class)ss",
                         to="authentication.restaurant",
                     ),
                 ),
             ],
             options={
                 "ordering": ["-week_start"],
-                "unique_together": {("restaurant", "week_start")},
+                "unique_together": {("business", "week_start")},
             },
         ),
         migrations.CreateModel(
@@ -319,10 +319,10 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "restaurant",
+                    "business",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="report_exports",
+                        related_name="%(class)ss",
                         to="authentication.restaurant",
                     ),
                 ),
@@ -334,11 +334,11 @@ class Migration(migrations.Migration):
         # Add indexes
         migrations.AddIndex(
             model_name="dailysalesstats",
-            index=models.Index(fields=["restaurant", "date"], name="analytics_d_restaur_sales_idx"),
+            index=models.Index(fields=["business", "date"], name="analytics_d_bus_sales_idx"),
         ),
         migrations.AddIndex(
             model_name="itemperformance",
-            index=models.Index(fields=["restaurant", "date"], name="analytics_i_restaur_item_idx"),
+            index=models.Index(fields=["business", "date"], name="analytics_i_bus_item_idx"),
         ),
         migrations.AddIndex(
             model_name="itemperformance",
@@ -346,18 +346,18 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name="categoryperformance",
-            index=models.Index(fields=["restaurant", "date"], name="analytics_c_restaur_cat_idx"),
+            index=models.Index(fields=["business", "date"], name="analytics_c_bus_cat_idx"),
         ),
         migrations.AddIndex(
             model_name="hourlystats",
-            index=models.Index(fields=["restaurant", "date"], name="analytics_h_restaur_hour_idx"),
+            index=models.Index(fields=["business", "date"], name="analytics_h_bus_hour_idx"),
         ),
         migrations.AddIndex(
             model_name="customerstats",
-            index=models.Index(fields=["restaurant", "date"], name="analytics_cs_restaur_idx"),
+            index=models.Index(fields=["business", "date"], name="analytics_cs_bus_idx"),
         ),
         migrations.AddIndex(
             model_name="weeklyreport",
-            index=models.Index(fields=["restaurant", "week_start"], name="analytics_w_restaur_week_idx"),
+            index=models.Index(fields=["business", "week_start"], name="analytics_w_bus_week_idx"),
         ),
     ]
