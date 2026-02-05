@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
+import { useAuth } from '@/lib/hooks/useAuth';
 import { useLiteContext } from '../layout';
 import { UpgradePrompt } from '@/components/lite/UpgradePrompt';
 import { useAnalyticsSummary } from '@/lib/hooks/useAnalytics';
@@ -9,8 +10,17 @@ import { useAnalyticsSummary } from '@/lib/hooks/useAnalytics';
 export default function LiteDashboardPage() {
   const locale = useLocale();
   const t = useTranslations('lite.dashboard');
+  const { isLoading: authLoading, isAuthenticated } = useAuth({ required: true });
   const { restaurant } = useLiteContext();
   const { data: analytics, isLoading: analyticsLoading } = useAnalyticsSummary();
+
+  if (authLoading || !isAuthenticated) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    );
+  }
 
   const formatStat = (value: number | undefined): string => {
     if (analyticsLoading || value === undefined) return '-';

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import { useAuth } from '@/lib/hooks/useAuth';
 import { useKitchenSocket } from '@/lib/hooks/useKitchenSocket';
 import { useKitchenQueue } from '@/lib/hooks/useKitchenQueue';
 import { OrderQueue } from '@/components/kitchen/OrderQueue';
@@ -12,6 +13,7 @@ const MOCK_RESTAURANT_ID = 'restaurant-uuid-here';
 
 export default function KitchenPage() {
   const t = useTranslations('kitchen');
+  const { isLoading: authLoading, isAuthenticated } = useAuth({ required: true });
   const [currentTime, setCurrentTime] = useState(new Date());
 
   const {
@@ -41,6 +43,14 @@ export default function KitchenPage() {
     }, 1000);
     return () => clearInterval(interval);
   }, []);
+
+  if (authLoading || !isAuthenticated) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen flex flex-col">

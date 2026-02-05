@@ -3,7 +3,16 @@ Django development settings for RESTO360 project.
 
 These settings are only for local development.
 """
+import os
+from pathlib import Path
+
 from .base import *  # noqa: F401, F403
+
+# GDAL library path for GeoDjango on Windows
+_gdal_dll = Path(__file__).resolve().parent.parent.parent / "venv" / "Lib" / "site-packages" / "osgeo" / "gdal.dll"
+if _gdal_dll.exists():
+    os.environ["GDAL_LIBRARY_PATH"] = str(_gdal_dll)
+    os.environ["PATH"] = str(_gdal_dll.parent) + os.pathsep + os.environ.get("PATH", "")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

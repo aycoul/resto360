@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useMenu } from '@/lib/hooks/useMenu';
+import { useAuth } from '@/lib/hooks/useAuth';
 import { CategoryTabs } from '@/components/pos/CategoryTabs';
 import { MenuGrid } from '@/components/pos/MenuGrid';
 import { Cart } from '@/components/pos/Cart';
@@ -10,6 +11,7 @@ import { LocaleSwitcher } from '@/components/ui/LocaleSwitcher';
 
 export default function POSPage() {
   const t = useTranslations('pos');
+  const { isLoading: authLoading, isAuthenticated } = useAuth({ required: true });
   // useMenu hook fetches categories from API, syncs to IndexedDB, and returns
   // categoriesWithItems which includes both category data and their menu items
   const { categories, isLoading, isOnline } = useMenu();
@@ -19,6 +21,14 @@ export default function POSPage() {
   const activeCategory = selectedCategoryId
     ? categories.find(c => c.id === selectedCategoryId)
     : categories[0];
+
+  if (authLoading || !isAuthenticated) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
