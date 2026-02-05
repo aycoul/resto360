@@ -310,7 +310,7 @@ class OrderItem(TenantModel):
         related_name="items",
     )
     menu_item = models.ForeignKey(
-        "menu.MenuItem",
+        "menu.Product",
         on_delete=models.SET_NULL,
         null=True,
         related_name="order_items",
@@ -352,12 +352,14 @@ class OrderItem(TenantModel):
 
     def save(self, *args, **kwargs):
         """Auto-calculate line total before saving."""
-        # If this is an existing item, recalculate
-        if self.pk:
+        # For existing items (update), recalculate based on saved modifiers
+        # Use _state.adding because UUID pks are set before save
+        if not self._state.adding:
             self.calculate_line_total()
-        else:
-            # For new items, just set basic line total without modifiers
-            self.line_total = self.unit_price * self.quantity
+        # For new items, only calculate if line_total wasn't already set
+        # This allows serializers to pass pre-calculated values
+        elif self.line_total == 0:
+            self.line_total = (self.unit_price + self.modifiers_total) * self.quantity
         super().save(*args, **kwargs)
 
 
